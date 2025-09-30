@@ -28,13 +28,13 @@ export default function MedicalHistoryOverviewPage() {
       {/* Main content */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
         <div className="max-w-md w-full space-y-8">
-          {/* Doctor Image - Green circle background */}
-          <div className="flex justify-center">
-            <div className="w-20 h-20 bg-[#4fa87f] rounded-full flex items-center justify-center">
-              <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-              </svg>
-            </div>
+          {/* Doctor Image - Left aligned */}
+          <div className="flex justify-start">
+            <img 
+              src="https://static.wixstatic.com/media/c49a9b_7742352092de4c8e82b9e6e10cc20719~mv2.webp"
+              alt="Medical Professional"
+              className="w-20 h-20 rounded-full object-cover"
+            />
           </div>
 
           {/* Title */}
