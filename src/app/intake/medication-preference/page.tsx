@@ -55,7 +55,7 @@ export default function MedicationPreferencePage() {
             {/* Option 1 */}
             <button
               onClick={() => setSelected('recommendation')}
-              className={`w-full p-4 text-left text-base md:text-lg rounded-2xl transition-all ${
+              className={`w-full p-3 md:p-4 text-left text-base md:text-lg rounded-2xl transition-all whitespace-normal ${
                 selected === 'recommendation' 
                   ? 'border border-[#f0feab] bg-[#f0feab]' 
                   : 'border border-gray-300 hover:border-gray-400 bg-white'
@@ -67,7 +67,7 @@ export default function MedicationPreferencePage() {
             {/* Option 2 */}
             <button
               onClick={() => setSelected('have_in_mind')}
-              className={`w-full p-4 text-left text-base md:text-lg rounded-2xl transition-all ${
+              className={`w-full p-3 md:p-4 text-left text-base md:text-lg rounded-2xl transition-all whitespace-normal ${
                 selected === 'have_in_mind' 
                   ? 'border border-[#f0feab] bg-[#f0feab]' 
                   : 'border border-gray-300 hover:border-gray-400 bg-white'
