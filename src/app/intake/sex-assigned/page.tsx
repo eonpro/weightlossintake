@@ -14,7 +14,7 @@ export default function SexAssignedPage() {
   const handleContinue = () => {
     if (selected) {
       sessionStorage.setItem('intake_sex', selected);
-      router.push('/intake/medical-conditions'); // Update this to the next page
+      router.push('/intake/activity-level');
     }
   };
 
