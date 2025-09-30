@@ -74,29 +74,31 @@ export default function GoalsPage() {
             <p className="text-gray-500">{t('goals.subtitle')}</p>
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-3">
             {options.map(option => (
               <button
                 key={option}
                 onClick={() => toggleOption(option)}
-                className={`w-full flex items-center p-4 rounded-2xl transition-all ${
+                className={`w-full text-left p-4 rounded-2xl border transition-all ${
                   selected.includes(option) 
-                    ? 'bg-[#f0feab] border border-[#f0feab]' 
-                    : 'bg-white border border-gray-300 hover:border-gray-400'
+                    ? 'border-[#f0feab] bg-[#f0feab]' 
+                    : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <div className={`w-5 h-5 mr-3 rounded border-2 flex items-center justify-center ${
-                  selected.includes(option)
-                    ? 'bg-[#4fa87f] border-[#4fa87f]'
-                    : 'bg-white border-gray-400'
-                }`}>
-                  {selected.includes(option) && (
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  )}
+                <div className="flex items-center">
+                  <div className={`w-5 h-5 mr-3 rounded border-2 flex items-center justify-center ${
+                    selected.includes(option)
+                      ? 'bg-[#f0feab] border-[#f0feab]'
+                      : 'border-gray-300'
+                  }`}>
+                    {selected.includes(option) && (
+                      <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="text-base md:text-lg font-medium">{t(option)}</span>
                 </div>
-                <span className="text-base md:text-lg text-left">{t(option)}</span>
               </button>
             ))}
           </div>

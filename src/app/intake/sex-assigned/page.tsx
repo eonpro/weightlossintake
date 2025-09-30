@@ -49,28 +49,54 @@ export default function SexAssignedPage() {
           <p className="text-lg font-normal mt-8">{t('sex.selectPrompt')}</p>
           
           {/* Options */}
-          <div className="space-y-4">
-            <label className="flex items-center space-x-3 cursor-pointer" onClick={() => setSelected('man')}>
-              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                selected === 'man' ? 'border-[#4fa87f]' : 'border-gray-400'
-              }`}>
-                {selected === 'man' && (
-                  <div className="w-3 h-3 rounded-full bg-[#4fa87f]"></div>
-                )}
+          <div className="space-y-3">
+            <button
+              onClick={() => setSelected('man')}
+              className={`w-full text-left p-4 rounded-2xl border transition-all ${
+                selected === 'man'
+                  ? 'border-[#f0feab] bg-[#f0feab]'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <div className="flex items-center">
+                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
+                  selected === 'man'
+                    ? 'border-[#f0feab] bg-[#f0feab]'
+                    : 'border-gray-300'
+                }`}>
+                  {selected === 'man' && (
+                    <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </div>
+                <span className="text-base md:text-lg font-medium">{t('sex.man')}</span>
               </div>
-              <span className="text-base md:text-lg">{t('sex.man')}</span>
-            </label>
+            </button>
             
-            <label className="flex items-center space-x-3 cursor-pointer" onClick={() => setSelected('woman')}>
-              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                selected === 'woman' ? 'border-[#4fa87f]' : 'border-gray-400'
-              }`}>
-                {selected === 'woman' && (
-                  <div className="w-3 h-3 rounded-full bg-[#4fa87f]"></div>
-                )}
+            <button
+              onClick={() => setSelected('woman')}
+              className={`w-full text-left p-4 rounded-2xl border transition-all ${
+                selected === 'woman'
+                  ? 'border-[#f0feab] bg-[#f0feab]'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <div className="flex items-center">
+                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
+                  selected === 'woman'
+                    ? 'border-[#f0feab] bg-[#f0feab]'
+                    : 'border-gray-300'
+                }`}>
+                  {selected === 'woman' && (
+                    <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </div>
+                <span className="text-base md:text-lg font-medium">{t('sex.woman')}</span>
               </div>
-              <span className="text-base md:text-lg">{t('sex.woman')}</span>
-            </label>
+            </button>
           </div>
           
           {/* Disclaimer */}
