@@ -14,8 +14,15 @@ export default function TestimonialsPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Single images array for slider
-  const testimonialImages = [
+  // Language-specific testimonial images
+  const testimonialImages = language === 'es' ? [
+    'https://static.wixstatic.com/media/c49a9b_3acf5a43eb8d48e1b0f6a9312277cd12~mv2.webp',
+    'https://static.wixstatic.com/media/c49a9b_eeb06937bc7a4b69a1ee5c028473c48a~mv2.webp',
+    'https://static.wixstatic.com/media/c49a9b_aaceb7116045472284b880cd9cdfb192~mv2.webp',
+    'https://static.wixstatic.com/media/c49a9b_994f15ab106c499cafda49acae0c55c1~mv2.webp',
+    'https://static.wixstatic.com/media/c49a9b_e69bbf808f884fa2b6bac9b962e0d819~mv2.webp',
+    'https://static.wixstatic.com/media/c49a9b_acffb0a6534c4e059daa20aca31aca3b~mv2.webp'
+  ] : [
     'https://static.wixstatic.com/media/c49a9b_9aef40faf6684d73829744872b83dcce~mv2.webp',
     'https://static.wixstatic.com/media/c49a9b_366d79f5e59040a899c267d3675494c6~mv2.webp',
     'https://static.wixstatic.com/media/c49a9b_6bb33332ffa7459ba48bea94f24b5c5c~mv2.webp',
@@ -23,6 +30,11 @@ export default function TestimonialsPage() {
     'https://static.wixstatic.com/media/c49a9b_86cfd5b97dfe4d8787463f312fd03712~mv2.webp',
     'https://static.wixstatic.com/media/c49a9b_9799e7cab45f4491a2169c23be5ec63c~mv2.webp'
   ];
+
+  // Reset slide when language changes
+  useEffect(() => {
+    setCurrentSlide(0);
+  }, [language]);
 
   // Auto-scroll functionality
   useEffect(() => {
@@ -33,7 +45,7 @@ export default function TestimonialsPage() {
 
       return () => clearInterval(interval);
     }
-  }, [currentSlide, isPaused]);
+  }, [currentSlide, isPaused, testimonialImages.length]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -54,11 +66,11 @@ export default function TestimonialsPage() {
         {/* Header with Icon */}
         <div className="space-y-4 mb-6">
           <div className="flex justify-start">
-            <div className="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
+            <img 
+              src="https://static.wixstatic.com/shapes/c49a9b_d96c5f8c37844a39bfa47b0503e6167a.svg"
+              alt="Check"
+              className="w-14 h-14"
+            />
           </div>
           <h1 className="text-2xl font-semibold leading-tight text-left">
             {language === 'es' 
