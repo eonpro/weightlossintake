@@ -96,7 +96,7 @@ export default function GoalsPage() {
                     </svg>
                   )}
                 </div>
-                <span className="text-lg text-left">{t(option)}</span>
+                <span className="text-base md:text-lg text-left">{t(option)}</span>
               </button>
             ))}
           </div>

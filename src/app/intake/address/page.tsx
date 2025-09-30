@@ -233,7 +233,7 @@ export default function AddressPage() {
               placeholder={t('address.placeholder')}
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="w-full p-4 text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
+              className="w-full p-4 text-base md:text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
             />
             
             <input
@@ -241,7 +241,7 @@ export default function AddressPage() {
               placeholder={t('address.apartment')}
               value={apartment}
               onChange={(e) => setApartment(e.target.value)}
-              className="w-full p-4 text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
+              className="w-full p-4 text-base md:text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
             />
             
             <p className="text-sm text-gray-400">{t('address.apartment.note')}</p>

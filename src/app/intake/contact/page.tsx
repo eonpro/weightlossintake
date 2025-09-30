@@ -76,7 +76,7 @@ export default function ContactPage() {
                 placeholder="Email Address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-4 rounded-2xl border border-gray-200 text-lg font-medium focus:outline-none focus:border-gray-400 transition-colors"
+                className="w-full p-4 rounded-2xl border border-gray-200 text-base md:text-lg font-medium focus:outline-none focus:border-gray-400 transition-colors"
               />
               
               <input
@@ -84,7 +84,7 @@ export default function ContactPage() {
                 placeholder="Phone Number"
                 value={phone}
                 onChange={handlePhoneChange}
-                className="w-full p-4 rounded-2xl border border-gray-200 text-lg font-medium focus:outline-none focus:border-gray-400 transition-colors"
+                className="w-full p-4 rounded-2xl border border-gray-200 text-base md:text-lg font-medium focus:outline-none focus:border-gray-400 transition-colors"
               />
               
               <input
@@ -92,7 +92,7 @@ export default function ContactPage() {
                 placeholder="Date of Birth"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
-                className="w-full p-4 rounded-2xl border border-gray-200 text-lg font-medium focus:outline-none focus:border-gray-400 transition-colors"
+                className="w-full p-4 rounded-2xl border border-gray-200 text-base md:text-lg font-medium focus:outline-none focus:border-gray-400 transition-colors"
               />
             </div>
           </div>

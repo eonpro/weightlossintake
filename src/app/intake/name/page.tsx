@@ -62,7 +62,7 @@ export default function NamePage() {
                     setFirstName('');
                   }
                 }}
-                className="w-full p-4 text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
+                className="w-full p-4 text-base md:text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
               />
               <input
                 type="text"
@@ -78,7 +78,7 @@ export default function NamePage() {
                     setLastName('');
                   }
                 }}
-                className="w-full p-4 text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
+                className="w-full p-4 text-base md:text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
               />
             </div>
           </div>

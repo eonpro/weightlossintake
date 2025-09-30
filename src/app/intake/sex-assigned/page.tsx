@@ -58,7 +58,7 @@ export default function SexAssignedPage() {
                   <div className="w-3 h-3 rounded-full bg-[#4fa87f]"></div>
                 )}
               </div>
-              <span className="text-lg">{t('sex.man')}</span>
+              <span className="text-base md:text-lg">{t('sex.man')}</span>
             </label>
             
             <label className="flex items-center space-x-3 cursor-pointer" onClick={() => setSelected('woman')}>
@@ -69,7 +69,7 @@ export default function SexAssignedPage() {
                   <div className="w-3 h-3 rounded-full bg-[#4fa87f]"></div>
                 )}
               </div>
-              <span className="text-lg">{t('sex.woman')}</span>
+              <span className="text-base md:text-lg">{t('sex.woman')}</span>
             </label>
           </div>
           

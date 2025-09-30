@@ -59,7 +59,7 @@ export default function ContactInfoPage() {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-4 text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
+              className="w-full p-4 text-base md:text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
             />
 
             {/* Phone Input with Country Code */}
@@ -102,7 +102,7 @@ export default function ContactInfoPage() {
                 placeholder={selectedCountry.dialCode + " 000 000 0000"}
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="flex-1 p-4 text-lg border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
+                className="flex-1 p-4 text-base md:text-lg border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
               />
             </div>
 

@@ -132,7 +132,7 @@ export default function DOBPage() {
                 value={dob}
                 onChange={handleDateChange}
                 maxLength={10}
-                className="w-full p-4 text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
+                className="w-full p-4 text-base md:text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
               />
               {dob.length === 10 && !isOver18 && (
                 <p className="text-red-500 text-sm mt-2">{t('dob.ageError')}</p>

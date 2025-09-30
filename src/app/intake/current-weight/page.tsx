@@ -56,7 +56,7 @@ export default function CurrentWeightPage() {
                   const value = e.target.value.replace(/[^0-9]/g, '');
                   setCurrentWeight(value);
                 }}
-                className="w-full p-4 pr-12 text-lg font-medium border border-gray-300 rounded-2xl focus:outline-none focus:border-gray-400"
+                className="w-full p-4 pr-12 text-base md:text-lg font-medium border border-gray-300 rounded-2xl focus:outline-none focus:border-gray-400"
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-light">{t('common.lbs')}</span>
             </div>
@@ -72,7 +72,7 @@ export default function CurrentWeightPage() {
                 <select
                   value={feet}
                   onChange={(e) => setFeet(e.target.value)}
-                  className="w-full p-4 pr-12 text-lg font-medium border border-gray-300 rounded-2xl appearance-none focus:outline-none focus:border-gray-400 bg-white"
+                  className="w-full p-4 pr-12 text-base md:text-lg font-medium border border-gray-300 rounded-2xl appearance-none focus:outline-none focus:border-gray-400 bg-white"
                 >
                   <option value="" disabled>{t('common.feet')}</option>
                   <option value="3">3</option>
@@ -93,7 +93,7 @@ export default function CurrentWeightPage() {
                 <select
                   value={inches}
                   onChange={(e) => setInches(e.target.value)}
-                  className="w-full p-4 pr-12 text-lg font-medium border border-gray-300 rounded-2xl appearance-none focus:outline-none focus:border-gray-400 bg-white"
+                  className="w-full p-4 pr-12 text-base md:text-lg font-medium border border-gray-300 rounded-2xl appearance-none focus:outline-none focus:border-gray-400 bg-white"
                 >
                   <option value="" disabled>{t('common.inches')}</option>
                   {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(inch => (

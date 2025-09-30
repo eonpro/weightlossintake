@@ -63,7 +63,7 @@ export default function StatePage() {
               <select
                 value={selectedState}
                 onChange={(e) => setSelectedState(e.target.value)}
-                className="w-full p-4 pr-12 text-lg border border-gray-200 rounded-2xl appearance-none focus:outline-none focus:border-gray-400 bg-white"
+                className="w-full p-4 pr-12 text-base md:text-lg border border-gray-200 rounded-2xl appearance-none focus:outline-none focus:border-gray-400 bg-white"
               >
                 {states.map(state => (
                   <option key={state} value={state}>{state}</option>

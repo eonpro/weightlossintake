@@ -75,7 +75,7 @@ export default function HealthPage() {
                   placeholder="Height (inches)"
                   value={height}
                   onChange={(e) => setHeight(e.target.value)}
-                  className="w-full p-4 rounded-2xl border border-gray-200 text-lg focus:outline-none focus:border-gray-400 transition-colors"
+                  className="w-full p-4 rounded-2xl border border-gray-200 text-base md:text-lg focus:outline-none focus:border-gray-400 transition-colors"
                 />
                 <p className="text-sm text-gray-400 mt-1 ml-2">For example: 70 inches = 5'10"</p>
               </div>
@@ -85,7 +85,7 @@ export default function HealthPage() {
                 placeholder="Current Weight (lbs)"
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
-                className="w-full p-4 rounded-2xl border border-gray-200 text-lg focus:outline-none focus:border-gray-400 transition-colors"
+                className="w-full p-4 rounded-2xl border border-gray-200 text-base md:text-lg focus:outline-none focus:border-gray-400 transition-colors"
               />
               
               <input
@@ -93,7 +93,7 @@ export default function HealthPage() {
                 placeholder="Target Weight (lbs) - Optional"
                 value={targetWeight}
                 onChange={(e) => setTargetWeight(e.target.value)}
-                className="w-full p-4 rounded-2xl border border-gray-200 text-lg focus:outline-none focus:border-gray-400 transition-colors"
+                className="w-full p-4 rounded-2xl border border-gray-200 text-base md:text-lg focus:outline-none focus:border-gray-400 transition-colors"
               />
 
               {calculateBMI() && (
