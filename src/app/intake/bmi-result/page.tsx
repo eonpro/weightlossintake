@@ -184,7 +184,7 @@ export default function BMIResultPage() {
       <div className="px-6 pb-8 max-w-md mx-auto w-full">
         <button 
           onClick={() => router.push('/intake/testimonials')}
-          className="w-full bg-[#e4fb74] text-black py-4 px-8 rounded-full text-lg font-normal flex items-center justify-center space-x-3 hover:bg-[#d8e668] transition-colors"
+          className="w-full bg-black text-white py-4 px-8 rounded-full text-lg font-normal flex items-center justify-center space-x-3 hover:bg-gray-800 transition-colors"
         >
           <span>{t('bmi.result.continue')}</span>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
