@@ -10,8 +10,8 @@ export default function CurrentWeightPage() {
   const router = useRouter();
   const { t } = useTranslation();
   const [currentWeight, setCurrentWeight] = useState('');
-  const [feet, setFeet] = useState('5');
-  const [inches, setInches] = useState('3');
+  const [feet, setFeet] = useState('');
+  const [inches, setInches] = useState('');
 
   const handleContinue = () => {
     if (currentWeight && feet && inches !== '') {
