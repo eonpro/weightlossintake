@@ -50,7 +50,7 @@ export default function IdealWeightPage() {
                   const value = e.target.value.replace(/[^0-9]/g, '');
                   setIdealWeight(value);
                 }}
-                className="w-full p-4 pr-12 text-2xl font-medium text-center border border-gray-300 rounded-2xl focus:outline-none focus:border-gray-400"
+                className="w-full p-4 pr-12 text-base md:text-lg font-medium text-left border border-gray-300 rounded-2xl focus:outline-none focus:border-gray-400"
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-gray-500">{t('common.lbs')}</span>
             </div>

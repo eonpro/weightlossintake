@@ -131,10 +131,10 @@ export default function BMICalculatingPage() {
           </div>
         </div>
         
-        <div className="space-y-1">
-          <p className="text-2xl text-gray-400">{t('bmi.calculating.eonpro')}</p>
-          <p className="text-2xl text-gray-400">{t('bmi.calculating.yourBmi')}</p>
-          <p className="text-2xl text-gray-400">{t('bmi.calculating.bmi')}</p>
+        <div className="space-y-0">
+          <p className="text-2xl text-gray-400 leading-tight">{t('bmi.calculating.eonpro')}</p>
+          <p className="text-2xl text-gray-400 leading-tight">{t('bmi.calculating.yourBmi')}</p>
+          <p className="text-2xl text-gray-400 leading-tight">{t('bmi.calculating.bmi')}</p>
           
           {/* Progress Bar */}
           <div className="mt-6 px-8">
