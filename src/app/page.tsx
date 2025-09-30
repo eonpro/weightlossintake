@@ -16,7 +16,7 @@ const IntroLottie = dynamic(() => import('@/components/IntroLottie'), {
 export default function Home() {
   const { t } = useTranslation();
   const router = useRouter();
-  const [showIntro, setShowIntro] = useState(true); // Start with intro showing
+  const [showIntro, setShowIntro] = useState(true); // Always start with intro showing
   const [fadeOut, setFadeOut] = useState(false);
   const [mounted, setMounted] = useState(false);
   
@@ -31,32 +31,15 @@ export default function Home() {
   useEffect(() => {
     setMounted(true);
     
-    // For testing: Clear sessionStorage if URL contains ?reset=true
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('reset') === 'true') {
-      sessionStorage.removeItem('introShown');
-      // Remove the query parameter from URL
-      window.history.replaceState({}, '', window.location.pathname);
-    }
+    // Always show intro for 3 seconds
+    const timer = setTimeout(() => {
+      setFadeOut(true);
+      setTimeout(() => {
+        setShowIntro(false);
+      }, 500);
+    }, 3000); // 3 seconds duration
     
-    // Check if intro has already been shown this session
-    const introShown = sessionStorage.getItem('introShown');
-    
-    if (introShown === 'true') {
-      // If already shown, skip intro
-      setShowIntro(false);
-    } else {
-      // Show intro for 4 seconds
-      const timer = setTimeout(() => {
-        setFadeOut(true);
-        setTimeout(() => {
-          setShowIntro(false);
-          sessionStorage.setItem('introShown', 'true');
-        }, 500);
-      }, 4000); // 4 seconds duration
-      
-      return () => clearTimeout(timer);
-    }
+    return () => clearTimeout(timer);
   }, []);
 
   // Show intro animation if needed (either not mounted yet or showIntro is true)
