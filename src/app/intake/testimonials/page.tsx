@@ -16,12 +16,12 @@ export default function TestimonialsPage() {
 
   // Language-specific testimonial images
   const testimonialImages = language === 'es' ? [
-    'https://static.wixstatic.com/media/c49a9b_3acf5a43eb8d48e1b0f6a9312277cd12~mv2.webp',
-    'https://static.wixstatic.com/media/c49a9b_eeb06937bc7a4b69a1ee5c028473c48a~mv2.webp',
-    'https://static.wixstatic.com/media/c49a9b_aaceb7116045472284b880cd9cdfb192~mv2.webp',
-    'https://static.wixstatic.com/media/c49a9b_994f15ab106c499cafda49acae0c55c1~mv2.webp',
-    'https://static.wixstatic.com/media/c49a9b_e69bbf808f884fa2b6bac9b962e0d819~mv2.webp',
-    'https://static.wixstatic.com/media/c49a9b_acffb0a6534c4e059daa20aca31aca3b~mv2.webp'
+    'https://static.wixstatic.com/media/c49a9b_b4dbc66741324c1f9124e3bff2094d84~mv2.webp',
+    'https://static.wixstatic.com/media/c49a9b_b020b2170766409e850210d418615da1~mv2.webp',
+    'https://static.wixstatic.com/media/c49a9b_e54335aad0164b22aa8a2b123bb34b7c~mv2.webp',
+    'https://static.wixstatic.com/media/c49a9b_b020b2170766409e850210d418615da1~mv2.webp',
+    'https://static.wixstatic.com/media/c49a9b_98e7e84f7213491a97bd9f27542c96af~mv2.webp',
+    'https://static.wixstatic.com/media/c49a9b_84d69338ec814bcca3c4bacc9f1d0044~mv2.webp'
   ] : [
     'https://static.wixstatic.com/media/c49a9b_9aef40faf6684d73829744872b83dcce~mv2.webp',
     'https://static.wixstatic.com/media/c49a9b_366d79f5e59040a899c267d3675494c6~mv2.webp',

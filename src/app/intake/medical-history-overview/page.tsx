@@ -38,7 +38,7 @@ export default function MedicalHistoryOverviewPage() {
           </div>
 
           {/* Title */}
-          <div className="text-center">
+          <div className="text-left">
             <h1 className="text-3xl font-medium text-black">
               {t('medical.overview.title.line1')}<br/>
               {t('medical.overview.title.line2')}
