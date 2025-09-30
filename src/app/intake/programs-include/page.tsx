@@ -88,15 +88,15 @@ export default function ProgramsIncludePage() {
           {programs.map((program, index) => (
             <div
               key={index}
-              className="rounded-3xl overflow-hidden flex items-center"
+              className="rounded-3xl overflow-hidden relative min-h-[140px] flex items-center"
               style={{ backgroundColor: program.bgColor }}
             >
               <img
                 src={program.image}
                 alt={program.title}
-                className="w-24 h-24 object-cover flex-shrink-0"
+                className="absolute bottom-0 left-0 w-32 h-32 object-cover"
               />
-              <div className="flex-1 p-4">
+              <div className="flex-1 p-4 pl-36">
                 <h3 className="text-lg font-semibold text-black mb-1">
                   {program.title}
                 </h3>
