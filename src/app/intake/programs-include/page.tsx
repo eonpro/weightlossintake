@@ -84,23 +84,23 @@ export default function ProgramsIncludePage() {
         </div>
 
         {/* Program cards */}
-        <div className="space-y-6 flex-1">
+        <div className="space-y-4 md:space-y-6 flex-1">
           {programs.map((program, index) => (
             <div
               key={index}
-              className="rounded-3xl overflow-hidden relative min-h-[140px] flex items-center"
+              className="rounded-3xl overflow-hidden relative min-h-[110px] md:min-h-[140px] flex items-center"
               style={{ backgroundColor: program.bgColor }}
             >
               <img
                 src={program.image}
                 alt={program.title}
-                className="absolute bottom-0 left-0 w-32 h-32 object-cover"
+                className="absolute bottom-0 left-0 w-24 h-24 md:w-32 md:h-32 object-cover"
               />
-              <div className="flex-1 p-4 pl-36">
-                <h3 className="text-lg font-semibold text-black mb-1">
+              <div className="flex-1 p-3 md:p-4 pl-28 md:pl-36">
+                <h3 className="text-base md:text-lg font-semibold text-black leading-tight">
                   {program.title}
                 </h3>
-                <p className="text-sm text-gray-800">
+                <p className="text-xs md:text-sm text-gray-800 leading-tight mt-1">
                   {program.description}
                 </p>
               </div>
