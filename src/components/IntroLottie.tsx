@@ -24,7 +24,7 @@ function IntroLottie() {
   }, []);
 
   return (
-    <div ref={containerRef} className="w-full max-w-[550px] h-[550px] flex items-center justify-center px-6">
+    <div ref={containerRef} className="w-full max-w-[715px] h-[715px] flex items-center justify-center px-6">
       <div className="text-gray-400">Loading animation...</div>
     </div>
   );
