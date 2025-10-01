@@ -87,8 +87,8 @@ export default function ReviewPage() {
               const encodedData = btoa(JSON.stringify(qualificationData));
               
               // Redirect to checkout platform with data in URL
-              const checkoutUrl = process.env.NODE_ENV === 'production' 
-                ? `https://checkout.eonmeds.com?q=${encodedData}` // Update with actual production URL
+              const checkoutUrl = process.env.NEXT_PUBLIC_CHECKOUT_URL 
+                ? `${process.env.NEXT_PUBLIC_CHECKOUT_URL}?q=${encodedData}`
                 : `http://localhost:5173?q=${encodedData}`;
               
               window.location.href = checkoutUrl;

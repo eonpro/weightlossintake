@@ -1,0 +1,10 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "env": {
+    "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY": "@google_maps_api_key",
+    "NEXT_PUBLIC_CHECKOUT_URL": "@checkout_url"
+  }
+}
