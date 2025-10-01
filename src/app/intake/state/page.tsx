@@ -13,7 +13,7 @@ export default function StatePage() {
   const { t } = useTranslation();
   const { language } = useLanguage();
   const isSpanish = language === 'es';
-  const [selectedState, setSelectedState] = useState('Florida');
+  const [selectedState, setSelectedState] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
 
   const states = [
@@ -29,7 +29,20 @@ export default function StatePage() {
 
   const handleContinue = () => {
     if (selectedState && termsAccepted) {
-      sessionStorage.setItem('intake_state', selectedState);
+      // Convert state name to state code
+      const stateCode: { [key: string]: string } = {
+        'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR', 'California': 'CA',
+        'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE', 'Florida': 'FL', 'Georgia': 'GA',
+        'Hawaii': 'HI', 'Idaho': 'ID', 'Illinois': 'IL', 'Indiana': 'IN', 'Iowa': 'IA',
+        'Kansas': 'KS', 'Kentucky': 'KY', 'Louisiana': 'LA', 'Maine': 'ME', 'Maryland': 'MD',
+        'Massachusetts': 'MA', 'Michigan': 'MI', 'Minnesota': 'MN', 'Mississippi': 'MS', 'Missouri': 'MO',
+        'Montana': 'MT', 'Nebraska': 'NE', 'Nevada': 'NV', 'New Hampshire': 'NH', 'New Jersey': 'NJ',
+        'New Mexico': 'NM', 'New York': 'NY', 'North Carolina': 'NC', 'North Dakota': 'ND', 'Ohio': 'OH',
+        'Oklahoma': 'OK', 'Oregon': 'OR', 'Pennsylvania': 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
+        'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX', 'Utah': 'UT', 'Vermont': 'VT',
+        'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY'
+      };
+      sessionStorage.setItem('intake_state', JSON.stringify({ state: stateCode[selectedState] || selectedState }));
       router.push('/intake/name');
     }
   };
@@ -69,10 +82,15 @@ export default function StatePage() {
               <select
                 value={selectedState}
                 onChange={(e) => setSelectedState(e.target.value)}
-                className="w-full p-4 pr-12 text-base md:text-lg border border-gray-200 rounded-2xl appearance-none focus:outline-none focus:border-gray-400 bg-white"
+                className={`w-full p-4 pr-12 text-base md:text-lg border border-gray-200 rounded-2xl appearance-none focus:outline-none focus:border-gray-400 bg-white ${
+                  !selectedState ? 'text-gray-400' : 'text-black'
+                }`}
               >
+                <option value="" disabled className="text-gray-400">
+                  {isSpanish ? 'Selecciona tu estado' : 'Select your state'}
+                </option>
                 {states.map(state => (
-                  <option key={state} value={state}>{state}</option>
+                  <option key={state} value={state} className="text-black">{state}</option>
                 ))}
               </select>
               <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -118,9 +136,9 @@ export default function StatePage() {
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <button 
           onClick={handleContinue}
-          disabled={!termsAccepted}
+          disabled={!selectedState || !termsAccepted}
           className={`w-full py-4 px-8 rounded-full text-lg font-medium transition-colors ${
-            termsAccepted 
+            selectedState && termsAccepted 
               ? 'bg-black text-white hover:bg-gray-900' 
               : 'bg-gray-200 text-gray-400 cursor-not-allowed'
           }`}
