@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useEnterNavigation } from '@/hooks/useEnterNavigation';
+import EonmedsLogo from '@/components/EonmedsLogo';
 
 export default function ObesityStatsPage() {
   const router = useRouter();
@@ -39,6 +40,11 @@ export default function ObesityStatsPage() {
   
   return (
     <div className="min-h-screen bg-white flex flex-col">
+      {/* Progress bar */}
+      <div className="w-full h-1 bg-gray-100">
+        <div className="h-full w-[4%] bg-[#f0feab] transition-all duration-300"></div>
+      </div>
+      
       {/* Back button */}
       <div className="p-4">
         <button
@@ -50,6 +56,9 @@ export default function ObesityStatsPage() {
           </svg>
         </button>
       </div>
+
+      {/* EONMeds Logo */}
+      <EonmedsLogo compact={true} />
 
       {/* Image and Reference */}
       <div className="flex-1 flex flex-col items-center justify-center p-6">
@@ -64,7 +73,7 @@ export default function ObesityStatsPage() {
             alt="Obesity statistics"
             width={500}
             height={600}
-            className="w-full h-auto"
+            className="w-3/4 md:w-full h-auto mx-auto"
             priority
           />
           
@@ -88,7 +97,7 @@ export default function ObesityStatsPage() {
       </div>
 
       {/* Next button */}
-      <div className="px-6 pb-8 max-w-md mx-auto w-full">
+      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
         <button 
           onClick={handleNext}
           className="w-full bg-black text-white py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 hover:bg-gray-900"

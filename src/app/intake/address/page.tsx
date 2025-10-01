@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useEnterNavigation } from '@/hooks/useEnterNavigation';
+import EonmedsLogo from '@/components/EonmedsLogo';
 
 declare global {
   interface Window {
@@ -180,7 +181,7 @@ export default function AddressPage() {
         <div className="h-full w-1/4 bg-[#f0feab] transition-all duration-300"></div>
       </div>
       
-      <div className="px-6 pt-6">
+      <div className="px-6 lg:px-8 pt-6">
         <Link href="/intake/support-info" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
@@ -188,8 +189,11 @@ export default function AddressPage() {
         </Link>
       </div>
 
+      {/* EONMeds Logo */}
+      <EonmedsLogo compact={true} />
+
       {/* Cold Shipping Banner */}
-      <div className="px-6 mt-3 max-w-md mx-auto w-full">
+      <div className="px-6 mt-3 max-w-md lg:max-w-lg mx-auto w-full">
         <div className="bg-[#f0feab] rounded-3xl overflow-hidden flex items-stretch">
           <div className="flex-1 px-5 py-3 flex flex-col justify-center">
             <h3 className="font-semibold text-base text-black">{t('address.shipping.title')}</h3>
@@ -205,7 +209,7 @@ export default function AddressPage() {
         </div>
       </div>
       
-      <div className="flex-1 px-6 py-4 max-w-md mx-auto w-full">
+      <div className="flex-1 px-6 lg:px-8 py-4 max-w-md lg:max-w-lg mx-auto w-full">
         <div className="space-y-6">
           <div>
             <h1 className="text-3xl font-medium mb-4">{t('address.title')}</h1>
@@ -250,7 +254,7 @@ export default function AddressPage() {
         </div>
       </div>
       
-      <div className="px-6 pb-8 max-w-md mx-auto w-full">
+      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
         <button 
           onClick={handleContinue}
           disabled={!address}
@@ -268,7 +272,7 @@ export default function AddressPage() {
         
         {/* Copyright footer */}
         <div className="mt-6 text-center">
-          <p className="text-[11px] text-gray-400 leading-tight">
+          <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
             {language === 'es' ? (
               <>
                 © 2025 EONPro, LLC. Todos los derechos reservados.<br/>

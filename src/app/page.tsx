@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useEnterNavigation } from '@/hooks/useEnterNavigation';
+import EonmedsLogo from '@/components/EonmedsLogo';
 
 // Dynamic import to avoid SSR issues
 const IntroLottie = dynamic(() => import('@/components/IntroLottie'), {
@@ -60,40 +61,44 @@ export default function Home() {
       {/* Yellow progress bar at top */}
       <div className="w-full h-1 bg-[#f0feab]"></div>
       
+      {/* Spacer to match back button area on other pages */}
+      <div className="h-16"></div>
+      
+      {/* EONMeds Logo */}
+      <EonmedsLogo />
+      
       {/* Main content - single container with consistent width */}
       <div className="flex-1 flex flex-col items-center justify-between">
-        <div className="w-full max-w-md px-6 mx-auto">
+        <div className="w-full max-w-md lg:max-w-2xl px-6 lg:px-8 mx-auto">
           {/* Title and subtitle */}
-          <div className="text-left pt-16 mb-12">
-            <h1 className="text-4xl font-medium text-[#4fa87f] leading-none mb-2">
+          <div className="text-left pt-8 lg:pt-12 mb-12">
+            <h1 className="text-3xl lg:text-4xl font-medium text-[#4fa87f] leading-none mb-2 lg:mb-4">
               {t('landing.title')}
             </h1>
-            <p className="text-lg text-black font-normal leading-tight">
+            <p className="text-xl lg:text-2xl text-black font-normal leading-tight">
               {t('landing.subtitle')}
             </p>
           </div>
           
-          {/* Spacer */}
-          <div className="h-8"></div>
-          
-          {/* Privacy and terms text - same width as everything else */}
-          <div className="space-y-5">
-            <p className="text-xs text-gray-600 leading-snug">
+        </div>
+        
+        {/* Bottom button and disclaimer text - same container width */}
+        <div className="w-full max-w-md lg:max-w-2xl px-6 lg:px-8 mx-auto pb-10">
+          {/* Privacy and terms text - closer to button */}
+          <div className="space-y-5 mb-8">
+            <p className="text-[9px] lg:text-[11px] text-gray-400 leading-snug">
               {t('landing.disclaimer1')}
-              <a href="#" className="text-[#4fa87f] underline">{t('landing.disclaimer.privacy')}</a>
+              <a href="#" className="text-gray-400 underline">{t('landing.disclaimer.privacy')}</a>
               {t('landing.disclaimer1.end')}
             </p>
             
-            <p className="text-xs text-gray-600 leading-snug">
+            <p className="text-[9px] lg:text-[11px] text-gray-400 leading-snug">
               {t('landing.disclaimer2.start')}
-              <a href="#" className="text-[#4fa87f] underline">{t('landing.disclaimer.terms')}</a>
+              <a href="#" className="text-gray-400 underline">{t('landing.disclaimer.terms')}</a>
               {t('landing.disclaimer2.end')}
             </p>
           </div>
-        </div>
-        
-        {/* Bottom button - same container width */}
-        <div className="w-full max-w-md px-6 mx-auto pb-10">
+          
           <button 
             onClick={handleContinue}
             className="w-full bg-black text-white py-4 rounded-full text-base font-medium flex items-center justify-center gap-3 hover:bg-gray-900 transition-colors">

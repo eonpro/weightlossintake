@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useEnterNavigation } from '@/hooks/useEnterNavigation';
+import EonmedsLogo from '@/components/EonmedsLogo';
 
 export default function DOBPage() {
   const router = useRouter();
@@ -14,6 +15,8 @@ export default function DOBPage() {
   const [dob, setDob] = useState('');
   const [certified, setCertified] = useState(false);
   const [isOver18, setIsOver18] = useState(true);
+  const [showDateError, setShowDateError] = useState(false);
+  const [showAgeError, setShowAgeError] = useState(false);
 
   // Format date with slashes and validate age
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,6 +70,10 @@ export default function DOBPage() {
     
     setDob(formattedValue);
     
+    // Reset errors when typing
+    setShowDateError(false);
+    setShowAgeError(false);
+    
     // Check if over 18 when date is complete
     if (formattedValue.length === 10) {
       const [month, day, year] = formattedValue.split('/').map(Number);
@@ -90,14 +97,32 @@ export default function DOBPage() {
       } else {
         setIsOver18(age >= 18);
       }
+    } else {
+      setIsOver18(true); // Reset to true when date is incomplete
     }
   };
 
   const handleContinue = () => {
-    if (dob && certified && isOver18) {
-      sessionStorage.setItem('intake_dob', dob);
-      router.push('/intake/support-info');
+    // Check if date is complete (10 characters)
+    if (dob.length !== 10) {
+      setShowDateError(true);
+      return;
     }
+    
+    // Check if over 18
+    if (!isOver18) {
+      setShowAgeError(true);
+      return;
+    }
+    
+    // Check if certified
+    if (!certified) {
+      return;
+    }
+    
+    // All validations passed
+    sessionStorage.setItem('intake_dob', dob);
+    router.push('/intake/contact-info');
   };
   
   // Enable Enter key navigation
@@ -107,10 +132,10 @@ export default function DOBPage() {
     <div className="min-h-screen bg-white flex flex-col">
       {/* Progress bar */}
       <div className="w-full h-1 bg-gray-100">
-        <div className="h-full w-5/6 bg-[#f0feab] transition-all duration-300"></div>
+        <div className="h-full w-[14%] bg-[#f0feab] transition-all duration-300"></div>
       </div>
       
-      <div className="px-6 pt-6">
+      <div className="px-6 lg:px-8 pt-6">
         <Link href="/intake/name" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
@@ -118,7 +143,10 @@ export default function DOBPage() {
         </Link>
       </div>
       
-      <div className="flex-1 flex flex-col px-6 py-8 max-w-md mx-auto w-full">
+      {/* EONMeds Logo */}
+      <EonmedsLogo />
+      
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <div className="space-y-4">
             <h1 className="text-3xl font-medium">{t('dob.title')}</h1>
@@ -133,10 +161,25 @@ export default function DOBPage() {
                 value={dob}
                 onChange={handleDateChange}
                 maxLength={10}
-                className="w-full p-4 text-base md:text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
+                className={`w-full p-4 text-base md:text-lg font-medium border rounded-2xl focus:outline-none focus:border-gray-400 ${
+                  (showDateError && dob.length !== 10) || (showAgeError && !isOver18)
+                    ? 'border-red-500'
+                    : 'border-gray-200'
+                }`}
               />
-              {dob.length === 10 && !isOver18 && (
-                <p className="text-red-500 text-sm mt-2">{t('dob.ageError')}</p>
+              {showDateError && dob.length !== 10 && (
+                <p className="text-red-500 text-sm mt-2">
+                  {language === 'es' 
+                    ? 'Por favor, ingresa una fecha de nacimiento completa (MM/DD/AAAA)'
+                    : 'Please enter a complete date of birth (MM/DD/YYYY)'}
+                </p>
+              )}
+              {(dob.length === 10 && !isOver18 && showAgeError) && (
+                <p className="text-red-500 text-sm mt-2">
+                  {language === 'es'
+                    ? 'Debes tener al menos 18 años para continuar'
+                    : 'You must be at least 18 years old to continue'}
+                </p>
               )}
             </div>
             
@@ -160,12 +203,11 @@ export default function DOBPage() {
         </div>
       </div>
       
-      <div className="px-6 pb-8 max-w-md mx-auto w-full">
+      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <button 
           onClick={handleContinue}
-          disabled={!dob || !certified}
           className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-            dob && certified 
+            dob.length === 10 && certified && isOver18
               ? 'bg-black text-white hover:bg-gray-900' 
               : 'bg-gray-300 text-gray-500 cursor-not-allowed'
           }`}
@@ -178,7 +220,7 @@ export default function DOBPage() {
         
         {/* Copyright footer */}
         <div className="mt-6 text-center">
-          <p className="text-[11px] text-gray-400 leading-tight">
+          <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
             {language === 'es' ? (
               <>
                 © 2025 EONPro, LLC. Todos los derechos reservados.<br/>

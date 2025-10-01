@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
+import EonmedsLogo from '@/components/EonmedsLogo';
 
 export default function ProgramsIncludePage() {
   const router = useRouter();
@@ -55,7 +56,7 @@ export default function ProgramsIncludePage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Back button */}
-      <div className="px-6 pt-6">
+      <div className="px-6 lg:px-8 pt-6">
         <Link 
           href="/intake/mental-health" 
           className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg"
@@ -66,8 +67,11 @@ export default function ProgramsIncludePage() {
         </Link>
       </div>
       
+      {/* EONMeds Logo */}
+      <EonmedsLogo compact={true} />
+      
       {/* Main content */}
-      <div className="flex-1 flex flex-col px-6 py-8 max-w-md mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-lg mx-auto w-full">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-medium leading-tight">
@@ -110,7 +114,7 @@ export default function ProgramsIncludePage() {
       </div>
       
       {/* Continue button */}
-      <div className="px-6 pb-8 max-w-md mx-auto w-full">
+      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
         <button 
           onClick={handleContinue}
           className="w-full bg-black text-white py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 hover:bg-gray-800 transition-colors"

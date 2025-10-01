@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
+import EonmedsLogo from '@/components/EonmedsLogo';
 
 export default function SupportInfoPage() {
   const router = useRouter();
@@ -24,18 +25,21 @@ export default function SupportInfoPage() {
     <div className="min-h-screen bg-white flex flex-col">
       {/* Progress bar - full */}
       <div className="w-full h-1 bg-gray-100">
-        <div className="h-full w-full bg-[#f0feab] transition-all duration-300"></div>
+        <div className="h-full w-[18%] bg-[#f0feab] transition-all duration-300"></div>
       </div>
       
-      <div className="px-6 pt-6">
-        <Link href="/intake/dob" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
+      <div className="px-6 lg:px-8 pt-6">
+        <Link href="/intake/contact-info" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </Link>
       </div>
       
-      <div className="flex-1 flex flex-col px-6 py-8 max-w-md mx-auto w-full">
+      {/* EONMeds Logo */}
+      <EonmedsLogo compact={true} />
+      
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-lg mx-auto w-full">
         <div className={`bg-[#f0feab] rounded-3xl p-6 pb-0 space-y-3 overflow-hidden transition-all duration-1000 ease-out transform ${
           showContainer ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-95'
         }`}>
@@ -68,7 +72,7 @@ export default function SupportInfoPage() {
         </div>
       </div>
       
-      <div className="px-6 pb-8 max-w-md mx-auto w-full">
+      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
         <button 
           onClick={() => router.push('/intake/address')}
           className="w-full bg-black text-white py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 hover:bg-gray-900"

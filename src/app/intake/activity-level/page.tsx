@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
+import EonmedsLogo from '@/components/EonmedsLogo';
 
 export default function ActivityLevelPage() {
   const router = useRouter();
@@ -69,8 +70,11 @@ export default function ActivityLevelPage() {
         </Link>
       </div>
       
+      {/* EONMeds Logo */}
+      <EonmedsLogo />
+      
       {/* Main content */}
-      <div className="flex-1 flex flex-col px-6 py-8 max-w-md mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           {/* Title */}
           <h1 className="text-3xl font-medium leading-tight">
@@ -104,7 +108,7 @@ export default function ActivityLevelPage() {
                     )}
                   </div>
                   <div>
-                    <div className="text-base md:text-lg font-medium">{level.label}</div>
+                    <div className="text-base lg:text-lg font-medium">{level.label}</div>
                     {level.description && (
                       <div className="text-sm text-gray-500 mt-1">{level.description}</div>
                     )}
@@ -117,7 +121,7 @@ export default function ActivityLevelPage() {
       </div>
       
       {/* Continue button */}
-      <div className="px-6 pb-8 max-w-md mx-auto w-full">
+      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <button 
           onClick={handleContinue}
           disabled={!selected}

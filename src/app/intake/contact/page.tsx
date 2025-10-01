@@ -42,7 +42,7 @@ export default function ContactPage() {
       </div>
 
       {/* Back button */}
-      <div className="px-6 pt-6">
+      <div className="px-6 lg:px-8 pt-6">
         <button
           onClick={handleBack}
           className="p-2 -ml-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -54,7 +54,7 @@ export default function ContactPage() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col px-6 py-8 max-w-md mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           {/* Heading */}
           <div className="space-y-4">
@@ -100,7 +100,7 @@ export default function ContactPage() {
       </div>
 
       {/* Bottom Button */}
-      <div className="px-6 pb-8">
+      <div className="px-6 lg:px-8 pb-8">
         <button
           onClick={handleContinue}
           disabled={!email || !phone || !dob}
@@ -118,7 +118,7 @@ export default function ContactPage() {
       </div>
 
       {/* Footer */}
-      <div className="px-6 py-4 text-center">
+      <div className="px-6 lg:px-8 py-4 text-center">
         <p className="text-xs text-gray-400">
           © 2025 EONPro, LLC. All rights reserved.
         </p>

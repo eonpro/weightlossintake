@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
+import EonmedsLogo from '@/components/EonmedsLogo';
 
 export default function MedicalHistoryOverviewPage() {
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function MedicalHistoryOverviewPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Back button */}
-      <div className="px-6 pt-6">
+      <div className="px-6 lg:px-8 pt-6">
         <Link href="/intake/testimonials" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
@@ -25,9 +26,12 @@ export default function MedicalHistoryOverviewPage() {
         </Link>
       </div>
       
+      {/* EONMeds Logo */}
+      <EonmedsLogo compact={true} />
+      
       {/* Main content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
-        <div className="max-w-md w-full space-y-8">
+      <div className="flex-1 px-6 lg:px-8 py-12 max-w-md lg:max-w-lg mx-auto w-full">
+        <div className="space-y-8">
           {/* Doctor Image - Left aligned */}
           <div className="flex justify-start">
             <img 
@@ -56,10 +60,10 @@ export default function MedicalHistoryOverviewPage() {
           {/* Timeline with Medical History card */}
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute left-3 top-8 bottom-0 w-0.5 bg-gray-300"></div>
+            <div className="absolute left-2 top-8 h-32 w-0.5 bg-gray-300"></div>
             
             {/* Timeline dot with pulsing animation */}
-            <div className="absolute left-1.5 top-4">
+            <div className="absolute left-0.5 top-4">
               <div className="absolute inset-0 w-4 h-4 bg-[#4fa87f] rounded-full opacity-75 animate-ping"></div>
               <div className="relative w-4 h-4 bg-[#4fa87f] rounded-full"></div>
             </div>
@@ -75,9 +79,9 @@ export default function MedicalHistoryOverviewPage() {
             </div>
             
             {/* Treatment section with gray dot */}
-            <div className="relative mt-12">
-              {/* Gray dot for Treatment */}
-              <div className="absolute left-[-1.875rem] top-[0.125rem]">
+            <div className="relative mt-8">
+              {/* Gray dot for Treatment - at the end of timeline */}
+              <div className="absolute left-0.5 -top-4">
                 <div className="w-4 h-4 bg-gray-300 rounded-full"></div>
               </div>
               
@@ -91,23 +95,21 @@ export default function MedicalHistoryOverviewPage() {
       </div>
 
       {/* Bottom section */}
-      <div className="px-6 pb-8">
-        <div className="max-w-md mx-auto w-full">
-          {/* Continue button */}
-          <button
-            onClick={handleContinue}
-            className="w-full bg-black text-white py-4 rounded-full text-lg font-medium hover:bg-gray-900 transition-colors"
-          >
-            {t('medical.overview.continue')}
-          </button>
-          
-          {/* Copyright text */}
-          <p className="text-xs text-gray-400 text-center mt-4">
-            {t('medical.overview.copyright.line1')}<br/>
-            {t('medical.overview.copyright.line2')}<br/>
-            {t('medical.overview.copyright.line3')}
-          </p>
-        </div>
+      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
+        {/* Continue button */}
+        <button
+          onClick={handleContinue}
+          className="w-full bg-black text-white py-4 rounded-full text-lg font-medium hover:bg-gray-900 transition-colors"
+        >
+          {t('medical.overview.continue')}
+        </button>
+        
+        {/* Copyright text */}
+        <p className="text-xs text-gray-400 text-center mt-4">
+          {t('medical.overview.copyright.line1')}<br/>
+          {t('medical.overview.copyright.line2')}<br/>
+          {t('medical.overview.copyright.line3')}
+        </p>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
+import EonmedsLogo from '@/components/EonmedsLogo';
 
 export default function CurrentWeightPage() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export default function CurrentWeightPage() {
         <div className="h-full w-3/6 bg-[#f0feab] transition-all duration-300"></div>
       </div>
       
-      <div className="px-6 pt-6">
+      <div className="px-6 lg:px-8 pt-6">
         <Link href="/intake/ideal-weight" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
@@ -38,7 +39,10 @@ export default function CurrentWeightPage() {
         </Link>
       </div>
       
-      <div className="flex-1 px-6 py-8 max-w-md mx-auto w-full">
+      {/* EONMeds Logo */}
+      <EonmedsLogo />
+      
+      <div className="flex-1 px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           {/* Current Weight */}
           <div className="space-y-4">
@@ -66,15 +70,15 @@ export default function CurrentWeightPage() {
           <div className="space-y-4">
             <h2 className="text-3xl font-medium">{t('currentWeight.heightTitle')}</h2>
             
-            <div className="space-y-3">
+            <div className="flex gap-3">
               {/* Feet dropdown */}
-              <div className="relative">
+              <div className="relative flex-1">
                 <select
                   value={feet}
                   onChange={(e) => setFeet(e.target.value)}
-                  className="w-full p-4 pr-12 text-base md:text-lg font-medium border border-gray-300 rounded-2xl appearance-none focus:outline-none focus:border-gray-400 bg-white"
+                  className={`w-full p-4 pr-12 text-base md:text-lg font-medium border border-gray-300 rounded-2xl appearance-none focus:outline-none focus:border-gray-400 bg-white ${feet === '' ? 'text-gray-400' : 'text-black'}`}
                 >
-                  <option value="" disabled>{t('common.feet')}</option>
+                  <option value="" disabled className="text-gray-400">{t('common.feet')}</option>
                   <option value="3">3</option>
                   <option value="4">4</option>
                   <option value="5">5</option>
@@ -89,13 +93,13 @@ export default function CurrentWeightPage() {
               </div>
 
               {/* Inches dropdown */}
-              <div className="relative">
+              <div className="relative flex-1">
                 <select
                   value={inches}
                   onChange={(e) => setInches(e.target.value)}
-                  className="w-full p-4 pr-12 text-base md:text-lg font-medium border border-gray-300 rounded-2xl appearance-none focus:outline-none focus:border-gray-400 bg-white"
+                  className={`w-full p-4 pr-12 text-base md:text-lg font-medium border border-gray-300 rounded-2xl appearance-none focus:outline-none focus:border-gray-400 bg-white ${inches === '' ? 'text-gray-400' : 'text-black'}`}
                 >
-                  <option value="" disabled>{t('common.inches')}</option>
+                  <option value="" disabled className="text-gray-400">{t('common.inches')}</option>
                   {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(inch => (
                     <option key={inch} value={inch}>{inch}</option>
                   ))}
@@ -111,7 +115,7 @@ export default function CurrentWeightPage() {
         </div>
       </div>
       
-      <div className="px-6 pb-8 max-w-md mx-auto w-full space-y-8">
+      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full space-y-8">
         <button 
           onClick={handleContinue}
           disabled={!currentWeight}

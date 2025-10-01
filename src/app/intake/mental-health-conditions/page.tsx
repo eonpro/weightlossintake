@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
+import EonmedsLogo from '@/components/EonmedsLogo';
 import { useTranslation } from '@/hooks/useTranslation';
 
 export default function MentalHealthConditionsPage() {
@@ -61,7 +62,7 @@ export default function MentalHealthConditionsPage() {
       </div>
       
       {/* Back button */}
-      <div className="px-6 pt-6">
+      <div className="px-6 lg:px-8 pt-6">
         <Link href="/intake/mental-health" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
@@ -69,8 +70,11 @@ export default function MentalHealthConditionsPage() {
         </Link>
       </div>
       
+      {/* EONMeds Logo */}
+      <EonmedsLogo />
+      
       {/* Main content */}
-      <div className="flex-1 flex flex-col px-6 py-8 max-w-md mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           {/* Title */}
           <h1 className="text-3xl font-medium leading-tight">
@@ -111,7 +115,7 @@ export default function MentalHealthConditionsPage() {
                     )}
                   </div>
                   <div>
-                    <span className="text-base md:text-lg font-medium">{condition.label}</span>
+                    <span className="text-base lg:text-lg font-medium">{condition.label}</span>
                     {condition.subtext && (
                       <div className="text-sm text-gray-500 mt-0.5">{condition.subtext}</div>
                     )}
@@ -124,7 +128,7 @@ export default function MentalHealthConditionsPage() {
       </div>
       
       {/* Continue button */}
-      <div className="px-6 pb-8 max-w-md mx-auto w-full">
+      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <button 
           onClick={handleContinue}
           disabled={selected.length === 0}

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
+import EonmedsLogo from '@/components/EonmedsLogo';
 
 export default function AllergiesPage() {
   const router = useRouter();
@@ -113,7 +114,7 @@ export default function AllergiesPage() {
       </div>
       
       {/* Back button */}
-      <div className="px-6 pt-6">
+      <div className="px-6 lg:px-8 pt-6">
         <Link href="/intake/medications" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
@@ -121,8 +122,11 @@ export default function AllergiesPage() {
         </Link>
       </div>
       
+      {/* EONMeds Logo */}
+      <EonmedsLogo />
+      
       {/* Main content */}
-      <div className="flex-1 flex flex-col px-6 py-8 max-w-md mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-6">
           {/* Title */}
           <h1 className="text-3xl font-medium leading-tight">
@@ -148,7 +152,7 @@ export default function AllergiesPage() {
               placeholder={language === 'es' 
                 ? 'Buscar medicamentos o suplementos...'
                 : 'Search medications or supplements...'}
-              className="w-full p-4 text-base md:text-lg border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
+              className="w-full p-4 text-base lg:text-lg border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
             />
             
             {/* Suggestions dropdown */}
@@ -220,7 +224,7 @@ export default function AllergiesPage() {
                     </svg>
                   )}
                 </div>
-                <span className="text-base md:text-lg font-medium">
+                <span className="text-base lg:text-lg font-medium">
                   {language === 'es' 
                     ? 'No tengo alergias a medicamentos o suplementos'
                     : 'I have no allergies to medications or supplements'}
@@ -231,7 +235,7 @@ export default function AllergiesPage() {
       </div>
       
       {/* Continue button */}
-      <div className="px-6 pb-8 max-w-md mx-auto w-full">
+      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <button 
           onClick={handleContinue}
           className="w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all bg-black text-white hover:bg-gray-800"
@@ -244,7 +248,7 @@ export default function AllergiesPage() {
         
         {/* Copyright footer */}
         <div className="mt-6 text-center">
-          <p className="text-[11px] text-gray-400 leading-tight">
+          <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
             {language === 'es' ? (
               <>
                 © 2025 EONPro, LLC. Todos los derechos reservados.<br/>

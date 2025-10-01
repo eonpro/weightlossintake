@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useEnterNavigation } from '@/hooks/useEnterNavigation';
+import EonmedsLogo from '@/components/EonmedsLogo';
 
 export default function StatePage() {
   const router = useRouter();
@@ -40,10 +41,10 @@ export default function StatePage() {
     <div className="min-h-screen bg-white flex flex-col">
       {/* Progress bar */}
       <div className="w-full h-1 bg-gray-100">
-        <div className="h-full w-[16%] bg-[#f0feab] transition-all duration-300"></div>
+        <div className="h-full w-[10%] bg-[#f0feab] transition-all duration-300"></div>
       </div>
       
-      <div className="px-6 pt-6">
+      <div className="px-6 lg:px-8 pt-6">
         <Link href="/intake/consent" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
@@ -51,7 +52,10 @@ export default function StatePage() {
         </Link>
       </div>
       
-      <div className="flex-1 flex flex-col px-6 py-8 max-w-md mx-auto w-full">
+      {/* EONMeds Logo */}
+      <EonmedsLogo />
+      
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <div className="space-y-4">
             <h1 className="text-3xl font-medium">{t('state.title')}</h1>
@@ -111,7 +115,7 @@ export default function StatePage() {
         </div>
       </div>
       
-      <div className="px-6 pb-8 max-w-md mx-auto w-full">
+      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <button 
           onClick={handleContinue}
           disabled={!termsAccepted}
@@ -126,7 +130,7 @@ export default function StatePage() {
         
         {/* Copyright footer */}
         <div className="mt-6 text-center">
-          <p className="text-[11px] text-gray-400 leading-tight">
+          <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
             {isSpanish ? (
               <>
                 © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
