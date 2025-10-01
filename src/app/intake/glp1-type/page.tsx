@@ -107,7 +107,7 @@ export default function GLP1TypePage() {
                 className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
                   selected === med.id
                     ? 'bg-[#f0feab] border-2 border-[#f0feab]'
-                    : 'bg-white hover:bg-gray-100 border-2 border-gray-200'
+                    : 'bg-white border-2 border-gray-200'
                 }`}
               >
                 <div className={`w-6 h-6 rounded border-2 flex items-center justify-center mr-3 transition-all ${

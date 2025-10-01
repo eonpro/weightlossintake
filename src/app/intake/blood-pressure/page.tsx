@@ -108,7 +108,7 @@ export default function BloodPressurePage() {
                 className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
                   selected === option.id
                     ? 'bg-[#f0feab] border-2 border-[#f0feab]'
-                    : 'bg-white hover:bg-gray-100 border-2 border-gray-200'
+                    : 'bg-white border-2 border-gray-200'
                 }`}
               >
                 <div className={`w-6 h-6 rounded border-2 flex items-center justify-center mr-3 transition-all ${
@@ -138,13 +138,6 @@ export default function BloodPressurePage() {
 
       {/* Bottom section */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        {/* Copyright text */}
-        <p className="text-[9px] lg:text-[11px] text-gray-400 text-center mb-4 leading-tight">
-          {language === 'es' 
-            ? '© 2025 EONPro, LLC. Todos los derechos reservados. Proceso exclusivo y protegido. Prohibida su copia o reproducción sin autorización.'
-            : '© 2025 EONPro, LLC. All rights reserved. Exclusive and protected process. Copying or reproduction without authorization is prohibited.'}
-        </p>
-
         <button 
           onClick={handleContinue}
           disabled={!selected}
@@ -159,6 +152,13 @@ export default function BloodPressurePage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
           </svg>
         </button>
+
+        {/* Copyright text */}
+        <p className="text-[9px] lg:text-[11px] text-gray-400 text-center mt-4 leading-tight">
+          {language === 'es' 
+            ? '© 2025 EONPro, LLC. Todos los derechos reservados. Proceso exclusivo y protegido. Prohibida su copia o reproducción sin autorización.'
+            : '© 2025 EONPro, LLC. All rights reserved. Exclusive and protected process. Copying or reproduction without authorization is prohibited.'}
+        </p>
       </div>
     </div>
   );

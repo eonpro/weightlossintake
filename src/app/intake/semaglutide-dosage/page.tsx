@@ -74,7 +74,7 @@ export default function SemaglutideDosagePage() {
                 className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
                   selected === dosage
                     ? 'bg-[#f0feab] border-2 border-[#f0feab]'
-                    : 'bg-white hover:bg-gray-100 border-2 border-gray-200'
+                    : 'bg-white border-2 border-gray-200'
                 }`}
               >
                 <div className={`w-6 h-6 rounded border-2 flex items-center justify-center mr-3 transition-all ${
@@ -96,7 +96,7 @@ export default function SemaglutideDosagePage() {
               className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
                 selected === 'oral'
                   ? 'bg-[#f0feab] border-2 border-[#f0feab]'
-                  : 'bg-gray-50 hover:bg-gray-100 border-2 border-gray-200'
+                  : 'bg-white border-2 border-gray-200'
               }`}
             >
               <div className={`w-6 h-6 rounded border-2 flex items-center justify-center mr-3 transition-all ${
