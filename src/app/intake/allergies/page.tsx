@@ -85,7 +85,13 @@ export default function AllergiesPage() {
   };
 
   const handleRemoveItem = (item: string) => {
-    setSelectedItems(selectedItems.filter(i => i !== item));
+    const updatedItems = selectedItems.filter(i => i !== item);
+    setSelectedItems(updatedItems);
+    
+    // Reset "no allergies" state when removing the last allergy
+    if (updatedItems.length === 0) {
+      setNoAllergiesSelected(false);
+    }
   };
 
   const filteredSuggestions = database
@@ -198,39 +204,41 @@ export default function AllergiesPage() {
             </div>
           )}
           
-          {/* No allergies button */}
-          <button
-              onClick={() => {
-                setNoAllergiesSelected(!noAllergiesSelected);
-                if (!noAllergiesSelected) {
-                  setSelectedItems([]); // Clear selected items when choosing "No allergies"
-                }
-              }}
-              className={`w-full text-left p-4 rounded-2xl border transition-all ${
-                noAllergiesSelected
-                  ? 'border-[#f0feab] bg-[#f0feab]'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              <div className="flex items-center">
-                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
+          {/* No allergies button - only show when no items are selected */}
+          {selectedItems.length === 0 && (
+            <button
+                onClick={() => {
+                  setNoAllergiesSelected(!noAllergiesSelected);
+                  if (!noAllergiesSelected) {
+                    setSelectedItems([]); // Clear selected items when choosing "No allergies"
+                  }
+                }}
+                className={`w-full text-left p-4 rounded-2xl border transition-all ${
                   noAllergiesSelected
                     ? 'border-[#f0feab] bg-[#f0feab]'
-                    : 'border-gray-300'
-                }`}>
-                  {noAllergiesSelected && (
-                    <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center">
+                  <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
+                    noAllergiesSelected
+                      ? 'border-[#f0feab] bg-[#f0feab]'
+                      : 'border-gray-300'
+                  }`}>
+                    {noAllergiesSelected && (
+                      <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="text-base lg:text-lg font-medium">
+                    {language === 'es' 
+                      ? 'No tengo alergias a medicamentos o suplementos'
+                      : 'I have no allergies to medications or supplements'}
+                  </span>
                 </div>
-                <span className="text-base lg:text-lg font-medium">
-                  {language === 'es' 
-                    ? 'No tengo alergias a medicamentos o suplementos'
-                    : 'I have no allergies to medications or supplements'}
-                </span>
-              </div>
-            </button>
+              </button>
+          )}
         </div>
       </div>
       
