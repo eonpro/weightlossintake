@@ -46,10 +46,10 @@ export default function SafetyQualityPage() {
         showContainer ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}>
         <div className="bg-[#e5fbab] rounded-3xl p-6 md:p-8">
-          {/* Desktop layout - side by side */}
-          <div className="flex flex-col lg:flex-row lg:items-center lg:space-x-8">
+          {/* Vertical layout - image below text */}
+          <div className="flex flex-col space-y-6">
             {/* Text content */}
-            <div className="flex-1 space-y-4 mb-6 lg:mb-0">
+            <div className="space-y-4">
               <h1 className="text-2xl lg:text-3xl font-semibold leading-tight text-black">
                 {language === 'es' 
                   ? 'Comprometidos con la seguridad y la máxima calidad en cada paso.'
@@ -63,8 +63,8 @@ export default function SafetyQualityPage() {
               </p>
             </div>
 
-            {/* Image - right side on desktop, bottom on mobile */}
-            <div className="lg:w-[45%] rounded-2xl overflow-hidden">
+            {/* Image - below text */}
+            <div className="rounded-2xl overflow-hidden">
               <img 
                 src="https://static.wixstatic.com/media/c49a9b_08d4b9a9d0394b3a83c2284def597b09~mv2.webp"
                 alt={language === 'es' ? 'Farmacia de calidad' : 'Quality pharmacy'}

@@ -37,7 +37,7 @@ export default function GLP1HistoryPage() {
       if (selected === 'currently_taking' || selected === 'previously_taken') {
         router.push('/intake/glp1-type');
       } else {
-        router.push('/intake/digestive-conditions');
+        router.push('/intake/dosage-satisfaction');
       }
     }
   };

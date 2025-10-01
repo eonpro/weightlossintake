@@ -66,7 +66,7 @@ export default function GLP1TypePage() {
         router.push('/intake/tirzepatide-dosage');
       } else {
         // For other medications, skip to digestive conditions
-        router.push('/intake/digestive-conditions');
+        router.push('/intake/dosage-satisfaction');
       }
     }
   };

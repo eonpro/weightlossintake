@@ -39,7 +39,7 @@ export default function TirzepatideSuccessPage() {
   const handleContinue = () => {
     if (selected) {
       sessionStorage.setItem('tirzepatide_success', selected);
-      router.push('/intake/digestive-conditions');
+      router.push('/intake/dosage-satisfaction');
     }
   };
 

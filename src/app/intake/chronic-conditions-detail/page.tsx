@@ -190,7 +190,7 @@ export default function ChronicConditionsDetailPage() {
 
   const handleContinue = () => {
     sessionStorage.setItem('chronic_conditions', JSON.stringify(selectedConditions));
-    router.push('/intake/medications');
+    router.push('/intake/digestive-conditions');
   };
 
   return (

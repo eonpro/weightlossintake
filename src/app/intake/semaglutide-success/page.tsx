@@ -39,7 +39,7 @@ export default function SemaglutideSuccessPage() {
   const handleContinue = () => {
     if (selected) {
       sessionStorage.setItem('semaglutide_success', selected);
-      router.push('/intake/digestive-conditions');
+      router.push('/intake/dosage-satisfaction');
     }
   };
 
