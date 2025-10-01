@@ -80,7 +80,14 @@ export default function ReviewPage() {
                 dob: sessionStorage.getItem('intake_dob') || '{}',
                 language: sessionStorage.getItem('language') || 'en',
                 qualified: true,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                // Enhanced data for smart recommendations
+                digestive_conditions: sessionStorage.getItem('digestive_conditions') || '[]',
+                chronic_conditions: sessionStorage.getItem('chronic_conditions') || '[]',
+                glp1_history: sessionStorage.getItem('glp1_history') || '',
+                goals: sessionStorage.getItem('goals') || '[]',
+                side_effects: sessionStorage.getItem('common_side_effects') || '[]',
+                activity_level: sessionStorage.getItem('activity_level') || ''
               };
               
               // Encode data as base64 to pass through URL
