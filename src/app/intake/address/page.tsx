@@ -23,11 +23,48 @@ export default function AddressPage() {
   const [apartment, setApartment] = useState('');
   const [mapError, setMapError] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const [showApartmentWarning, setShowApartmentWarning] = useState(false);
+  const [addressComponents, setAddressComponents] = useState<any>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<any>(null);
   const mapInstanceRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
+
+  // Function to detect if apartment/suite might be needed
+  const shouldSuggestApartment = (addressText: string) => {
+    if (!addressText) return false;
+    
+    const addressLower = addressText.toLowerCase();
+    
+    // Keywords that indicate multi-unit buildings
+    const multiUnitKeywords = [
+      'apartment', 'apt', 'complex', 'tower',
+      'building', 'bldg', 'suite', 'ste', 
+      'unit', 'plaza', 'court', 'commons',
+      'center', 'centre', 'loft', 'flats',
+      'condominium', 'condo', 'residence'
+    ];
+    
+    // Check for any multi-unit keywords
+    const hasMultiUnitKeyword = multiUnitKeywords.some(keyword => 
+      addressLower.includes(keyword)
+    );
+    
+    // Don't show warning if apartment already provided
+    if (apartment) return false;
+    
+    return hasMultiUnitKeyword;
+  };
+
+  // Update warning when apartment field changes
+  useEffect(() => {
+    if (address && shouldSuggestApartment(address) && !apartment) {
+      setShowApartmentWarning(true);
+    } else {
+      setShowApartmentWarning(false);
+    }
+  }, [apartment, address]);
 
   // Load Google Maps script
   useEffect(() => {
@@ -84,6 +121,22 @@ export default function AddressPage() {
           setAddress(place.formatted_address);
           setShowMap(true);
           
+          // Parse address components for better storage
+          if (place.address_components) {
+            const components: any = {};
+            place.address_components.forEach((component: any) => {
+              const types = component.types;
+              if (types.includes('locality')) components.city = component.long_name;
+              if (types.includes('administrative_area_level_1')) components.state = component.short_name;
+              if (types.includes('postal_code')) components.zipCode = component.long_name;
+            });
+            setAddressComponents(components);
+          }
+          
+          // Check if apartment might be needed
+          const needsApartment = shouldSuggestApartment(place.formatted_address);
+          setShowApartmentWarning(needsApartment);
+          
           // Initialize map after a short delay
           setTimeout(() => {
             if (!mapInstanceRef.current && mapRef.current) {
@@ -118,7 +171,7 @@ export default function AddressPage() {
       const defaultLocation = { lat: 27.9506, lng: -82.4572 };
       
       mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
-        zoom: 17,
+        zoom: 18,
         center: defaultLocation,
         mapTypeId: 'satellite',
         mapTypeControl: false,
@@ -154,9 +207,9 @@ export default function AddressPage() {
   const updateMapLocation = (location: any) => {
     if (!mapInstanceRef.current || !location) return;
 
-    // Center map on the location
+    // Center map on the location with closer zoom
     mapInstanceRef.current.setCenter(location);
-    mapInstanceRef.current.setZoom(17);
+    mapInstanceRef.current.setZoom(19);
 
     // Update marker position
     if (markerRef.current) {
@@ -166,7 +219,19 @@ export default function AddressPage() {
 
   const handleContinue = () => {
     if (address) {
-      sessionStorage.setItem('intake_address', JSON.stringify({ address, apartment }));
+      // Parse the address to extract components
+      const fullAddress = apartment 
+        ? `${address}, ${apartment}`
+        : address;
+        
+      sessionStorage.setItem('intake_address', JSON.stringify({ 
+        street: address,
+        unit: apartment,
+        city: addressComponents?.city || '',
+        state: addressComponents?.state || '',
+        zipCode: addressComponents?.zipCode || '',
+        fullAddress: fullAddress
+      }));
       router.push('/intake/ideal-weight');
     }
   };
@@ -238,6 +303,12 @@ export default function AddressPage() {
               placeholder={t('address.placeholder')}
               value={address}
               onChange={(e) => setAddress(e.target.value)}
+              onBlur={(e) => {
+                // Check for apartment suggestion when manually typing
+                if (e.target.value && !apartment) {
+                  setShowApartmentWarning(shouldSuggestApartment(e.target.value));
+                }
+              }}
               className="w-full p-4 text-base md:text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
             />
             
@@ -248,6 +319,29 @@ export default function AddressPage() {
               onChange={(e) => setApartment(e.target.value)}
               className="w-full p-4 text-base md:text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
             />
+            
+            {/* Apartment Warning */}
+            {showApartmentWarning && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3">
+                <div className="flex items-start space-x-2">
+                  <svg className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  <div className="text-left">
+                    <p className="text-sm text-yellow-800 font-medium">
+                      {language === 'es' 
+                        ? 'Esta dirección puede requerir un número de apartamento/suite'
+                        : 'This address may require an apartment/suite number'}
+                    </p>
+                    <p className="text-xs text-yellow-700 mt-1">
+                      {language === 'es'
+                        ? 'Por favor agregue el número si aplica para asegurar la entrega correcta'
+                        : 'Please add if applicable to ensure accurate delivery'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
             
             <p className="text-xs text-gray-400">{t('address.apartment.note')}</p>
           </div>
