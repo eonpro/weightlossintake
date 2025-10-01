@@ -62,7 +62,7 @@ export default function BMIResultPage() {
 
   const weightToLose = currentWeight - idealWeight;
   const goalBMI = idealWeight && currentWeight ? 
-    Math.round(((idealWeight / Math.pow((parseInt(heightStr.split("'")[0]) * 12 + parseInt(heightStr.split("'")[1] || 0)), 2)) * 703) * 100) / 100 : 0;
+    Math.round(((idealWeight / Math.pow((parseInt(heightStr.split("'")[0]) * 12 + parseInt(heightStr.split("'")[1] || '0')), 2)) * 703) * 100) / 100 : 0;
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
