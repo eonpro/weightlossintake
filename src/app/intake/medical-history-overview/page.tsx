@@ -33,7 +33,7 @@ export default function MedicalHistoryOverviewPage() {
             <img 
               src="https://static.wixstatic.com/media/c49a9b_7742352092de4c8e82b9e6e10cc20719~mv2.webp"
               alt="Medical Professional"
-              className="w-20 h-20 rounded-full object-cover"
+              className="w-[6.5rem] h-[6.5rem] rounded-full object-cover"
             />
           </div>
 
@@ -58,8 +58,11 @@ export default function MedicalHistoryOverviewPage() {
             {/* Timeline line */}
             <div className="absolute left-3 top-8 bottom-0 w-0.5 bg-gray-300"></div>
             
-            {/* Timeline dot */}
-            <div className="absolute left-1.5 top-4 w-4 h-4 bg-[#4fa87f] rounded-full"></div>
+            {/* Timeline dot with pulsing animation */}
+            <div className="absolute left-1.5 top-4">
+              <div className="absolute inset-0 w-4 h-4 bg-[#4fa87f] rounded-full opacity-75 animate-ping"></div>
+              <div className="relative w-4 h-4 bg-[#4fa87f] rounded-full"></div>
+            </div>
             
             {/* Medical History Card */}
             <div className="ml-10 bg-[#f0feab] rounded-2xl p-6 space-y-3">
@@ -71,9 +74,17 @@ export default function MedicalHistoryOverviewPage() {
               </p>
             </div>
             
-            {/* Treatment text */}
-            <div className="ml-10 mt-12">
-              <p className="text-lg text-gray-300">{t('medical.overview.treatment')}</p>
+            {/* Treatment section with gray dot */}
+            <div className="relative mt-12">
+              {/* Gray dot for Treatment */}
+              <div className="absolute left-[-1.875rem] top-[0.125rem]">
+                <div className="w-4 h-4 bg-gray-300 rounded-full"></div>
+              </div>
+              
+              {/* Treatment text */}
+              <div className="ml-10">
+                <p className="text-lg text-gray-300">{t('medical.overview.treatment')}</p>
+              </div>
             </div>
           </div>
         </div>

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 
-export default function SexAssignedPage() {
+export default function PregnancyPage() {
   const router = useRouter();
   const { t } = useTranslation();
   const { language } = useLanguage();
@@ -14,8 +14,8 @@ export default function SexAssignedPage() {
 
   const handleContinue = () => {
     if (selected) {
-      sessionStorage.setItem('intake_sex', selected);
-      router.push('/intake/activity-level');
+      sessionStorage.setItem('pregnancy_breastfeeding', selected);
+      router.push('/intake/review'); // Update this to the next page in your flow
     }
   };
 
@@ -23,12 +23,12 @@ export default function SexAssignedPage() {
     <div className="min-h-screen bg-white flex flex-col">
       {/* Progress bar */}
       <div className="w-full h-1 bg-gray-100">
-        <div className="h-full w-1/3 bg-[#f0feab] transition-all duration-300"></div>
+        <div className="h-full w-[97%] bg-[#f0feab] transition-all duration-300"></div>
       </div>
       
       {/* Back button */}
       <div className="px-6 pt-6">
-        <Link href="/intake/medical-history-overview" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
+        <Link href="/intake/diabetes-personal" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
           </svg>
@@ -37,88 +37,82 @@ export default function SexAssignedPage() {
       
       {/* Main content */}
       <div className="flex-1 flex flex-col px-6 py-8 max-w-md mx-auto w-full">
-        <div className="space-y-6">
-          {/* Title */}
-          <h1 className="text-3xl font-medium">{t('sex.title')}</h1>
+        <div className="space-y-8">
+          <h1 className="text-3xl font-medium leading-tight">
+            {language === 'es' 
+              ? '¿Estás embarazada o dando de lactar?'
+              : 'Are you pregnant or breastfeeding?'}
+          </h1>
           
-          {/* Description */}
-          <p className="text-gray-500 font-light">
-            {t('sex.subtitle')}
-          </p>
-          
-          {/* Selection prompt */}
-          <p className="text-lg font-normal mt-8">{t('sex.selectPrompt')}</p>
-          
-          {/* Options */}
+          {/* Yes/No options */}
           <div className="space-y-3">
             <button
-              onClick={() => setSelected('man')}
+              onClick={() => setSelected('yes')}
               className={`w-full text-left p-4 rounded-2xl border transition-all ${
-                selected === 'man'
+                selected === 'yes'
                   ? 'border-[#f0feab] bg-[#f0feab]'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
               <div className="flex items-center">
                 <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
-                  selected === 'man'
+                  selected === 'yes'
                     ? 'border-[#f0feab] bg-[#f0feab]'
                     : 'border-gray-300'
                 }`}>
-                  {selected === 'man' && (
+                  {selected === 'yes' && (
                     <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   )}
                 </div>
-                <span className="text-base md:text-lg font-medium">{t('sex.man')}</span>
+                <span className="text-base md:text-lg font-medium">
+                  {language === 'es' ? 'Sí' : 'Yes'}
+                </span>
               </div>
             </button>
             
             <button
-              onClick={() => setSelected('woman')}
+              onClick={() => setSelected('no')}
               className={`w-full text-left p-4 rounded-2xl border transition-all ${
-                selected === 'woman'
+                selected === 'no'
                   ? 'border-[#f0feab] bg-[#f0feab]'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
               <div className="flex items-center">
                 <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
-                  selected === 'woman'
+                  selected === 'no'
                     ? 'border-[#f0feab] bg-[#f0feab]'
                     : 'border-gray-300'
                 }`}>
-                  {selected === 'woman' && (
+                  {selected === 'no' && (
                     <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   )}
                 </div>
-                <span className="text-base md:text-lg font-medium">{t('sex.woman')}</span>
+                <span className="text-base md:text-lg font-medium">
+                  No
+                </span>
               </div>
             </button>
-          </div>
-          
-          {/* Disclaimer */}
-          <div className="mt-8">
-            <p className="text-xs text-gray-500 leading-tight">
-              {t('sex.disclaimer')}
-            </p>
           </div>
         </div>
       </div>
       
-      {/* Bottom section */}
+      {/* Continue button */}
       <div className="px-6 pb-8 max-w-md mx-auto w-full">
         <button 
           onClick={handleContinue}
           disabled={!selected}
           className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-colors ${
-            selected ? 'bg-black text-white hover:bg-gray-900' : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            selected
+              ? 'bg-black text-white hover:bg-gray-800' 
+              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
           }`}
         >
-          <span>{t('sex.continue')}</span>
+          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
           </svg>

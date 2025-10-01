@@ -8,11 +8,17 @@ import { useLanguage } from '@/contexts/LanguageContext';
 export default function MedicationsPage() {
   const router = useRouter();
   const { language } = useLanguage();
-  const [medications, setMedications] = useState('');
+  const [selected, setSelected] = useState<'yes' | 'no' | null>(null);
 
   const handleContinue = () => {
-    sessionStorage.setItem('current_medications', medications);
-    router.push('/intake/allergies'); // Navigate to next page
+    if (selected) {
+      sessionStorage.setItem('taking_medications', selected);
+      if (selected === 'yes') {
+        router.push('/intake/medications-selection');
+      } else {
+        router.push('/intake/allergies');
+      }
+    }
   };
 
   return (
@@ -36,38 +42,100 @@ export default function MedicationsPage() {
         <div className="space-y-8">
           <h1 className="text-3xl font-medium leading-tight">
             {language === 'es' 
-              ? '¿Estás tomando algún medicamento actualmente?'
-              : 'Are you currently taking any medications?'}
+              ? '¿Estás tomando algún medicamento o suplemento actualmente?'
+              : 'Are you currently taking any medications or supplements?'}
           </h1>
           
-          <p className="text-gray-500 text-base">
-            {language === 'es'
-              ? 'Incluye todos los medicamentos recetados, de venta libre, vitaminas y suplementos.'
-              : 'Include all prescription medications, over-the-counter medications, vitamins, and supplements.'}
-          </p>
-          
-          <textarea
-            value={medications}
-            onChange={(e) => setMedications(e.target.value)}
-            placeholder={language === 'es' 
-              ? 'Escribe aquí tus medicamentos actuales...' 
-              : 'List your current medications here...'}
-            className="w-full h-32 p-4 text-base md:text-lg border border-gray-300 rounded-2xl focus:outline-none focus:border-gray-400 resize-none"
-          />
+          {/* Yes/No Options */}
+          <div className="space-y-3">
+            <button
+              onClick={() => setSelected('yes')}
+              className={`w-full text-left p-4 rounded-2xl border transition-all ${
+                selected === 'yes'
+                  ? 'border-[#f0feab] bg-[#f0feab]'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <div className="flex items-center">
+                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
+                  selected === 'yes'
+                    ? 'border-[#f0feab] bg-[#f0feab]'
+                    : 'border-gray-300'
+                }`}>
+                  {selected === 'yes' && (
+                    <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </div>
+                <span className="text-base md:text-lg font-medium">
+                  {language === 'es' ? 'Sí' : 'Yes'}
+                </span>
+              </div>
+            </button>
+            
+            <button
+              onClick={() => setSelected('no')}
+              className={`w-full text-left p-4 rounded-2xl border transition-all ${
+                selected === 'no'
+                  ? 'border-[#f0feab] bg-[#f0feab]'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <div className="flex items-center">
+                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
+                  selected === 'no'
+                    ? 'border-[#f0feab] bg-[#f0feab]'
+                    : 'border-gray-300'
+                }`}>
+                  {selected === 'no' && (
+                    <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </div>
+                <span className="text-base md:text-lg font-medium">
+                  {language === 'es' ? 'No' : 'No'}
+                </span>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
       
-      {/* Continue button */}
+      {/* Footer and Continue button */}
       <div className="px-6 pb-8 max-w-md mx-auto w-full">
         <button 
           onClick={handleContinue}
-          className="w-full bg-black text-white py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 hover:bg-gray-800 transition-colors"
+          disabled={!selected}
+          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
+            selected
+              ? 'bg-black text-white hover:bg-gray-800'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
         >
           <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
           </svg>
         </button>
+        
+        {/* Copyright footer */}
+        <div className="mt-6 text-center">
+          <p className="text-[11px] text-gray-400 leading-tight">
+            {language === 'es' ? (
+              <>
+                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+              </>
+            ) : (
+              <>
+                © 2025 EONPro, LLC. All rights reserved.<br/>
+                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+              </>
+            )}
+          </p>
+        </div>
       </div>
     </div>
   );

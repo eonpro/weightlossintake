@@ -11,6 +11,7 @@ export default function AllergiesPage() {
   const [searchValue, setSearchValue] = useState('');
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [noAllergiesSelected, setNoAllergiesSelected] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
 
   // Common medications and supplements database
@@ -65,13 +66,18 @@ export default function AllergiesPage() {
   ];
 
   const handleContinue = () => {
-    sessionStorage.setItem('allergies', JSON.stringify(selectedItems));
-    router.push('/intake/blood-pressure');
+    if (noAllergiesSelected) {
+      sessionStorage.setItem('allergies', JSON.stringify(['None']));
+    } else {
+      sessionStorage.setItem('allergies', JSON.stringify(selectedItems));
+    }
+    router.push('/intake/kidney-conditions');
   };
 
   const handleAddItem = (item: string) => {
     if (!selectedItems.includes(item)) {
       setSelectedItems([...selectedItems, item]);
+      setNoAllergiesSelected(false); // Clear "No allergies" when adding an item
     }
     setSearchValue('');
     setShowSuggestions(false);
@@ -189,19 +195,38 @@ export default function AllergiesPage() {
           )}
           
           {/* No allergies button */}
-          {selectedItems.length === 0 && (
-            <button
+          <button
               onClick={() => {
-                sessionStorage.setItem('allergies', JSON.stringify(['None']));
-                router.push('/intake/blood-pressure');
+                setNoAllergiesSelected(!noAllergiesSelected);
+                if (!noAllergiesSelected) {
+                  setSelectedItems([]); // Clear selected items when choosing "No allergies"
+                }
               }}
-              className="w-full p-4 text-center text-base md:text-lg border border-gray-200 rounded-2xl hover:border-gray-400 transition-all"
+              className={`w-full text-left p-4 rounded-2xl border transition-all ${
+                noAllergiesSelected
+                  ? 'border-[#f0feab] bg-[#f0feab]'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
             >
-              {language === 'es' 
-                ? 'No tengo alergias a medicamentos o suplementos'
-                : 'I have no allergies to medications or supplements'}
+              <div className="flex items-center">
+                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
+                  noAllergiesSelected
+                    ? 'border-[#f0feab] bg-[#f0feab]'
+                    : 'border-gray-300'
+                }`}>
+                  {noAllergiesSelected && (
+                    <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </div>
+                <span className="text-base md:text-lg font-medium">
+                  {language === 'es' 
+                    ? 'No tengo alergias a medicamentos o suplementos'
+                    : 'I have no allergies to medications or supplements'}
+                </span>
+              </div>
             </button>
-          )}
         </div>
       </div>
       
@@ -216,6 +241,23 @@ export default function AllergiesPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
           </svg>
         </button>
+        
+        {/* Copyright footer */}
+        <div className="mt-6 text-center">
+          <p className="text-[11px] text-gray-400 leading-tight">
+            {language === 'es' ? (
+              <>
+                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+              </>
+            ) : (
+              <>
+                © 2025 EONPro, LLC. All rights reserved.<br/>
+                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+              </>
+            )}
+          </p>
+        </div>
       </div>
     </div>
   );

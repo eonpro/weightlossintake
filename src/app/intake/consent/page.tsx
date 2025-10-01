@@ -11,6 +11,7 @@ import { useEnterNavigation } from '@/hooks/useEnterNavigation';
 export default function ConsentPage() {
   const router = useRouter();
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const [agreed, setAgreed] = useState(false);
   
   const handleContinue = () => {
@@ -78,7 +79,7 @@ export default function ConsentPage() {
               </div>
               <div className="flex-1 flex flex-col justify-center px-4 py-3">
                 <h3 className="font-bold text-base leading-tight mb-1">{t('consent.doctor.title')}</h3>
-                <p className="text-xs leading-snug">{t('consent.doctor.subtitle')}</p>
+                <p className="text-xs leading-snug text-gray-600">{t('consent.doctor.subtitle')}</p>
               </div>
             </div>
           </div>
@@ -103,7 +104,7 @@ export default function ConsentPage() {
                 onChange={(e) => setAgreed(e.target.checked)}
                 className="sr-only"
               />
-              <div className="text-sm">
+              <div className="text-[10.5px] md:text-[12.5px]">
                 {t('consent.agreement.start')}
                 <a href="#" className="text-[#4fa87f] underline">{t('consent.agreement.terms')}</a>
                 {t('consent.agreement.and')}
@@ -134,6 +135,23 @@ export default function ConsentPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
           </svg>
         </button>
+        
+        {/* Copyright footer */}
+        <div className="mt-6 text-center">
+          <p className="text-[11px] text-gray-400 leading-tight">
+            {language === 'es' ? (
+              <>
+                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+              </>
+            ) : (
+              <>
+                © 2025 EONPro, LLC. All rights reserved.<br/>
+                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+              </>
+            )}
+          </p>
+        </div>
       </div>
     </div>
   );

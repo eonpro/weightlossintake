@@ -65,13 +65,11 @@ export default function Home() {
         <div className="w-full max-w-md px-6 mx-auto">
           {/* Title and subtitle */}
           <div className="text-left pt-16 mb-12">
-            <h1 className="text-4xl font-medium text-[#4fa87f] leading-tight mb-4">
-              {t('landing.title.line1')}<br/>
-              {t('landing.title.line2')}
+            <h1 className="text-4xl font-medium text-[#4fa87f] leading-none mb-2">
+              {t('landing.title')}
             </h1>
             <p className="text-lg text-black font-normal leading-tight">
-              {t('landing.subtitle.line1')}<br/>
-              {t('landing.subtitle.line2')}
+              {t('landing.subtitle')}
             </p>
           </div>
           

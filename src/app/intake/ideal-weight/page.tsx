@@ -9,6 +9,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 export default function IdealWeightPage() {
   const router = useRouter();
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const [idealWeight, setIdealWeight] = useState('');
 
   const handleContinue = () => {
@@ -52,7 +53,7 @@ export default function IdealWeightPage() {
                 }}
                 className="w-full p-4 pr-12 text-base md:text-lg font-medium text-left border border-gray-300 rounded-2xl focus:outline-none focus:border-gray-400"
               />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-gray-500">{t('common.lbs')}</span>
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-base text-gray-500">{t('common.lbs')}</span>
             </div>
           </div>
         </div>
@@ -73,6 +74,23 @@ export default function IdealWeightPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
           </svg>
         </button>
+        
+        {/* Copyright footer */}
+        <div className="mt-6 text-center">
+          <p className="text-[11px] text-gray-400 leading-tight">
+            {language === 'es' ? (
+              <>
+                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+              </>
+            ) : (
+              <>
+                © 2025 EONPro, LLC. All rights reserved.<br/>
+                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+              </>
+            )}
+          </p>
+        </div>
       </div>
     </div>
   );

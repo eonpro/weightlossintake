@@ -91,7 +91,7 @@ export default function StatePage() {
                   </svg>
                 )}
               </div>
-              <span className="ml-3 text-base text-gray-700 leading-relaxed">
+              <span className="ml-3 text-[10.5px] md:text-[12.5px] text-gray-700 leading-tight">
                 {selectedState === 'Florida' ? (
                   <>
                     {t('state.terms.agree')}<a href={isSpanish ? "https://www.eonmeds.com/terminosycondiciones" : "https://www.eonmeds.com/termsandconditions"} target="_blank" rel="noopener noreferrer" className="text-[#4fa87f] underline" onClick={(e) => e.stopPropagation()}>{t('state.terms.link')}</a>, <a href={isSpanish ? "https://www.eonmeds.com/floridaweightlossconsumerbillofrights" : "https://www.eonmeds.com/floridaweightlossconsumerbillofrightseng"} target="_blank" rel="noopener noreferrer" className="text-[#4fa87f] underline" onClick={(e) => e.stopPropagation()}>{t('state.terms.flBill')}</a>, <a href={isSpanish ? "https://www.eonmeds.com/floridatelehealthconsent" : "https://www.eonmeds.com/florida-telehealth-consent"} target="_blank" rel="noopener noreferrer" className="text-[#4fa87f] underline" onClick={(e) => e.stopPropagation()}>{t('state.terms.flConsent')}</a>, <a href={isSpanish ? "https://www.eonmeds.com/consentimientodetelemedicina" : "https://www.eonmeds.com/telehealth-consent"} target="_blank" rel="noopener noreferrer" className="text-[#4fa87f] underline" onClick={(e) => e.stopPropagation()}>{t('state.terms.telehealth')}</a>{t('state.terms.acknowledge')}<a href={isSpanish ? "https://www.eonmeds.com/politicadeprivacidad" : "https://www.eonmeds.com/privacypolicy"} target="_blank" rel="noopener noreferrer" className="text-[#4fa87f] underline" onClick={(e) => e.stopPropagation()}>{t('state.terms.privacy')}</a>.
@@ -123,6 +123,23 @@ export default function StatePage() {
         >
           {t('state.continue')}
         </button>
+        
+        {/* Copyright footer */}
+        <div className="mt-6 text-center">
+          <p className="text-[11px] text-gray-400 leading-tight">
+            {isSpanish ? (
+              <>
+                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+              </>
+            ) : (
+              <>
+                © 2025 EONPro, LLC. All rights reserved.<br/>
+                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+              </>
+            )}
+          </p>
+        </div>
       </div>
     </div>
   );

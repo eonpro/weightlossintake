@@ -1,10 +1,8 @@
 export const translations = {
   en: {
     // Landing page
-    'landing.title.line1': 'Let\'s evaluate your',
-    'landing.title.line2': 'treatment options.',
-    'landing.subtitle.line1': 'Discover personalized solutions based',
-    'landing.subtitle.line2': 'on your goals, habits, and health history.',
+    'landing.title': 'Let\'s evaluate your treatment options.',
+    'landing.subtitle': 'Discover personalized solutions based on your goals, habits, and health history.',
     'landing.button.start': 'Start',
     'landing.disclaimer1': 'By clicking "Continue", you agree that EONMeds may use your responses to personalize your experience and for other purposes in accordance with our ',
     'landing.disclaimer.privacy': 'Privacy Policy',
@@ -214,10 +212,8 @@ export const translations = {
   },
   es: {
     // Landing page
-    'landing.title.line1': 'Evaluemos tus',
-    'landing.title.line2': 'opciones de tratamiento.',
-    'landing.subtitle.line1': 'Descubre soluciones personalizadas',
-    'landing.subtitle.line2': 'basadas en tus objetivos, hábitos e historial médico.',
+    'landing.title': 'Evaluemos tus opciones de tratamiento.',
+    'landing.subtitle': 'Descubre soluciones personalizadas basadas en tus objetivos, hábitos e historial médico.',
     'landing.button.start': 'Comenzar',
     'landing.disclaimer1': 'Al hacer clic en "Continuar", aceptas que EONMeds puede usar tus respuestas para personalizar tu experiencia y para otros propósitos de acuerdo con nuestra ',
     'landing.disclaimer.privacy': 'Política de Privacidad',
