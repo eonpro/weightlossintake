@@ -21,7 +21,7 @@ export default function ContactInfoPage() {
 
   const countries = [
     { code: 'US', name: 'United States', flag: '🇺🇸', dialCode: '+1' },
-    { code: 'PR', name: 'Puerto Rico', flag: '🇵🇷', dialCode: '+1 787' }
+    { code: 'PR', name: 'Puerto Rico', flag: '🇵🇷', dialCode: '+1' }
   ];
 
   const selectedCountry = countries.find(c => c.code === country) || countries[0];
@@ -104,7 +104,10 @@ export default function ContactInfoPage() {
     }
     
     if (isEmailValid && isPhoneValid && consent) {
-      sessionStorage.setItem('intake_contact', JSON.stringify({ email, phone: selectedCountry.dialCode + ' ' + phone }));
+      // Always ensure +1 prefix for US numbers
+      const phoneDigitsOnly = phone.replace(/\D/g, '');
+      const formattedPhone = '+1' + phoneDigitsOnly;
+      sessionStorage.setItem('intake_contact', JSON.stringify({ email, phone: formattedPhone }));
       router.push('/intake/support-info');
     }
   };
@@ -167,6 +170,7 @@ export default function ContactInfoPage() {
                     className="flex items-center space-x-2 p-4 border border-gray-200 rounded-2xl"
                   >
                     <span className="text-2xl">{selectedCountry.flag}</span>
+                    <span className="text-base font-medium">+1</span>
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                     </svg>
@@ -197,7 +201,7 @@ export default function ContactInfoPage() {
                 
                 <input
                   type="tel"
-                  placeholder={selectedCountry.dialCode + " 000 000 0000"}
+                  placeholder="000 000 0000"
                   value={phone}
                   onChange={handlePhoneChange}
                   inputMode="numeric"
