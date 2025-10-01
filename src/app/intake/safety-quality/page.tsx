@@ -42,43 +42,41 @@ export default function SafetyQualityPage() {
       <EonmedsLogo compact={true} />
       
       {/* Main content */}
-      <div className={`flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-lg mx-auto w-full transition-all duration-1000 ease-out transform ${
+      <div className={`flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full transition-all duration-1000 ease-out transform ${
         showContainer ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}>
-        <div className="bg-[#e5fbab] rounded-3xl p-6 md:p-8 space-y-6">
-          <div>
-            <h1 className="text-3xl font-medium leading-tight mb-2">
-              {language === 'es' 
-                ? 'Comprometidos con la seguridad y la máxima calidad en cada paso.'
-                : 'Committed to safety and the highest quality at every step.'}
-            </h1>
-            <h2 className="text-xl text-[#4ea77d] font-medium mb-3">
-              {language === 'es' ? 'seguridad' : 'safety'}
-            </h2>
-            <h2 className="text-xl text-[#4ea77d] font-medium mb-4">
-              {language === 'es' ? 'calidad' : 'quality'}
-            </h2>
-          </div>
+        <div className="bg-[#e5fbab] rounded-3xl p-6 md:p-8">
+          {/* Desktop layout - side by side */}
+          <div className="flex flex-col lg:flex-row lg:items-center lg:space-x-8">
+            {/* Text content */}
+            <div className="flex-1 space-y-4 mb-6 lg:mb-0">
+              <h1 className="text-2xl lg:text-3xl font-semibold leading-tight text-black">
+                {language === 'es' 
+                  ? 'Comprometidos con la seguridad y la máxima calidad en cada paso.'
+                  : 'Committed to safety and the highest quality at every step.'}
+              </h1>
+              
+              <p className="text-base lg:text-lg text-gray-700 leading-relaxed">
+                {language === 'es'
+                  ? 'EONMeds colabora con algunas de las mejores farmacias 503A licenciadas del país para elaborar tratamientos personalizados y seguros para ti.'
+                  : 'EONMeds collaborates with some of the best 503A licensed pharmacies in the country to develop personalized and safe treatments for you.'}
+              </p>
+            </div>
 
-          <p className="text-gray-700 leading-relaxed">
-            {language === 'es'
-              ? 'EONMeds colabora con algunas de las mejores farmacias 503A licenciadas del país para elaborar tratamientos personalizados y seguros para ti.'
-              : 'EONMeds collaborates with some of the best 503A licensed pharmacies in the country to develop personalized and safe treatments for you.'}
-          </p>
-
-          {/* Image */}
-          <div className="rounded-2xl overflow-hidden">
-            <img 
-              src="https://static.wixstatic.com/media/c49a9b_08d4b9a9d0394b3a83c2284def597b09~mv2.webp"
-              alt={language === 'es' ? 'Farmacia de calidad' : 'Quality pharmacy'}
-              className="w-full h-auto"
-            />
+            {/* Image - right side on desktop, bottom on mobile */}
+            <div className="lg:w-[45%] rounded-2xl overflow-hidden">
+              <img 
+                src="https://static.wixstatic.com/media/c49a9b_08d4b9a9d0394b3a83c2284def597b09~mv2.webp"
+                alt={language === 'es' ? 'Farmacia de calidad' : 'Quality pharmacy'}
+                className="w-full h-auto"
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Bottom button */}
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
+      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <button 
           onClick={handleContinue}
           className="w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all bg-black text-white hover:bg-gray-900"

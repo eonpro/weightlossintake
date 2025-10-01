@@ -114,7 +114,7 @@ export default function ReviewPage() {
             <span className="text-gray-400">
               {language === 'es' ? 'Gracias, ' : 'Thank you, '}
             </span>
-            <span className="text-black">@{firstName || 'firstname'}</span>
+            <span className="text-black">{firstName || ''}</span>
           </h1>
           
           {/* Lottie Animation - using the same medical/processing animation */}
@@ -140,7 +140,7 @@ export default function ReviewPage() {
                 : 'Your information is being assigned to a licensed physician in'}
             </p>
             <p className="text-2xl text-black font-medium">
-              @{state || 'state'} <span className="text-gray-400">{language === 'es' ? 'via' : 'via'}</span>
+              {state || ''} <span className="text-gray-400">{language === 'es' ? 'via' : 'via'}</span>
             </p>
             <p className="text-2xl text-black font-medium">
               EONPro MedLink.

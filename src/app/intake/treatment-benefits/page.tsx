@@ -84,38 +84,43 @@ export default function TreatmentBenefitsPage() {
       <EonmedsLogo compact={true} />
       
       {/* Main content */}
-      <div className={`flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-lg mx-auto w-full transition-all duration-1000 ease-out transform ${
+      <div className={`flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full transition-all duration-1000 ease-out transform ${
         showContainer ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}>
         <div className="space-y-6">
-          <h1 className="text-3xl font-medium leading-tight">
+          <h1 className="text-2xl lg:text-3xl font-semibold leading-tight text-black">
             {language === 'es' 
               ? 'Nuestros tratamientos te ayudan de la siguiente manera'
               : 'Our treatments help you in the following ways'}
           </h1>
 
           {/* Benefit cards */}
-          <div className="space-y-4 md:space-y-6">
+          <div className="space-y-4 md:space-y-5">
             {benefits.map((benefit) => (
               <div 
                 key={benefit.id} 
-                className={`${benefit.bgColor} rounded-3xl p-3 md:p-4 relative overflow-hidden min-h-[110px] md:min-h-[140px] flex items-center`}
+                className={`${benefit.bgColor} rounded-3xl overflow-hidden`}
               >
-                {/* Image */}
-                <img 
-                  src={benefit.image}
-                  alt={language === 'es' ? benefit.title.es : benefit.title.en}
-                  className="absolute top-0 bottom-0 left-0 w-24 md:w-32 h-full object-cover"
-                />
-                
-                {/* Text content */}
-                <div className="pl-28 md:pl-36">
-                  <h2 className="text-base md:text-lg font-semibold mb-1">
-                    {language === 'es' ? benefit.title.es : benefit.title.en}
-                  </h2>
-                  <p className="text-xs md:text-sm leading-tight">
-                    {language === 'es' ? benefit.description.es : benefit.description.en}
-                  </p>
+                {/* Flex container with proper responsive layout */}
+                <div className="flex items-stretch min-h-[120px] lg:min-h-[140px]">
+                  {/* Text content - left side on both mobile and desktop */}
+                  <div className="flex-1 p-4 lg:p-6 flex flex-col justify-center">
+                    <h2 className="text-lg lg:text-xl font-semibold mb-1 text-black">
+                      {language === 'es' ? benefit.title.es : benefit.title.en}
+                    </h2>
+                    <p className="text-sm lg:text-base text-gray-700 leading-tight">
+                      {language === 'es' ? benefit.description.es : benefit.description.en}
+                    </p>
+                  </div>
+                  
+                  {/* Image container - right side */}
+                  <div className="w-32 lg:w-48 flex-shrink-0">
+                    <img 
+                      src={benefit.image}
+                      alt={language === 'es' ? benefit.title.es : benefit.title.en}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 </div>
               </div>
             ))}
@@ -124,7 +129,7 @@ export default function TreatmentBenefitsPage() {
       </div>
 
       {/* Bottom button */}
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
+      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <button 
           onClick={handleContinue}
           className="w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all bg-black text-white hover:bg-gray-900"
