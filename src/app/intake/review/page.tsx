@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { submitIntake, collectIntakeData, markCheckpointCompleted, submitCheckpoint } from '@/lib/api';
 
 export default function ReviewPage() {
   const router = useRouter();
@@ -66,7 +67,7 @@ export default function ReviewPage() {
           // Redirect to checkout after progress completes
           if (!hasNavigated.current) {
             hasNavigated.current = true;
-            setTimeout(() => {
+            setTimeout(async () => {
               // Prepare qualification data to pass to checkout
               const qualificationData = {
                 firstName: sessionStorage.getItem('intake_name') ? JSON.parse(sessionStorage.getItem('intake_name')!).firstName : '',
@@ -89,6 +90,21 @@ export default function ReviewPage() {
                 side_effects: sessionStorage.getItem('common_side_effects') || '[]',
                 activity_level: sessionStorage.getItem('activity_level') || ''
               };
+              
+              // Mark final checkpoint as completed
+              markCheckpointCompleted('qualification-complete');
+              
+              // Submit final checkpoint with qualification data
+              await submitCheckpoint('qualification-complete', qualificationData, 'qualified');
+              
+              // Submit complete intake data to API
+              const intakeData = collectIntakeData();
+              const submissionResult = await submitIntake(intakeData);
+              
+              if (submissionResult.success && submissionResult.intakeId) {
+                // Store intake ID for reference
+                sessionStorage.setItem('submitted_intake_id', submissionResult.intakeId);
+              }
               
               // Encode data as base64 to pass through URL
               const encodedData = btoa(JSON.stringify(qualificationData));

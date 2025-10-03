@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import EonmedsLogo from '@/components/EonmedsLogo';
+import { submitCheckpoint, markCheckpointCompleted } from '@/lib/api';
 
 export default function ChronicConditionsDetailPage() {
   const router = useRouter();
@@ -188,8 +189,18 @@ export default function ChronicConditionsDetailPage() {
     setSelectedConditions(selectedConditions.filter(c => c !== condition));
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     sessionStorage.setItem('chronic_conditions', JSON.stringify(selectedConditions));
+    
+    // Submit medical history checkpoint
+    const checkpointData = {
+      chronicConditions: selectedConditions,
+      timestamp: new Date().toISOString()
+    };
+    
+    await submitCheckpoint('medical-history', checkpointData, 'partial');
+    markCheckpointCompleted('medical-history');
+    
     router.push('/intake/digestive-conditions');
   };
 

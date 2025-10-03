@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import EonmedsLogo from '@/components/EonmedsLogo';
+import { submitCheckpoint, markCheckpointCompleted } from '@/lib/api';
 
 export default function BMIResultPage() {
   const router = useRouter();
@@ -53,6 +54,19 @@ export default function BMIResultPage() {
           setIndicatorPosition(Math.min(Math.max(position, 0), 100));
         }, 100);
       }, 500);
+      
+      // Submit BMI checkpoint
+      const checkpointData = {
+        bmi: finalBMI,
+        currentWeight: weight,
+        idealWeight: parseInt(idealWeightData || '0'),
+        height: `${height.feet}'${height.inches}"`,
+        weightToLose: weight - parseInt(idealWeightData || '0'),
+        timestamp: new Date().toISOString()
+      };
+      
+      submitCheckpoint('bmi-calculation', checkpointData, 'partial');
+      markCheckpointCompleted('bmi-calculation');
     }
     
     if (idealWeightData) {

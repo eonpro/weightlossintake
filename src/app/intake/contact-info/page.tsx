@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import EonmedsLogo from '@/components/EonmedsLogo';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
+import { submitCheckpoint, markCheckpointCompleted } from '@/lib/api';
 
 export default function ContactInfoPage() {
   const router = useRouter();
@@ -91,7 +92,7 @@ export default function ContactInfoPage() {
     }
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     const isEmailValid = validateEmail(email);
     const isPhoneValid = validatePhone(phone);
     
@@ -108,6 +109,26 @@ export default function ContactInfoPage() {
       const phoneDigitsOnly = phone.replace(/\D/g, '');
       const formattedPhone = '+1' + phoneDigitsOnly;
       sessionStorage.setItem('intake_contact', JSON.stringify({ email, phone: formattedPhone }));
+      
+      // Submit personal info checkpoint
+      const nameData = sessionStorage.getItem('intake_name');
+      const stateData = sessionStorage.getItem('intake_state');
+      const dobData = sessionStorage.getItem('intake_dob');
+      
+      const checkpointData = {
+        personalInfo: {
+          ...(nameData ? JSON.parse(nameData) : {}),
+          email,
+          phone: formattedPhone,
+          dob: dobData ? JSON.parse(dobData) : null,
+          state: stateData ? JSON.parse(stateData) : null
+        },
+        timestamp: new Date().toISOString()
+      };
+      
+      await submitCheckpoint('personal-info', checkpointData, 'partial');
+      markCheckpointCompleted('personal-info');
+      
       router.push('/intake/support-info');
     }
   };
