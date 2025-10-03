@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import EonmedsLogo from '@/components/EonmedsLogo';
+import IntakePageLayout from '@/components/IntakePageLayout';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import { submitCheckpoint, markCheckpointCompleted } from '@/lib/api';
@@ -137,26 +138,57 @@ export default function ContactInfoPage() {
     }
   };
 
+  const progressBar = (
+    <div className="w-full h-1 bg-gray-100">
+      <div className="h-full w-[16%] bg-[#f0feab] transition-all duration-300"></div>
+    </div>
+  );
+
+  const backButton = (
+    <Link href="/intake/dob" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+    </Link>
+  );
+
+  const continueButton = (
+    <button 
+      onClick={handleContinue}
+      disabled={!email || !phone || !consent}
+      className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
+        email && phone && consent 
+          ? 'bg-black text-white hover:bg-gray-900' 
+          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+      }`}
+    >
+      <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </button>
+  );
+
+  const copyrightText = (
+    <p className="text-[9px] lg:text-[11px] text-gray-400 text-center leading-tight">
+      {language === 'es' 
+        ? '© 2025 EONPro, LLC. Todos los derechos reservados.\nProceso exclusivo y protegido. Copiar o reproducir\nsin autorización está prohibido.'
+        : '© 2025 EONPro, LLC. All rights reserved.\nExclusive and protected process. Copying or reproduction\nwithout authorization is prohibited.'}
+    </p>
+  );
+
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      {/* Progress bar */}
-      <div className="w-full h-1 bg-gray-100">
-        <div className="h-full w-[16%] bg-[#f0feab] transition-all duration-300"></div>
-      </div>
+    <IntakePageLayout
+      progressBar={progressBar}
+      backButton={backButton}
+      button={continueButton}
+      copyright={copyrightText}
+    >
+      <div className="max-w-md lg:max-w-2xl mx-auto w-full">
+        {/* Logo */}
+        <EonmedsLogo />
       
-      <div className="px-6 lg:px-8 pt-6">
-        <Link href="/intake/dob" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
-          </svg>
-        </Link>
-      </div>
-      
-      {/* Logo */}
-      <EonmedsLogo />
-      
-      <div className="flex-1 px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <div className="space-y-6">
+        <div className="space-y-6 mt-6">
           <div>
             <h1 className="text-3xl font-medium mb-4">
               {language === 'es' ? '¿Cómo podemos contactarte?' : 'How can we contact you?'}
@@ -274,29 +306,6 @@ export default function ContactInfoPage() {
           </div>
         </div>
       </div>
-      
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={!email || !phone || !consent}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-            email && phone && consent 
-              ? 'bg-black text-white hover:bg-gray-900' 
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        <p className="text-[9px] lg:text-[11px] text-gray-400 text-center mt-4 leading-tight">
-          {language === 'es' 
-            ? '© 2025 EONPro, LLC. Todos los derechos reservados.\nProceso exclusivo y protegido. Copiar o reproducir\nsin autorización está prohibido.'
-            : '© 2025 EONPro, LLC. All rights reserved.\nExclusive and protected process. Copying or reproduction\nwithout authorization is prohibited.'}
-        </p>
-      </div>
-    </div>
+    </IntakePageLayout>
   );
 }
