@@ -325,7 +325,7 @@ export default function ContactInfoPage() {
                 type="button"
                 onClick={() => setConsent(!consent)}
                 className={`mt-0.5 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all flex-shrink-0 ${
-                  consent ? 'bg-[#f0feab] border-[#f0feab]' : 'bg-white border-gray-300'
+                  consent ? 'bg-gray-200 border-gray-400' : 'bg-white border-gray-300'
                 }`}
               >
                 {consent && (

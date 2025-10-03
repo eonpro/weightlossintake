@@ -83,18 +83,18 @@ export default function WeightLossSupportPage() {
                 onClick={() => handleSupportToggle(option.id)}
                 className={`w-full p-4 rounded-2xl border transition-all flex items-center justify-between text-left ${
                   selectedSupport.includes(option.id)
-                    ? 'bg-[#f0feab] border-[#f0feab]'
+                    ? 'bg-gray-200 border-gray-400'
                     : 'bg-white border-gray-200'
                 }`}
               >
                 <span className="text-base lg:text-lg pr-4">{option.label}</span>
-                <div className={`w-6 h-6 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all ${
+                <div className={`w-5 h-5 flex-shrink-0 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all ${
                   selectedSupport.includes(option.id)
-                    ? 'bg-[#f0feab] border-[#f0feab]'
+                    ? 'bg-gray-200 border-gray-400'
                     : 'bg-white border-gray-300'
                 }`}>
                   {selectedSupport.includes(option.id) && (
-                    <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-3 h-3 text-black" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   )}

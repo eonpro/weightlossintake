@@ -68,14 +68,14 @@ export default function DosageInterestPage() {
                 onClick={() => setSelected(option.id)}
                 className={`w-full p-4 rounded-2xl border transition-all flex items-center justify-between text-left ${
                   selected === option.id
-                    ? 'bg-[#f0feab] border-[#f0feab]'
+                    ? 'bg-gray-200 border-gray-400'
                     : 'bg-white border-gray-200'
                 }`}
               >
                 <span className="text-base lg:text-lg">{option.label}</span>
                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                   selected === option.id
-                    ? 'bg-[#f0feab] border-[#f0feab]'
+                    ? 'bg-gray-200 border-gray-400'
                     : 'bg-white border-gray-300'
                 }`}>
                   {selected === option.id && (
