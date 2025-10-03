@@ -54,14 +54,14 @@ export default function ResearchDonePage() {
       <EonmedsLogo compact={true} />
       
       {/* Main content */}
-      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-lg mx-auto w-full">
-        <div className="space-y-8">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-4 lg:py-8 max-w-md lg:max-w-lg mx-auto w-full">
+        <div className="space-y-4 lg:space-y-8">
           {medicationPreference === 'recommendation' ? (
             <>
-              <div className="space-y-8">
+              <div className="space-y-4">
                 {/* Title animated in two parts */}
                 <div>
-                  <h1 className={`text-2xl font-medium text-black leading-relaxed transition-all duration-800 ease-out ${
+                  <h1 className={`text-xl lg:text-2xl font-medium text-black leading-tight transition-all duration-800 ease-out ${
                     showLine1 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
                   }`}>
                     {language === 'es' ? 
@@ -72,7 +72,7 @@ export default function ResearchDonePage() {
                 
                 {/* Subtitle animated */}
                 <div>
-                  <p className={`text-2xl font-medium text-black leading-relaxed transition-all duration-800 ease-out ${
+                  <p className={`text-xl lg:text-2xl font-medium text-black leading-tight transition-all duration-800 ease-out ${
                     showLine2 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
                   }`}>
                     {language === 'es' ? 
@@ -84,8 +84,8 @@ export default function ResearchDonePage() {
             </>
           ) : (
             <>
-              <div className="space-y-6">
-                <h1 className={`text-2xl font-medium text-black leading-relaxed transition-all duration-800 ease-out ${
+              <div className="space-y-4">
+                <h1 className={`text-xl lg:text-2xl font-medium text-black leading-tight transition-all duration-800 ease-out ${
                   showLine1 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
                 }`}>
                   {language === 'es' ? 
@@ -93,7 +93,7 @@ export default function ResearchDonePage() {
                     'Nice, it sounds like you\'ve already done your research.'}
                 </h1>
                 
-                <p className={`text-2xl font-medium text-black leading-relaxed transition-all duration-800 ease-out ${
+                <p className={`text-xl lg:text-2xl font-medium text-black leading-tight transition-all duration-800 ease-out ${
                   showLine2 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
                 }`}>
                   {language === 'es' ? 
@@ -107,7 +107,7 @@ export default function ResearchDonePage() {
       </div>
       
       {/* Bottom button */}
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
+      <div className="px-6 lg:px-8 pb-6 lg:pb-8 max-w-md lg:max-w-lg mx-auto w-full">
         <button 
           onClick={handleNext}
           className="w-full bg-black text-white py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 hover:bg-gray-800 transition-colors"
