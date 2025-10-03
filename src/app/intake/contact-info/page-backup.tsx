@@ -7,6 +7,7 @@ import EonmedsLogo from '@/components/EonmedsLogo';
 import IntakePageLayout from '@/components/IntakePageLayout';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
+import { submitCheckpoint, markCheckpointCompleted } from '@/lib/api';
 
 export default function ContactInfoPage() {
   const router = useRouter();
@@ -19,7 +20,6 @@ export default function ContactInfoPage() {
   const [consent, setConsent] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const countries = [
     { code: 'US', name: 'United States', flag: '🇺🇸', dialCode: '+1' },
@@ -39,8 +39,11 @@ export default function ContactInfoPage() {
     // Remove all non-digits
     const digitsOnly = phone.replace(/\D/g, '');
     
-    if (country === 'US' || country === 'PR') {
-      // US and Puerto Rico phone: 10 digits
+    if (country === 'US') {
+      // US phone: 10 digits
+      return digitsOnly.length === 10;
+    } else if (country === 'PR') {
+      // Puerto Rico: 10 digits (area code + 7 digits)
       return digitsOnly.length === 10;
     }
     return false;
@@ -49,8 +52,9 @@ export default function ContactInfoPage() {
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setEmail(value);
-    // Clear error when user starts typing
-    if (emailError) {
+    if (value && !validateEmail(value)) {
+      setEmailError(language === 'es' ? 'Por favor ingrese un email válido' : 'Please enter a valid email');
+    } else {
       setEmailError('');
     }
   };
@@ -80,108 +84,57 @@ export default function ContactInfoPage() {
     if (digitsOnly.length <= 10) {
       const formatted = formatPhoneNumber(digitsOnly);
       setPhone(formatted);
-      // Clear error when user starts typing
-      if (phoneError) {
+      
+      if (digitsOnly.length > 0 && !validatePhone(digitsOnly)) {
+        setPhoneError(language === 'es' ? 'Por favor ingrese un número de teléfono válido de 10 dígitos' : 'Please enter a valid 10-digit phone number');
+      } else {
         setPhoneError('');
       }
     }
   };
 
-  const handleContinue = async () => {
-    // Prevent double submission
-    if (isSubmitting) {
-      console.log('Already submitting...');
-      return;
-    }
-
-    console.log('Starting submission...');
-    console.log('Email:', email, 'Valid:', validateEmail(email));
-    console.log('Phone:', phone, 'Valid:', validatePhone(phone));
-    console.log('Consent:', consent);
-
-    // Validate inputs
+  const handleContinue = () => {
     const isEmailValid = validateEmail(email);
     const isPhoneValid = validatePhone(phone);
     
-    // Set error messages if invalid
     if (!isEmailValid) {
       setEmailError(language === 'es' ? 'Por favor ingrese un email válido' : 'Please enter a valid email');
-      return;
     }
     
     if (!isPhoneValid) {
       setPhoneError(language === 'es' ? 'Por favor ingrese un número de teléfono válido de 10 dígitos' : 'Please enter a valid 10-digit phone number');
-      return;
     }
     
-    if (!consent) {
-      console.log('Consent not checked');
-      return;
-    }
-
-    // All validations passed, proceed with submission
-    setIsSubmitting(true);
-    
-    try {
-      // Save data to session storage
+    if (isEmailValid && isPhoneValid && consent) {
+      // Always ensure +1 prefix for US numbers
       const phoneDigitsOnly = phone.replace(/\D/g, '');
       const formattedPhone = '+1' + phoneDigitsOnly;
+      sessionStorage.setItem('intake_contact', JSON.stringify({ email, phone: formattedPhone }));
       
-      sessionStorage.setItem('intake_contact', JSON.stringify({ 
-        email, 
-        phone: formattedPhone 
-      }));
-      
-      console.log('Data saved to sessionStorage');
-      
-      // Save checkpoint data locally (no API call for now)
+      // Submit personal info checkpoint
       const nameData = sessionStorage.getItem('intake_name');
       const stateData = sessionStorage.getItem('intake_state');
       const dobData = sessionStorage.getItem('intake_dob');
       
       const checkpointData = {
-        checkpointName: 'personal-info',
-        timestamp: new Date().toISOString(),
-        data: {
-          personalInfo: {
-            ...(nameData ? JSON.parse(nameData) : {}),
-            email,
-            phone: formattedPhone,
-            dob: dobData ? JSON.parse(dobData) : null,
-            state: stateData ? JSON.parse(stateData) : null
-          }
+        personalInfo: {
+          ...(nameData ? JSON.parse(nameData) : {}),
+          email,
+          phone: formattedPhone,
+          dob: dobData ? JSON.parse(dobData) : null,
+          state: stateData ? JSON.parse(stateData) : null
         },
-        sessionId: sessionStorage.getItem('intake_session_id') || `session-${Date.now()}`,
-        status: 'partial'
+        timestamp: new Date().toISOString()
       };
       
-      // Save checkpoint locally
-      const existingCheckpoints = JSON.parse(
-        sessionStorage.getItem('intake_checkpoints') || '[]'
-      );
-      existingCheckpoints.push(checkpointData);
-      sessionStorage.setItem('intake_checkpoints', JSON.stringify(existingCheckpoints));
+      // Submit checkpoint without blocking navigation
+      submitCheckpoint('personal-info', checkpointData, 'partial').catch(err => {
+        console.error('Checkpoint submission failed:', err);
+        // Continue anyway - data is saved locally
+      });
+      markCheckpointCompleted('personal-info');
       
-      // Mark checkpoint as completed
-      const completedCheckpoints = JSON.parse(
-        sessionStorage.getItem('completed_checkpoints') || '[]'
-      );
-      if (!completedCheckpoints.includes('personal-info')) {
-        completedCheckpoints.push('personal-info');
-        sessionStorage.setItem('completed_checkpoints', JSON.stringify(completedCheckpoints));
-      }
-      
-      console.log('Checkpoint saved locally');
-      console.log('Navigating to /intake/support-info...');
-      
-      // Navigate to next page
       router.push('/intake/support-info');
-    } catch (error) {
-      console.error('Error during submission:', error);
-      // Even if there's an error, try to navigate
-      router.push('/intake/support-info');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -202,14 +155,14 @@ export default function ContactInfoPage() {
   const continueButton = (
     <button 
       onClick={handleContinue}
-      disabled={!email || !phone || !consent || isSubmitting}
+      disabled={!email || !phone || !consent}
       className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-        email && phone && consent && !isSubmitting
+        email && phone && consent 
           ? 'bg-black text-white hover:bg-gray-900' 
           : 'bg-gray-300 text-gray-500 cursor-not-allowed'
       }`}
     >
-      <span>{isSubmitting ? (language === 'es' ? 'Procesando...' : 'Processing...') : (language === 'es' ? 'Continuar' : 'Continue')}</span>
+      <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
       </svg>
@@ -334,8 +287,8 @@ export default function ContactInfoPage() {
                   </svg>
                 )}
               </button>
-              <div className="ml-3 text-sm text-gray-600 leading-relaxed">
-                {language === 'es'
+              <div className="text-sm font-light ml-3">
+                {language === 'es' 
                   ? <>Acepto la <a href="#" className="text-[#4fa87f] underline">Política de Privacidad</a> y autorizo recibir comunicaciones importantes por correo electrónico y mensajes de texto (SMS) de EONMeds/EONPro y afiliados con respecto a mi tratamiento.</>
                   : <>I accept the <a href="#" className="text-[#4fa87f] underline">Privacy Policy</a> and I authorize receiving important communications via email and text messages (SMS) from EONMeds/EONPro and affiliates regarding my treatment.</>
                 }
