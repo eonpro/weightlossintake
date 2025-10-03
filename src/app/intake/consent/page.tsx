@@ -92,7 +92,7 @@ export default function ConsentPage() {
           <div className="border border-[#4fa87f] bg-[#f9f9f9] rounded-2xl p-4 space-y-3">
             <label className="flex items-start space-x-3 cursor-pointer">
               <div className="mt-0.5 flex-shrink-0">
-                <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
                   agreed ? 'bg-[#4fa87f] border-[#4fa87f]' : 'bg-white border-gray-300'
                 }`}>
                   {agreed && (

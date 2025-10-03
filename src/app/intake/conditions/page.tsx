@@ -87,7 +87,7 @@ export default function ConditionsPage() {
                 }`}
               >
                 <div className="flex items-center">
-                  <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
+                  <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center flex-shrink-0 ${
                     selectedConditions.includes(condition)
                       ? 'border-[#4fa87f] bg-[#e8f4eb]0'
                       : 'border-gray-300'

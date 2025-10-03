@@ -71,7 +71,7 @@ export default function MentalHealthPage() {
               }`}
             >
               <div className="flex items-center">
-                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
+                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center flex-shrink-0 ${
                   selected === 'yes'
                     ? 'border-[#f0feab] bg-[#f0feab]'
                     : 'border-gray-300'
@@ -97,7 +97,7 @@ export default function MentalHealthPage() {
               }`}
             >
               <div className="flex items-center">
-                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
+                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center flex-shrink-0 ${
                   selected === 'no'
                     ? 'border-[#f0feab] bg-[#f0feab]'
                     : 'border-gray-300'

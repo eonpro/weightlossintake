@@ -58,7 +58,7 @@ export default function MedicationPreferencePage() {
               }`}
             >
               <div className="flex items-center">
-                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
+                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center flex-shrink-0 ${
                   selected === 'recommendation'
                     ? 'border-[#f0feab] bg-[#f0feab]'
                     : 'border-gray-300'
@@ -85,7 +85,7 @@ export default function MedicationPreferencePage() {
               }`}
             >
               <div className="flex items-center">
-                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${
+                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center flex-shrink-0 ${
                   selected === 'have_in_mind'
                     ? 'border-[#f0feab] bg-[#f0feab]'
                     : 'border-gray-300'

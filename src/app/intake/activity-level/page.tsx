@@ -96,7 +96,7 @@ export default function ActivityLevelPage() {
                 }`}
               >
                 <div className="flex items-start">
-                  <div className={`w-5 h-5 rounded border-2 mr-3 mt-0.5 flex items-center justify-center ${
+                  <div className={`w-5 h-5 rounded border-2 mr-3 mt-0.5 flex items-center justify-center flex-shrink-0 ${
                     selected === level.value
                       ? 'border-[#f0feab] bg-[#f0feab]'
                       : 'border-gray-300'

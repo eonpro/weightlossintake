@@ -141,7 +141,7 @@ export default function StatePage() {
           <div className="mt-6">
             <label className="flex items-start cursor-pointer" onClick={() => setTermsAccepted(!termsAccepted)}>
               <div className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
-                termsAccepted ? 'bg-[#f0feab] border-[#f0feab]' : 'border-gray-300'
+                termsAccepted ? 'bg-gray-200 border-gray-400' : 'border-gray-300'
               }`}>
                 {termsAccepted && (
                   <svg className="w-3 h-3 text-black" fill="currentColor" viewBox="0 0 20 20">

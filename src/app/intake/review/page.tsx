@@ -110,10 +110,9 @@ export default function ReviewPage() {
               const encodedData = btoa(JSON.stringify(qualificationData));
               
               // Redirect to checkout platform with data in URL
-              const checkoutUrl = process.env.NEXT_PUBLIC_CHECKOUT_URL 
-                ? `${process.env.NEXT_PUBLIC_CHECKOUT_URL}?q=${encodedData}`
-                : `http://localhost:5173?q=${encodedData}`;
+              const checkoutUrl = `https://eonmedscheckout.vercel.app?q=${encodedData}`;
               
+              console.log('Redirecting to checkout:', checkoutUrl);
               window.location.href = checkoutUrl;
             }, 1500);
           }

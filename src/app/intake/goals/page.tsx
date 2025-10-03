@@ -91,9 +91,9 @@ export default function GoalsPage() {
                 }`}
               >
                 <div className="flex items-center">
-                  <div className={`w-5 h-5 mr-3 rounded border-2 flex items-center justify-center ${
+                  <div className={`w-5 h-5 mr-3 rounded border-2 flex items-center justify-center flex-shrink-0 ${
                     selected.includes(option)
-                      ? 'bg-[#f0feab] border-[#f0feab]'
+                      ? 'bg-gray-200 border-gray-400'
                       : 'border-gray-300'
                   }`}>
                     {selected.includes(option) && (
