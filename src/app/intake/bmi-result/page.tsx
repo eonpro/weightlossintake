@@ -65,7 +65,9 @@ export default function BMIResultPage() {
         timestamp: new Date().toISOString()
       };
       
-      submitCheckpoint('bmi-calculation', checkpointData, 'partial');
+      submitCheckpoint('bmi-calculation', checkpointData, 'partial').catch(err => {
+        console.error('BMI checkpoint submission failed:', err);
+      });
       markCheckpointCompleted('bmi-calculation');
     }
     

@@ -92,7 +92,7 @@ export default function ContactInfoPage() {
     }
   };
 
-  const handleContinue = async () => {
+  const handleContinue = () => {
     const isEmailValid = validateEmail(email);
     const isPhoneValid = validatePhone(phone);
     
@@ -126,7 +126,11 @@ export default function ContactInfoPage() {
         timestamp: new Date().toISOString()
       };
       
-      await submitCheckpoint('personal-info', checkpointData, 'partial');
+      // Submit checkpoint without blocking navigation
+      submitCheckpoint('personal-info', checkpointData, 'partial').catch(err => {
+        console.error('Checkpoint submission failed:', err);
+        // Continue anyway - data is saved locally
+      });
       markCheckpointCompleted('personal-info');
       
       router.push('/intake/support-info');
@@ -172,7 +176,7 @@ export default function ContactInfoPage() {
                 placeholder="Email"
                 value={email}
                 onChange={handleEmailChange}
-                className={`w-full p-4 text-base md:text-lg font-medium border rounded-2xl focus:outline-none ${
+                className={`w-full p-4 text-[16px] md:text-lg font-medium border rounded-2xl focus:outline-none ${
                   emailError ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-gray-400'
                 }`}
               />
@@ -183,15 +187,15 @@ export default function ContactInfoPage() {
 
             {/* Phone Input with Country Code */}
             <div>
-              <div className="flex space-x-2">
-                <div className="relative">
+              <div className="flex space-x-2 w-full overflow-hidden">
+                <div className="relative flex-shrink-0">
                   <button 
                     type="button"
                     onClick={() => setShowCountryDropdown(!showCountryDropdown)}
                     className="flex items-center space-x-2 p-4 border border-gray-200 rounded-2xl"
                   >
                     <span className="text-2xl">{selectedCountry.flag}</span>
-                    <span className="text-base font-medium">+1</span>
+                    <span className="text-[16px] md:text-base font-medium">+1</span>
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                     </svg>
@@ -226,7 +230,7 @@ export default function ContactInfoPage() {
                   value={phone}
                   onChange={handlePhoneChange}
                   inputMode="numeric"
-                  className={`flex-1 p-4 text-base md:text-lg border rounded-2xl focus:outline-none ${
+                  className={`flex-1 min-w-0 p-4 text-[16px] md:text-lg border rounded-2xl focus:outline-none ${
                     phoneError ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-gray-400'
                   }`}
                 />

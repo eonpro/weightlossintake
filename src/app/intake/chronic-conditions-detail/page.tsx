@@ -189,7 +189,7 @@ export default function ChronicConditionsDetailPage() {
     setSelectedConditions(selectedConditions.filter(c => c !== condition));
   };
 
-  const handleContinue = async () => {
+  const handleContinue = () => {
     sessionStorage.setItem('chronic_conditions', JSON.stringify(selectedConditions));
     
     // Submit medical history checkpoint
@@ -198,7 +198,9 @@ export default function ChronicConditionsDetailPage() {
       timestamp: new Date().toISOString()
     };
     
-    await submitCheckpoint('medical-history', checkpointData, 'partial');
+    submitCheckpoint('medical-history', checkpointData, 'partial').catch(err => {
+      console.error('Medical history checkpoint submission failed:', err);
+    });
     markCheckpointCompleted('medical-history');
     
     router.push('/intake/digestive-conditions');
