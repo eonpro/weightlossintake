@@ -131,7 +131,7 @@ export default function StatePage() {
               </select>
               <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7 7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
             </div>
@@ -141,7 +141,7 @@ export default function StatePage() {
           <div className="mt-6">
             <label className="flex items-start cursor-pointer" onClick={() => setTermsAccepted(!termsAccepted)}>
               <div className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
-                termsAccepted ? 'bg-gray-200 border-gray-400' : 'border-gray-300'
+                termsAccepted ? 'bg-[#f0feab] border-[#f0feab]' : 'border-gray-300'
               }`}>
                 {termsAccepted && (
                   <svg className="w-3 h-3 text-black" fill="currentColor" viewBox="0 0 20 20">
