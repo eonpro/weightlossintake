@@ -80,16 +80,17 @@ export async function submitCheckpoint(
     existingCheckpoints.push(checkpointData);
     sessionStorage.setItem('intake_checkpoints', JSON.stringify(existingCheckpoints));
 
-    // Send to API
-    const response = await fetch(`${API_BASE_URL}/intake/checkpoint`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(checkpointData)
-    });
+    // Send to API (commented out until backend is ready)
+    // const response = await fetch(`${API_BASE_URL}/intake/checkpoint`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(checkpointData)
+    // });
 
-    return response.ok;
+    // return response.ok;
+    return true; // Return true for now since data is saved locally
   } catch (error) {
     console.error('Checkpoint submission failed:', error);
     // Data is still saved locally
@@ -104,24 +105,31 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
   error?: string;
 }> {
   try {
-    const response = await fetch(`${API_BASE_URL}/intake/submit`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...intakeData,
-        submittedAt: new Date().toISOString()
-      })
-    });
+    // API call commented out until backend is ready
+    // const response = await fetch(`${API_BASE_URL}/intake/submit`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     ...intakeData,
+    //     submittedAt: new Date().toISOString()
+    //   })
+    // });
 
-    if (!response.ok) {
-      throw new Error(`Submission failed: ${response.statusText}`);
-    }
+    // if (!response.ok) {
+    //   throw new Error(`Submission failed: ${response.statusText}`);
+    // }
 
-    const result = await response.json();
+    // const result = await response.json();
     
-    // Clear local storage after successful submission
+    // For now, simulate successful submission
+    const result = {
+      success: true,
+      intakeId: `INTAKE-${Date.now()}`
+    };
+    
+    // Save submission status locally
     if (result.success) {
       sessionStorage.setItem('intake_submitted', 'true');
       sessionStorage.setItem('intake_id', result.intakeId);

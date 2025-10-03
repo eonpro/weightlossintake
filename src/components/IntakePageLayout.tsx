@@ -38,14 +38,19 @@ export default function IntakePageLayout({
           </div>
         </div>
         
-        {/* Fixed button area at bottom */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-          {button}
-          {copyright && (
-            <div className="mt-3">
-              {copyright}
-            </div>
-          )}
+        {/* Fixed button area at bottom with gradient */}
+        <div className="fixed bottom-0 left-0 right-0">
+          {/* Gradient overlay for natural fade - taller for smoother transition */}
+          <div className="absolute bottom-full h-16 w-full bg-gradient-to-t from-white via-white/95 to-transparent pointer-events-none"></div>
+          {/* Button container */}
+          <div className="bg-white px-6 pt-2 pb-4">
+            {button}
+            {copyright && (
+              <div className="mt-3">
+                {copyright}
+              </div>
+            )}
+          </div>
         </div>
       </div>
       
