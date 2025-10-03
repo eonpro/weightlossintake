@@ -8,6 +8,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useEnterNavigation } from '@/hooks/useEnterNavigation';
 import EonmedsLogo from '@/components/EonmedsLogo';
+import ViewportAwareLayout from '@/components/ViewportAwareLayout';
 
 // Dynamic import to avoid SSR issues
 const IntroLottie = dynamic(() => import('@/components/IntroLottie'), {
@@ -56,59 +57,57 @@ export default function Home() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-white flex flex-col">
-      {/* Yellow progress bar at top */}
-      <div className="w-full h-1 bg-[#f0feab]"></div>
-      
-      {/* Spacer to match back button area on other pages */}
-      <div className="h-16"></div>
-      
-      {/* EONMeds Logo */}
-      <EonmedsLogo />
-      
-      {/* Main content - single container with consistent width */}
-      <div className="flex-1 flex flex-col items-center justify-between">
-        <div className="w-full max-w-md lg:max-w-2xl px-6 lg:px-8 mx-auto">
-          {/* Title and subtitle */}
-          <div className="text-left pt-4 lg:pt-12 mb-6 lg:mb-12">
-            <h1 className="text-3xl lg:text-4xl font-medium text-[#4fa87f] leading-none mb-2 lg:mb-4">
-              {t('landing.title')}
-            </h1>
-            <p className="text-xl lg:text-2xl text-black font-normal leading-tight">
-              {t('landing.subtitle')}
-            </p>
-          </div>
-          
-        </div>
+  // Progress bar component
+  const progressBar = <div className="w-full h-1 bg-[#f0feab]"></div>;
+  
+  // Logo component
+  const logo = <EonmedsLogo />;
+  
+  // Button with disclaimers
+  const buttonWithDisclaimer = (
+    <>
+      {/* Privacy and terms text - closer to button */}
+      <div className="space-y-2 mb-4">
+        <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
+          {t('landing.disclaimer1')}
+          <a href="#" className="text-gray-400 underline">{t('landing.disclaimer.privacy')}</a>
+          {t('landing.disclaimer1.end')}
+        </p>
         
-        {/* Bottom button and disclaimer text - same container width */}
-        <div className="w-full max-w-md lg:max-w-2xl px-6 lg:px-8 mx-auto pb-4">
-          {/* Privacy and terms text - closer to button */}
-          <div className="space-y-2 mb-4">
-            <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
-              {t('landing.disclaimer1')}
-              <a href="#" className="text-gray-400 underline">{t('landing.disclaimer.privacy')}</a>
-              {t('landing.disclaimer1.end')}
-            </p>
-            
-            <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
-              {t('landing.disclaimer2.start')}
-              <a href="#" className="text-gray-400 underline">{t('landing.disclaimer.terms')}</a>
-              {t('landing.disclaimer2.end')}
-            </p>
-          </div>
-          
-          <button 
-            onClick={handleContinue}
-            className="w-full bg-black text-white py-4 rounded-full text-base font-medium flex items-center justify-center gap-3 hover:bg-gray-900 transition-colors">
-            <span>{t('landing.button.start')}</span>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </button>
-        </div>
+        <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
+          {t('landing.disclaimer2.start')}
+          <a href="#" className="text-gray-400 underline">{t('landing.disclaimer.terms')}</a>
+          {t('landing.disclaimer2.end')}
+        </p>
       </div>
-    </div>
+      
+      <button 
+        onClick={handleContinue}
+        className="w-full bg-black text-white py-4 rounded-full text-base font-medium flex items-center justify-center gap-3 hover:bg-gray-900 transition-colors">
+        <span>{t('landing.button.start')}</span>
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </>
+  );
+
+  return (
+    <ViewportAwareLayout
+      progressBar={progressBar}
+      logo={logo}
+      button={buttonWithDisclaimer}
+      compactMode={true}
+    >
+      {/* Title and subtitle */}
+      <div className="text-left title-spacing">
+        <h1 className="text-3xl lg:text-4xl font-medium text-[#4fa87f] leading-none mb-2 lg:mb-4">
+          {t('landing.title')}
+        </h1>
+        <p className="text-xl lg:text-2xl text-black font-normal leading-tight">
+          {t('landing.subtitle')}
+        </p>
+      </div>
+    </ViewportAwareLayout>
   );
 }
