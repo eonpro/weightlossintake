@@ -108,7 +108,7 @@ export default function ActivityLevelPage() {
                     )}
                   </div>
                   <div>
-                    <div className="text-base lg:text-lg font-medium">{level.label}</div>
+                    <div className="text-[16px] lg:text-lg font-medium leading-tight">{level.label}</div>
                     {level.description && (
                       <div className="text-sm text-gray-500 mt-1">{level.description}</div>
                     )}

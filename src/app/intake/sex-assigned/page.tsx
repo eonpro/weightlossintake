@@ -75,7 +75,7 @@ export default function SexAssignedPage() {
                     </svg>
                   )}
                 </div>
-                <span className="text-base lg:text-lg font-medium">{t('sex.man')}</span>
+                <span className="text-[16px] lg:text-lg font-medium leading-tight">{t('sex.man')}</span>
               </div>
             </button>
             
@@ -99,7 +99,7 @@ export default function SexAssignedPage() {
                     </svg>
                   )}
                 </div>
-                <span className="text-base lg:text-lg font-medium">{t('sex.woman')}</span>
+                <span className="text-[16px] lg:text-lg font-medium leading-tight">{t('sex.woman')}</span>
               </div>
             </button>
           </div>

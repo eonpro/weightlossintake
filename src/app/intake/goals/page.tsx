@@ -102,7 +102,7 @@ export default function GoalsPage() {
                       </svg>
                     )}
                   </div>
-                  <span className="text-base lg:text-lg font-medium">{t(option)}</span>
+                  <span className="text-[16px] lg:text-lg font-medium leading-tight">{t(option)}</span>
                 </div>
               </button>
             ))}

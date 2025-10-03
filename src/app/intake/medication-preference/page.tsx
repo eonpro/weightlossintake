@@ -69,7 +69,7 @@ export default function MedicationPreferencePage() {
                     </svg>
                   )}
                 </div>
-                <span className="text-base lg:text-lg font-medium whitespace-nowrap">
+                <span className="text-[16px] lg:text-lg font-medium leading-tight">
                   {t('medication.option1')}
                 </span>
               </div>
@@ -96,7 +96,7 @@ export default function MedicationPreferencePage() {
                     </svg>
                   )}
                 </div>
-                <span className="text-base lg:text-lg font-medium whitespace-nowrap">
+                <span className="text-[16px] lg:text-lg font-medium leading-tight">
                   {t('medication.option2')}
                 </span>
               </div>

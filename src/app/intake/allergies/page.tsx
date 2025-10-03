@@ -231,7 +231,7 @@ export default function AllergiesPage() {
                       </svg>
                     )}
                   </div>
-                  <span className="text-base lg:text-lg font-medium">
+                  <span className="text-[16px] lg:text-lg font-medium leading-tight">
                     {language === 'es' 
                       ? 'No tengo alergias a medicamentos o suplementos'
                       : 'I have no allergies to medications or supplements'}

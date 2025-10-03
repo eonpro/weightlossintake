@@ -115,7 +115,7 @@ export default function MentalHealthConditionsPage() {
                     )}
                   </div>
                   <div>
-                    <span className="text-base lg:text-lg font-medium">{condition.label}</span>
+                    <span className="text-[16px] lg:text-lg font-medium leading-tight">{condition.label}</span>
                     {condition.subtext && (
                       <div className="text-sm text-gray-500 mt-0.5">{condition.subtext}</div>
                     )}

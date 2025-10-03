@@ -82,7 +82,7 @@ export default function MentalHealthPage() {
                     </svg>
                   )}
                 </div>
-                <span className="text-base lg:text-lg font-medium">
+                <span className="text-[16px] lg:text-lg font-medium leading-tight">
                   {language === 'es' ? 'Sí' : 'Yes'}
                 </span>
               </div>
@@ -108,7 +108,7 @@ export default function MentalHealthPage() {
                     </svg>
                   )}
                 </div>
-                <span className="text-base lg:text-lg font-medium">
+                <span className="text-[16px] lg:text-lg font-medium leading-tight">
                   {language === 'es' ? 'No' : 'No'}
                 </span>
               </div>
