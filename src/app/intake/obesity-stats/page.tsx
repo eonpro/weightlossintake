@@ -60,9 +60,9 @@ export default function ObesityStatsPage() {
       {/* EONMeds Logo */}
       <EonmedsLogo compact={true} />
 
-      {/* Image and Reference */}
-      <div className="flex-1 flex flex-col items-center justify-center p-6">
-        <div className={`relative w-full max-w-md transition-all duration-1000 ease-out transform ${
+      {/* Image and Reference - matching support-info page structure */}
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-lg mx-auto w-full">
+        <div className={`relative w-full transition-all duration-1000 ease-out transform ${
           showContainer ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-95'
         }`}>
           <Image
@@ -73,7 +73,7 @@ export default function ObesityStatsPage() {
             alt="Obesity statistics"
             width={500}
             height={600}
-            className="w-3/4 md:w-full h-auto mx-auto"
+            className="w-full h-auto"
             priority
           />
           

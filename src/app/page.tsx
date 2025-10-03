@@ -83,9 +83,9 @@ export default function Home() {
         </div>
         
         {/* Bottom button and disclaimer text - same container width */}
-        <div className="w-full max-w-md lg:max-w-2xl px-6 lg:px-8 mx-auto pb-10">
+        <div className="w-full max-w-md lg:max-w-2xl px-6 lg:px-8 mx-auto pb-6">
           {/* Privacy and terms text - closer to button */}
-          <div className="space-y-5 mb-8">
+          <div className="space-y-3 mb-6">
             <p className="text-[9px] lg:text-[11px] text-gray-400 leading-snug">
               {t('landing.disclaimer1')}
               <a href="#" className="text-gray-400 underline">{t('landing.disclaimer.privacy')}</a>
