@@ -71,7 +71,7 @@ export default function Home() {
       <div className="flex-1 flex flex-col items-center justify-between">
         <div className="w-full max-w-md lg:max-w-2xl px-6 lg:px-8 mx-auto">
           {/* Title and subtitle */}
-          <div className="text-left pt-8 lg:pt-12 mb-12">
+          <div className="text-left pt-4 lg:pt-12 mb-6 lg:mb-12">
             <h1 className="text-3xl lg:text-4xl font-medium text-[#4fa87f] leading-none mb-2 lg:mb-4">
               {t('landing.title')}
             </h1>
@@ -83,16 +83,16 @@ export default function Home() {
         </div>
         
         {/* Bottom button and disclaimer text - same container width */}
-        <div className="w-full max-w-md lg:max-w-2xl px-6 lg:px-8 mx-auto pb-6">
+        <div className="w-full max-w-md lg:max-w-2xl px-6 lg:px-8 mx-auto pb-4">
           {/* Privacy and terms text - closer to button */}
-          <div className="space-y-3 mb-6">
-            <p className="text-[9px] lg:text-[11px] text-gray-400 leading-snug">
+          <div className="space-y-2 mb-4">
+            <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
               {t('landing.disclaimer1')}
               <a href="#" className="text-gray-400 underline">{t('landing.disclaimer.privacy')}</a>
               {t('landing.disclaimer1.end')}
             </p>
             
-            <p className="text-[9px] lg:text-[11px] text-gray-400 leading-snug">
+            <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
               {t('landing.disclaimer2.start')}
               <a href="#" className="text-gray-400 underline">{t('landing.disclaimer.terms')}</a>
               {t('landing.disclaimer2.end')}
