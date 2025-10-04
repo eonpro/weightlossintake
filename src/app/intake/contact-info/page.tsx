@@ -255,7 +255,7 @@ export default function ContactInfoPage() {
                 placeholder="Email"
                 value={email}
                 onChange={handleEmailChange}
-                className={`w-full p-4 text-[16px] md:text-lg font-medium border rounded-2xl focus:outline-none ${
+                className={`w-full p-4 text-[16px] md:text-lg font-medium placeholder:font-medium border rounded-2xl focus:outline-none ${
                   emailError ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-gray-400'
                 }`}
               />
@@ -309,7 +309,7 @@ export default function ContactInfoPage() {
                   value={phone}
                   onChange={handlePhoneChange}
                   inputMode="numeric"
-                  className={`flex-1 min-w-0 p-4 text-[16px] md:text-lg font-medium border rounded-2xl focus:outline-none ${
+                  className={`flex-1 min-w-0 p-4 text-[16px] md:text-lg font-medium placeholder:font-medium border rounded-2xl focus:outline-none ${
                     phoneError ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-gray-400'
                   }`}
                 />
