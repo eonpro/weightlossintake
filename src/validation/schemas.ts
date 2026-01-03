@@ -249,9 +249,9 @@ export function validateStep(schemaType: SchemaType, data: any): ValidationResul
   }
 
   const errors: Record<string, string> = {};
-  result.error.errors.forEach((err) => {
-    const path = err.path.join('.');
-    errors[path || 'root'] = err.message;
+  result.error.issues.forEach((issue) => {
+    const path = issue.path.join('.');
+    errors[path || 'root'] = issue.message;
   });
 
   return { success: false, errors };
@@ -260,6 +260,6 @@ export function validateStep(schemaType: SchemaType, data: any): ValidationResul
 export function validateField(schema: z.ZodSchema, value: any): string | null {
   const result = schema.safeParse(value);
   if (result.success) return null;
-  return result.error.errors[0]?.message || 'Invalid value';
+  return result.error.issues[0]?.message || 'Invalid value';
 }
 
