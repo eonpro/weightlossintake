@@ -13,12 +13,31 @@ export default function ThyroidCancerPersonalPage() {
   const { language } = useLanguage();
   const [selected, setSelected] = useState('');
 
+  // Get next page based on selected family conditions
+  const getNextPage = () => {
+    const conditions = JSON.parse(sessionStorage.getItem('family_conditions') || '[]');
+    const conditionOrder = ['men', 'pancreatitis', 'gastroparesis', 'diabetes_t2'];
+    const routeMap: { [key: string]: string } = {
+      'men': '/intake/men-personal',
+      'pancreatitis': '/intake/pancreatitis-personal',
+      'gastroparesis': '/intake/gastroparesis-personal',
+      'diabetes_t2': '/intake/diabetes-personal',
+    };
+    
+    for (const condition of conditionOrder) {
+      if (conditions.includes(condition)) {
+        return routeMap[condition];
+      }
+    }
+    return '/intake/pregnancy';
+  };
+
   // Auto-advance on selection
   const handleSelect = (value: string) => {
     setSelected(value);
     sessionStorage.setItem('personal_thyroid_cancer', value);
     setTimeout(() => {
-      router.push('/intake/men-personal');
+      router.push(getNextPage());
     }, 150);
   };
 

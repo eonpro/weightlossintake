@@ -47,8 +47,33 @@ export default function FamilyConditionsPage() {
   const handleContinue = () => {
     sessionStorage.setItem('family_conditions', JSON.stringify(selectedConditions));
     
-    // Always go through all the follow-up questions in sequence
-    router.push('/intake/thyroid-cancer-personal');
+    // If "none" selected, skip all follow-up questions and go to pregnancy
+    if (selectedConditions.includes('none')) {
+      router.push('/intake/pregnancy');
+      return;
+    }
+    
+    // Route to the first selected condition's follow-up page
+    // Order: thyroid_cancer → men → pancreatitis → gastroparesis → diabetes_t2
+    const conditionOrder = ['thyroid_cancer', 'men', 'pancreatitis', 'gastroparesis', 'diabetes_t2'];
+    const routeMap: { [key: string]: string } = {
+      'thyroid_cancer': '/intake/thyroid-cancer-personal',
+      'men': '/intake/men-personal',
+      'pancreatitis': '/intake/pancreatitis-personal',
+      'gastroparesis': '/intake/gastroparesis-personal',
+      'diabetes_t2': '/intake/diabetes-personal',
+    };
+    
+    // Find the first selected condition that has a follow-up page
+    for (const condition of conditionOrder) {
+      if (selectedConditions.includes(condition)) {
+        router.push(routeMap[condition]);
+        return;
+      }
+    }
+    
+    // If only long_qt was selected (no follow-up page), go to pregnancy
+    router.push('/intake/pregnancy');
   };
 
   return (

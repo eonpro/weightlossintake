@@ -13,12 +13,29 @@ export default function PancreatitisPersonalPage() {
   const { language } = useLanguage();
   const [selected, setSelected] = useState('');
 
+  // Get next page based on selected family conditions
+  const getNextPage = () => {
+    const conditions = JSON.parse(sessionStorage.getItem('family_conditions') || '[]');
+    const conditionOrder = ['gastroparesis', 'diabetes_t2'];
+    const routeMap: { [key: string]: string } = {
+      'gastroparesis': '/intake/gastroparesis-personal',
+      'diabetes_t2': '/intake/diabetes-personal',
+    };
+    
+    for (const condition of conditionOrder) {
+      if (conditions.includes(condition)) {
+        return routeMap[condition];
+      }
+    }
+    return '/intake/pregnancy';
+  };
+
   // Auto-advance on selection
   const handleSelect = (value: string) => {
     setSelected(value);
     sessionStorage.setItem('personal_pancreatitis', value);
     setTimeout(() => {
-      router.push('/intake/gastroparesis-personal');
+      router.push(getNextPage());
     }, 150);
   };
 

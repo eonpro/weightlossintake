@@ -13,12 +13,23 @@ export default function GastroparesisPersonalPage() {
   const { language } = useLanguage();
   const [selected, setSelected] = useState('');
 
+  // Get next page based on selected family conditions
+  const getNextPage = () => {
+    const conditions = JSON.parse(sessionStorage.getItem('family_conditions') || '[]');
+    
+    // Check if diabetes_t2 was selected
+    if (conditions.includes('diabetes_t2')) {
+      return '/intake/diabetes-personal';
+    }
+    return '/intake/pregnancy';
+  };
+
   // Auto-advance on selection
   const handleSelect = (value: string) => {
     setSelected(value);
     sessionStorage.setItem('personal_gastroparesis', value);
     setTimeout(() => {
-      router.push('/intake/diabetes-personal');
+      router.push(getNextPage());
     }, 150);
   };
 
