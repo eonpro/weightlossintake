@@ -75,19 +75,32 @@ export default function IntakeLayout({ children }: IntakeLayoutProps) {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if this is a page refresh (not initial load or navigation)
-    const navigationType = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+    // Check if this is a page refresh using performance API
+    const navEntries = performance.getEntriesByType('navigation');
+    const navigationType = navEntries.length > 0 ? (navEntries[0] as PerformanceNavigationTiming).type : null;
     
-    if (navigationType?.type === 'reload') {
-      // Clear all intake data on refresh
-      INTAKE_STORAGE_KEYS.forEach(key => {
-        sessionStorage.removeItem(key);
-      });
+    // Only clear and redirect if:
+    // 1. It's a reload (refresh)
+    // 2. AND there was previous data (user was in the middle of intake)
+    if (navigationType === 'reload') {
+      const hadPreviousData = sessionStorage.getItem('intake_goals') || 
+                              sessionStorage.getItem('intake_name') ||
+                              sessionStorage.getItem('intake_state');
       
-      // Redirect to the start of the intake
-      router.replace('/');
-      return;
+      if (hadPreviousData) {
+        // Clear all intake data on refresh
+        INTAKE_STORAGE_KEYS.forEach(key => {
+          sessionStorage.removeItem(key);
+        });
+        
+        // Redirect to the start of the intake
+        router.replace('/');
+        return;
+      }
     }
+    
+    // Set flag to indicate legitimate navigation
+    sessionStorage.setItem('intake_navigation_flag', 'true');
 
     // Warning message based on language
     const warningMessage = language === 'es'

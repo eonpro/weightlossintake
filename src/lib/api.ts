@@ -291,19 +291,26 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
 export function collectIntakeData(): IntakeSubmission {
   const sessionId = getSessionId();
   
-  // Parse stored data
+  // Parse stored data - using CORRECT sessionStorage keys
   const nameData = sessionStorage.getItem('intake_name');
   const contactData = sessionStorage.getItem('intake_contact');
   const dobData = sessionStorage.getItem('intake_dob');
   const addressData = sessionStorage.getItem('intake_address');
-  const weightData = sessionStorage.getItem('intake_weight');
-  const goalsData = sessionStorage.getItem('goals');
+  
+  // Weight data is stored in separate keys
+  const currentWeight = sessionStorage.getItem('intake_current_weight');
+  const idealWeight = sessionStorage.getItem('intake_ideal_weight');
+  const heightData = sessionStorage.getItem('intake_height');
+  
+  // Goals stored with 'intake_' prefix
+  const goalsData = sessionStorage.getItem('intake_goals');
   const activityData = sessionStorage.getItem('activity_level');
   
   // Medical history
   const chronicConditions = sessionStorage.getItem('chronic_conditions');
   const digestiveConditions = sessionStorage.getItem('digestive_conditions');
-  const medications = sessionStorage.getItem('medications_list');
+  // Medications stored as 'current_medications', not 'medications_list'
+  const medications = sessionStorage.getItem('current_medications');
   const allergies = sessionStorage.getItem('allergies');
   const mentalHealth = sessionStorage.getItem('mental_health_conditions');
   
@@ -313,17 +320,26 @@ export function collectIntakeData(): IntakeSubmission {
   const sideEffects = sessionStorage.getItem('common_side_effects');
   const medicationPref = sessionStorage.getItem('medication_preference');
   
+  // Build weight object from separate keys
+  const parsedHeight = heightData ? JSON.parse(heightData) : {};
+  const weightObject = {
+    currentWeight: currentWeight ? parseInt(currentWeight) : null,
+    idealWeight: idealWeight ? parseInt(idealWeight) : null,
+    heightFeet: parsedHeight.feet || null,
+    heightInches: parsedHeight.inches || null
+  };
+  
   const intakeData: IntakeSubmission = {
     sessionId,
     personalInfo: {
       ...(nameData ? JSON.parse(nameData) : {}),
       ...(contactData ? JSON.parse(contactData) : {}),
-      dob: dobData ? JSON.parse(dobData) : null
+      dob: dobData || null
     },
     address: addressData ? JSON.parse(addressData) : null,
     medicalProfile: {
-      weight: weightData ? JSON.parse(weightData) : null,
-      bmi: calculateBMI(weightData) || undefined,
+      weight: weightObject,
+      bmi: calculateBMIFromObject(weightObject) || undefined,
       goals: goalsData ? JSON.parse(goalsData) : [],
       activityLevel: activityData || ''
     },
@@ -350,14 +366,13 @@ export function collectIntakeData(): IntakeSubmission {
   return intakeData;
 }
 
-// Helper function to calculate BMI
-function calculateBMI(weightDataStr: string | null): number | null {
-  if (!weightDataStr) return null;
+// Helper function to calculate BMI from weight object
+function calculateBMIFromObject(weightData: { currentWeight: number | null; heightFeet: number | null; heightInches: number | null }): number | null {
+  if (!weightData) return null;
   
   try {
-    const weightData = JSON.parse(weightDataStr);
     const weight = weightData.currentWeight;
-    const heightInches = (weightData.heightFeet || 0) * 12 + (weightData.heightInches || 0);
+    const heightInches = ((weightData.heightFeet || 0) * 12) + (weightData.heightInches || 0);
     
     if (weight && heightInches) {
       const bmi = (weight / (heightInches * heightInches)) * 703;
