@@ -115,21 +115,21 @@ export default function ViewportAwareLayout({
         </div>
       )}
       
-      {/* Logo if provided - extra top margin if no back button to clear language selector */}
-      {logo && (
-        <div className={backButton ? dynamicStyles.logoMargin : 'mt-14 lg:mt-16'}>
-          {logo}
-        </div>
-      )}
-      
-      {/* Mobile Layout with smart spacing */}
-      <div className="lg:hidden flex flex-col flex-1">
-        {/* Content area that adapts to available space */}
+      {/* Main content wrapper - consistent alignment on all screen sizes */}
+      <div className="flex-1 flex flex-col">
+        {/* Logo if provided - extra top margin if no back button to clear language selector */}
+        {logo && (
+          <div className={backButton ? dynamicStyles.logoMargin : 'mt-14 lg:mt-16'}>
+            {logo}
+          </div>
+        )}
+        
+        {/* Content area - same max-width as logo for alignment */}
         <div 
-          className="flex-1 overflow-y-auto px-6"
+          className="flex-1 overflow-y-auto px-6 lg:px-8"
           style={{ paddingBottom: `${dynamicStyles.scrollPadding}px` }}
         >
-          <div className={`${dynamicStyles.contentPadding} ${dynamicStyles.elementSpacing}`}>
+          <div className={`max-w-md lg:max-w-2xl mx-auto w-full ${dynamicStyles.contentPadding} ${dynamicStyles.elementSpacing}`}>
             {/* Apply title spacing class if in compact mode */}
             {compactMode ? (
               <div className={dynamicStyles.titleSpacing}>
@@ -138,26 +138,9 @@ export default function ViewportAwareLayout({
             ) : (
               children
             )}
-          </div>
-        </div>
-        
-        {/* Fixed button area - simple gradient fade */}
-        <div className="fixed bottom-0 left-0 right-0 w-full z-10 px-6 pb-6 pt-12" style={{ background: 'linear-gradient(to top, #ffffff 0%, #ffffff 50%, transparent 100%)' }}>
-          {button}
-          {copyright && (
-            <div className={dynamicStyles.copyrightMargin}>
-              {copyright}
-            </div>
-          )}
-        </div>
-      </div>
-      
-      {/* Desktop Layout - unchanged */}
-      <div className="hidden lg:flex lg:flex-col lg:flex-1">
-        <div className="flex-1 overflow-y-auto px-8 py-8">
-          <div className="max-w-2xl mx-auto">
-            {children}
-            <div className="mt-8">
+            
+            {/* Desktop: Show button inline with content */}
+            <div className="hidden lg:block mt-8">
               {button}
               {copyright && (
                 <div className="mt-4">
@@ -166,6 +149,16 @@ export default function ViewportAwareLayout({
               )}
             </div>
           </div>
+        </div>
+        
+        {/* Mobile: Fixed button area at bottom */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 w-full z-10 px-6 pb-6 pt-12" style={{ background: 'linear-gradient(to top, #ffffff 0%, #ffffff 50%, transparent 100%)' }}>
+          {button}
+          {copyright && (
+            <div className={dynamicStyles.copyrightMargin}>
+              {copyright}
+            </div>
+          )}
         </div>
       </div>
     </div>
