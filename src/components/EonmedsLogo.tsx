@@ -13,9 +13,9 @@ export default function EonmedsLogo({ compact = false, showLottie = true }: Eonm
     <div className={`px-6 lg:px-8 mb-4 max-w-md ${compact ? 'lg:max-w-lg' : 'lg:max-w-2xl'} mx-auto w-full`}>
       <div className="flex items-center justify-between">
         <img 
-          src="https://static.wixstatic.com/shapes/c49a9b_807d1532baa84b3893fca492cd2189fc.svg"
+          src="https://static.wixstatic.com/shapes/c49a9b_a0bd04a723284392ac265f9e53628dd6.svg"
           alt="EONMeds"
-          className="h-6 w-auto"
+          className="h-7 w-auto"
         />
         {showLottie && (
           <div className="w-10 h-10">
