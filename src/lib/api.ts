@@ -1,6 +1,96 @@
 // API functions for submitting intake data at checkpoints
+import { translations } from '@/translations';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.eonpro.io';
+
+// Mapping for common stored values to English
+const valueToEnglish: Record<string, string> = {
+  // Sex
+  'man': 'Man',
+  'woman': 'Woman',
+  'hombre': 'Man',
+  'mujer': 'Woman',
+  
+  // Yes/No
+  'yes': 'Yes',
+  'no': 'No',
+  'sí': 'Yes',
+  'si': 'Yes',
+  
+  // GLP-1 History
+  'currently_taking': 'Currently taking GLP-1',
+  'previously_taken': 'Previously taken GLP-1',
+  'never_taken': 'Never taken GLP-1',
+  
+  // GLP-1 Types
+  'semaglutide': 'Semaglutide',
+  'tirzepatide': 'Tirzepatide',
+  
+  // Medication preference
+  'recommendation': 'Looking for a recommendation',
+  'have_in_mind': 'Already have something in mind',
+  
+  // Activity levels
+  '1': 'Not very active (1)',
+  '2': 'Low activity (2)',
+  '3': 'Moderately active (3)',
+  '4': 'Active (4)',
+  '5': 'Very active (5)',
+  
+  // Blood pressure
+  'normal': 'Normal',
+  'high': 'High',
+  'low': 'Low',
+  'dont_know': "Don't know",
+  'no_se': "Don't know",
+  
+  // Satisfaction levels
+  'satisfied': 'Satisfied',
+  'not_satisfied': 'Not satisfied',
+  'somewhat': 'Somewhat satisfied',
+  
+  // Success levels
+  'successful': 'Successful',
+  'not_successful': 'Not successful',
+  'partial': 'Partial success',
+};
+
+// Helper function to convert translation keys to English text
+function toEnglish(value: string | undefined | null): string {
+  if (!value) return '';
+  
+  // Check if it's a known value mapping
+  const lowerValue = value.toLowerCase();
+  if (valueToEnglish[lowerValue]) {
+    return valueToEnglish[lowerValue];
+  }
+  if (valueToEnglish[value]) {
+    return valueToEnglish[value];
+  }
+  
+  // If it's a translation key (contains a dot and exists in translations)
+  const enTranslations = translations.en as Record<string, string>;
+  if (value.includes('.') && enTranslations[value]) {
+    return enTranslations[value];
+  }
+  
+  // Check if value is a Spanish translation and find the English equivalent
+  const esTranslations = translations.es as Record<string, string>;
+  for (const [key, esValue] of Object.entries(esTranslations)) {
+    if (esValue === value && enTranslations[key]) {
+      return enTranslations[key];
+    }
+  }
+  
+  // Return original value if not a translation key (already in English or raw data)
+  return value;
+}
+
+// Helper function to convert an array of values to English
+function arrayToEnglish(arr: string[] | undefined | null): string[] {
+  if (!arr || !Array.isArray(arr)) return [];
+  return arr.map(item => toEnglish(item));
+}
 
 export interface CheckpointData {
   checkpointName: string;
@@ -105,7 +195,7 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
   error?: string;
 }> {
   try {
-    // Prepare data for Airtable
+    // Prepare data for Airtable - ALL RESPONSES IN ENGLISH regardless of flow language
     const airtableData = {
       sessionId: intakeData.sessionId,
       firstName: intakeData.personalInfo?.firstName,
@@ -124,34 +214,39 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
       heightFeet: intakeData.medicalProfile?.weight?.heightFeet,
       heightInches: intakeData.medicalProfile?.weight?.heightInches,
       bmi: intakeData.medicalProfile?.bmi,
+      // Convert goals to English
       goals: Array.isArray(intakeData.medicalProfile?.goals) 
-        ? intakeData.medicalProfile.goals.join(', ')
-        : intakeData.medicalProfile?.goals,
-      activityLevel: intakeData.medicalProfile?.activityLevel,
+        ? arrayToEnglish(intakeData.medicalProfile.goals).join(', ')
+        : toEnglish(intakeData.medicalProfile?.goals as string),
+      // Convert activity level to English
+      activityLevel: toEnglish(intakeData.medicalProfile?.activityLevel),
+      // Convert medical conditions to English
       chronicConditions: Array.isArray(intakeData.medicalHistory?.chronicConditions)
-        ? intakeData.medicalHistory.chronicConditions.join(', ')
-        : intakeData.medicalHistory?.chronicConditions,
+        ? arrayToEnglish(intakeData.medicalHistory.chronicConditions).join(', ')
+        : toEnglish(intakeData.medicalHistory?.chronicConditions as string),
       digestiveConditions: Array.isArray(intakeData.medicalHistory?.digestiveConditions)
-        ? intakeData.medicalHistory.digestiveConditions.join(', ')
-        : intakeData.medicalHistory?.digestiveConditions,
+        ? arrayToEnglish(intakeData.medicalHistory.digestiveConditions).join(', ')
+        : toEnglish(intakeData.medicalHistory?.digestiveConditions as string),
       medications: Array.isArray(intakeData.medicalHistory?.medications)
-        ? intakeData.medicalHistory.medications.join(', ')
-        : intakeData.medicalHistory?.medications,
+        ? arrayToEnglish(intakeData.medicalHistory.medications).join(', ')
+        : toEnglish(intakeData.medicalHistory?.medications as string),
       allergies: Array.isArray(intakeData.medicalHistory?.allergies)
-        ? intakeData.medicalHistory.allergies.join(', ')
-        : intakeData.medicalHistory?.allergies,
+        ? arrayToEnglish(intakeData.medicalHistory.allergies).join(', ')
+        : toEnglish(intakeData.medicalHistory?.allergies as string),
       mentalHealthConditions: Array.isArray(intakeData.medicalHistory?.mentalHealthConditions)
-        ? intakeData.medicalHistory.mentalHealthConditions.join(', ')
-        : intakeData.medicalHistory?.mentalHealthConditions,
-      glp1History: intakeData.glp1Profile?.history,
-      glp1Type: intakeData.glp1Profile?.type,
+        ? arrayToEnglish(intakeData.medicalHistory.mentalHealthConditions).join(', ')
+        : toEnglish(intakeData.medicalHistory?.mentalHealthConditions as string),
+      // Convert GLP-1 related fields to English
+      glp1History: toEnglish(intakeData.glp1Profile?.history),
+      glp1Type: toEnglish(intakeData.glp1Profile?.type),
       sideEffects: Array.isArray(intakeData.glp1Profile?.sideEffects)
-        ? intakeData.glp1Profile.sideEffects.join(', ')
-        : intakeData.glp1Profile?.sideEffects,
-      medicationPreference: intakeData.glp1Profile?.medicationPreference,
+        ? arrayToEnglish(intakeData.glp1Profile.sideEffects).join(', ')
+        : toEnglish(intakeData.glp1Profile?.sideEffects as string),
+      medicationPreference: toEnglish(intakeData.glp1Profile?.medicationPreference),
       qualified: intakeData.qualificationStatus?.qualified,
       submittedAt: intakeData.qualificationStatus?.completedAt || new Date().toISOString(),
-      language: sessionStorage.getItem('preferredLanguage') || 'en',
+      // Keep track of original flow language for reference
+      flowLanguage: sessionStorage.getItem('preferredLanguage') || 'en',
     };
 
     // Send to Airtable API route
