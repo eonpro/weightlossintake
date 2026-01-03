@@ -45,9 +45,9 @@ export default function NamePage() {
       
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
-          <div className="space-y-4">
+          <div className="space-y-3">
             <h1 className="page-title">{t('name.title')}</h1>
-            <p className="page-subtitle">{t('name.subtitle')}</p>
+            <p className="text-[18px] lg:text-[20px] text-[#413d3d]/70 leading-snug" style={{ fontWeight: 350 }}>{t('name.subtitle')}</p>
           </div>
           
           <div className="space-y-6">
