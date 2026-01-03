@@ -342,22 +342,25 @@ button, .button-like {
   right: 0;
   width: 100%;
   z-index: 50;
-  padding: 24px;
+  padding: 16px 24px;
   padding-top: 48px;
+  padding-bottom: env(safe-area-inset-bottom, 16px);
   background: linear-gradient(to top, #ffffff 0%, #ffffff 60%, transparent 100%);
 }
 
 @media (min-width: 768px) {
   .sticky-bottom-button {
-    padding: 24px 35px;
+    padding: 16px 35px;
     padding-top: 48px;
+    padding-bottom: env(safe-area-inset-bottom, 16px);
   }
 }
 
 @media (min-width: 1024px) {
   .sticky-bottom-button {
-    padding: 24px 32px;
+    padding: 16px 32px;
     padding-top: 48px;
+    padding-bottom: env(safe-area-inset-bottom, 16px);
   }
 }
 
