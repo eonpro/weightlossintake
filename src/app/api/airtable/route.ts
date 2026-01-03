@@ -75,6 +75,19 @@ interface IntakeRecord {
   personalizedTreatmentInterest?: string;
   submittedAt?: string;
   flowLanguage?: string;
+  // Consent tracking
+  privacyPolicyAccepted?: boolean;
+  privacyPolicyAcceptedAt?: string;
+  termsOfUseAccepted?: boolean;
+  termsOfUseAcceptedAt?: string;
+  telehealthConsentAccepted?: boolean;
+  telehealthConsentAcceptedAt?: string;
+  cancellationPolicyAccepted?: boolean;
+  cancellationPolicyAcceptedAt?: string;
+  floridaBillOfRightsAccepted?: boolean;
+  floridaBillOfRightsAcceptedAt?: string;
+  floridaConsentAccepted?: boolean;
+  floridaConsentAcceptedAt?: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -165,12 +178,26 @@ export async function POST(request: NextRequest) {
       'Referrer Name': data.referrerName || '',
       'Referrer Type': data.referrerType || '',
 
-      // Qualification Status (4 fields)
+      // Qualification Status (5 fields)
       'Qualified': data.qualified ?? false,
       'Taking Medications': data.takingMedications || '',
       'Personalized Treatment Interest': data.personalizedTreatmentInterest || '',
       'Submitted At': data.submittedAt || new Date().toISOString(),
       'Language': data.flowLanguage || 'en',
+
+      // Consent Tracking (12 fields)
+      'Privacy Policy Accepted': data.privacyPolicyAccepted ?? false,
+      'Privacy Policy Accepted At': data.privacyPolicyAcceptedAt || '',
+      'Terms of Use Accepted': data.termsOfUseAccepted ?? false,
+      'Terms of Use Accepted At': data.termsOfUseAcceptedAt || '',
+      'Telehealth Consent Accepted': data.telehealthConsentAccepted ?? false,
+      'Telehealth Consent Accepted At': data.telehealthConsentAcceptedAt || '',
+      'Cancellation Policy Accepted': data.cancellationPolicyAccepted ?? false,
+      'Cancellation Policy Accepted At': data.cancellationPolicyAcceptedAt || '',
+      'Florida Bill of Rights Accepted': data.floridaBillOfRightsAccepted ?? false,
+      'Florida Bill of Rights Accepted At': data.floridaBillOfRightsAcceptedAt || '',
+      'Florida Consent Accepted': data.floridaConsentAccepted ?? false,
+      'Florida Consent Accepted At': data.floridaConsentAcceptedAt || '',
     };
 
     // Send to Airtable using Personal Access Token

@@ -176,6 +176,20 @@ export interface IntakeSubmission {
     takingMedications?: string;
     personalizedTreatmentInterest?: string;
   };
+  consents?: {
+    privacyPolicyAccepted?: boolean;
+    privacyPolicyAcceptedAt?: string;
+    termsOfUseAccepted?: boolean;
+    termsOfUseAcceptedAt?: string;
+    telehealthConsentAccepted?: boolean;
+    telehealthConsentAcceptedAt?: string;
+    cancellationPolicyAccepted?: boolean;
+    cancellationPolicyAcceptedAt?: string;
+    floridaBillOfRightsAccepted?: boolean;
+    floridaBillOfRightsAcceptedAt?: string;
+    floridaConsentAccepted?: boolean;
+    floridaConsentAcceptedAt?: string;
+  };
 }
 
 // Generate or get session ID
@@ -322,6 +336,19 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
       submittedAt: intakeData.qualificationStatus?.completedAt || new Date().toISOString(),
       // Keep track of original flow language
       flowLanguage: isBrowser ? (localStorage.getItem('preferredLanguage') || 'en') : 'en',
+      // Consent tracking
+      privacyPolicyAccepted: intakeData.consents?.privacyPolicyAccepted ?? false,
+      privacyPolicyAcceptedAt: intakeData.consents?.privacyPolicyAcceptedAt || '',
+      termsOfUseAccepted: intakeData.consents?.termsOfUseAccepted ?? false,
+      termsOfUseAcceptedAt: intakeData.consents?.termsOfUseAcceptedAt || '',
+      telehealthConsentAccepted: intakeData.consents?.telehealthConsentAccepted ?? false,
+      telehealthConsentAcceptedAt: intakeData.consents?.telehealthConsentAcceptedAt || '',
+      cancellationPolicyAccepted: intakeData.consents?.cancellationPolicyAccepted ?? false,
+      cancellationPolicyAcceptedAt: intakeData.consents?.cancellationPolicyAcceptedAt || '',
+      floridaBillOfRightsAccepted: intakeData.consents?.floridaBillOfRightsAccepted ?? false,
+      floridaBillOfRightsAcceptedAt: intakeData.consents?.floridaBillOfRightsAcceptedAt || '',
+      floridaConsentAccepted: intakeData.consents?.floridaConsentAccepted ?? false,
+      floridaConsentAcceptedAt: intakeData.consents?.floridaConsentAcceptedAt || '',
     };
 
     // Send to Airtable API route
@@ -447,6 +474,20 @@ export function collectIntakeData(): IntakeSubmission {
   const hasChronicConditions = sessionStorage.getItem('has_chronic_conditions');
   const personalizedTreatment = sessionStorage.getItem('personalized_treatment_interest');
 
+  // Consent tracking
+  const privacyPolicyAccepted = sessionStorage.getItem('privacy_policy_accepted');
+  const privacyPolicyAcceptedAt = sessionStorage.getItem('privacy_policy_accepted_at');
+  const termsOfUseAccepted = sessionStorage.getItem('terms_of_use_accepted');
+  const termsOfUseAcceptedAt = sessionStorage.getItem('terms_of_use_accepted_at');
+  const telehealthConsentAccepted = sessionStorage.getItem('telehealth_consent_accepted');
+  const telehealthConsentAcceptedAt = sessionStorage.getItem('telehealth_consent_accepted_at');
+  const cancellationPolicyAccepted = sessionStorage.getItem('cancellation_policy_accepted');
+  const cancellationPolicyAcceptedAt = sessionStorage.getItem('cancellation_policy_accepted_at');
+  const floridaBillOfRightsAccepted = sessionStorage.getItem('florida_bill_of_rights_accepted');
+  const floridaBillOfRightsAcceptedAt = sessionStorage.getItem('florida_bill_of_rights_accepted_at');
+  const floridaConsentAccepted = sessionStorage.getItem('florida_consent_accepted');
+  const floridaConsentAcceptedAt = sessionStorage.getItem('florida_consent_accepted_at');
+
   // Build weight object from separate keys
   const parsedHeight = heightData ? JSON.parse(heightData) : {};
   const weightObject = {
@@ -524,6 +565,20 @@ export function collectIntakeData(): IntakeSubmission {
       checkpoints: JSON.parse(sessionStorage.getItem('completed_checkpoints') || '[]'),
       takingMedications: takingMedications || '',
       personalizedTreatmentInterest: personalizedTreatment || ''
+    },
+    consents: {
+      privacyPolicyAccepted: privacyPolicyAccepted === 'true',
+      privacyPolicyAcceptedAt: privacyPolicyAcceptedAt || '',
+      termsOfUseAccepted: termsOfUseAccepted === 'true',
+      termsOfUseAcceptedAt: termsOfUseAcceptedAt || '',
+      telehealthConsentAccepted: telehealthConsentAccepted === 'true',
+      telehealthConsentAcceptedAt: telehealthConsentAcceptedAt || '',
+      cancellationPolicyAccepted: cancellationPolicyAccepted === 'true',
+      cancellationPolicyAcceptedAt: cancellationPolicyAcceptedAt || '',
+      floridaBillOfRightsAccepted: floridaBillOfRightsAccepted === 'true',
+      floridaBillOfRightsAcceptedAt: floridaBillOfRightsAcceptedAt || '',
+      floridaConsentAccepted: floridaConsentAccepted === 'true',
+      floridaConsentAcceptedAt: floridaConsentAcceptedAt || ''
     }
   };
 

@@ -24,6 +24,9 @@ export default function Home() {
   
   // Handle navigation to goals page
   const handleContinue = () => {
+    // Track Privacy Policy acceptance from landing page
+    sessionStorage.setItem('privacy_policy_accepted', 'true');
+    sessionStorage.setItem('privacy_policy_accepted_at', new Date().toISOString());
     router.push('/intake/goals');
   };
   
