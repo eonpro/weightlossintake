@@ -74,7 +74,7 @@ export default function ProgramsIncludePage() {
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-lg mx-auto w-full">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-medium leading-tight">
+          <h1 className="page-title">
             {language === 'es' ? (
               <>
                 Todos nuestros <span className="text-[#4fa87f]">programas</span> incluyen

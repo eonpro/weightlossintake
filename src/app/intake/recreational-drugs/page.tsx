@@ -73,7 +73,7 @@ export default function RecreationalDrugsPage() {
         <div className="space-y-8">
           {/* Title */}
           <div className="text-left">
-            <h1 className="text-3xl font-medium text-black">
+            <h1 className="page-title">
               {isSpanish 
                 ? '¿Has tomado alguna de las siguientes drogas recreativas en los últimos 6 meses?'
                 : 'Have you taken any of the following recreational drugs in the past 6 months?'}

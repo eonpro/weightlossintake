@@ -234,11 +234,11 @@ export default function ContactInfoPage() {
         <EonmedsLogo />
       
         <div className="space-y-6 mt-6">
-          <div>
-            <h1 className="text-3xl font-medium mb-4">
+          <div className="space-y-4">
+            <h1 className="page-title">
               {language === 'es' ? '¿Cómo podemos contactarte?' : 'How can we contact you?'}
             </h1>
-            <p className="text-gray-500">
+            <p className="page-subtitle">
               {language === 'es' 
                 ? 'Usamos esta información para mantenerte informado sobre tu tratamiento, enviarte actualizaciones importantes y ayudarte a mantenerte conectado con tu proveedor.'
                 : 'We use this information to keep you informed about your treatment, send you important updates, and help you stay connected with your provider.'}

@@ -42,7 +42,7 @@ export default function PersonalizedTreatmentPage() {
       {/* Main content */}
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
-          <h1 className="text-3xl font-medium leading-tight">
+          <h1 className="page-title">
             {language === 'es' 
               ? '¿Te interesaría que tu proveedor considere un plan de tratamiento personalizado para ayudarte a manejar estos efectos secundarios?'
               : 'Would you be interested in having your provider consider a personalized treatment plan to help you manage these side effects?'}

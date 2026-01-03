@@ -77,14 +77,14 @@ export default function MentalHealthConditionsPage() {
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           {/* Title */}
-          <h1 className="text-3xl font-medium leading-tight">
+          <h1 className="page-title">
             {language === 'es' 
               ? '¿Has sido diagnosticado con alguno de los siguientes?'
               : 'Have you been diagnosed with any of the following?'}
           </h1>
           
           {/* Description */}
-          <p className="text-gray-500 text-base">
+          <p className="page-subtitle">
             {language === 'es'
               ? 'Preguntamos esto porque algunas de estas condiciones pueden influir en el tipo de tratamiento más adecuado para ti.'
               : 'We ask this because some of these conditions may influence the type of treatment that is most appropriate for you.'}

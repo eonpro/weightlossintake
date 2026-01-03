@@ -110,12 +110,12 @@ export default function CommonSideEffectsPage() {
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <div>
-            <h1 className="text-3xl font-medium leading-tight mb-3">
+            <h1 className="page-title mb-3">
               {language === 'es' 
                 ? '¿Sueles presentar alguno de estos efectos secundarios al comenzar un nuevo medicamento o suplemento?'
                 : 'Do you usually experience any of these side effects when starting a new medication or supplement?'}
             </h1>
-            <p className="text-gray-500">
+            <p className="page-subtitle">
               {language === 'es'
                 ? 'Nuestros doctores puede ayudarte a controlar los efectos secundarios con un plan de tratamiento personalizado. Marca todas las opciones que apliquen a tu caso.'
                 : 'Our doctors can help you manage side effects with a personalized treatment plan. Select all that apply to your case.'}

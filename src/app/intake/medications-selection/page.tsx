@@ -278,13 +278,13 @@ export default function MedicationsSelectionPage() {
       {/* Main content */}
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
-          <h1 className="text-3xl font-medium leading-tight">
+          <h1 className="page-title">
             {language === 'es' 
               ? '¿Qué medicamentos o suplementos estás tomando?'
               : 'What medications or supplements are you currently taking?'}
           </h1>
           
-          <p className="text-gray-500 text-base">
+          <p className="page-subtitle">
             {language === 'es'
               ? 'Incluye todos los medicamentos recetados, de venta libre, vitaminas y suplementos.'
               : 'Include all prescription medications, over-the-counter medications, vitamins, and supplements.'}

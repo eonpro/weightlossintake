@@ -99,12 +99,12 @@ export default function ReferralSourcePage() {
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <div>
-            <h1 className="text-3xl font-medium leading-tight mb-3">
+            <h1 className="page-title mb-3">
               {language === 'es' 
                 ? 'Como escuchaste sobre EONMeds?'
                 : 'How did you hear about EONMeds?'}
             </h1>
-            <p className="text-gray-500">
+            <p className="page-subtitle">
               {language === 'es'
                 ? 'Nuestra misión es ayudar al mayor número de personas posible a mejorar su calidad de vida. Saber cómo nuestros pacientes nos encuentran es clave para entender cómo llegar a más personas como tú.'
                 : 'Our mission is to help as many people as possible improve their quality of life. Knowing how our patients find us is key to understanding how to reach more people like you.'}

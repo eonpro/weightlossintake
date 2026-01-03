@@ -75,7 +75,7 @@ export default function WeightLossHistoryPage() {
         <div className="space-y-8">
           {/* Title */}
           <div className="text-left">
-            <h1 className="text-3xl font-medium text-black">
+            <h1 className="page-title">
               {isSpanish 
                 ? '¿Alguna vez has dejado un programa de pérdida de peso antes de alcanzar tu meta?'
                 : 'Have you ever stopped a weight loss program before reaching your goal?'}

@@ -53,7 +53,7 @@ export default function DosageInterestPage() {
         <div className="space-y-8">
           {/* Title */}
           <div className="text-left">
-            <h1 className="text-3xl font-medium text-black leading-tight">
+            <h1 className="page-title">
               {isSpanish 
                 ? '¿Estarías interesado en que tu proveedor considere un plan de dosis personalizado que pueda ayudar a manejar los efectos secundarios gastrointestinales como náuseas, vómitos, estreñimiento y diarrea?'
                 : 'Would you be interested in your provider considering a personalized dosage plan that can help manage gastrointestinal side effects like nausea, vomiting, constipation, and diarrhea?'}

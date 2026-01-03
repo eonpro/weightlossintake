@@ -43,12 +43,12 @@ export default function MENPersonalPage() {
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-medium leading-tight">
+            <h1 className="page-title">
               {language === 'es' 
                 ? '¿Tienes antecedentes personales de neoplasia endocrina múltiple tipo 2?'
                 : 'Do you have a personal history of multiple endocrine neoplasia type 2?'}
             </h1>
-            <p className="text-gray-500 text-sm mt-4 leading-relaxed">
+            <p className="page-subtitle text-sm mt-4">
               {language === 'es'
                 ? 'Explicación: La neoplasia endocrina múltiple tipo 2 (MEN 2) es un síndrome genético raro que hace que ciertas glándulas del cuerpo produzcan demasiadas hormonas o desarrollen tumores (neoplasias). Es hereditario, lo que significa que se transmite de padres a hijos a través de los genes.'
                 : 'Explanation: Multiple endocrine neoplasia type 2 (MEN 2) is a rare genetic syndrome that causes certain glands in the body to produce too many hormones or develop tumors (neoplasias). It is hereditary, meaning it is transmitted from parents to children through genes.'}

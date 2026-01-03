@@ -81,7 +81,7 @@ export default function TestimonialsPage() {
               ? 'Únete a los miles de transformaciones que hemos ayudado a lograr.'
               : 'Join the thousands of transformations we\'ve helped achieve.'}
           </h1>
-          <p className="text-gray-500 text-base text-left">
+          <p className="page-subtitle text-left">
             {language === 'es'
               ? 'Cada uno de estos casos presenta pacientes reales que transformaron sus vidas.'
               : 'Each of these cases features real patients who transformed their lives.'}

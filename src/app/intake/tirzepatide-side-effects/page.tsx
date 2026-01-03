@@ -112,12 +112,12 @@ export default function TirzepatideSideEffectsPage() {
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <div>
-            <h1 className="text-3xl font-medium leading-tight mb-2">
+            <h1 className="page-title mb-2">
               {language === 'es' 
                 ? '¿Ha experimentado alguno de los siguientes efectos secundarios con tirzepatida (Mounjaro®, Zepbound®)?'
                 : 'Have you experienced any of the following side effects with tirzepatide (Mounjaro®, Zepbound®)?'}
             </h1>
-            <p className="text-gray-500 text-sm">
+            <p className="page-subtitle text-sm">
               {language === 'es'
                 ? 'Seleccione todos los que apliquen.'
                 : 'Select all that apply.'}

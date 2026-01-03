@@ -90,12 +90,12 @@ export default function MedicalConditionsPage() {
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-medium leading-tight">
+            <h1 className="page-title">
               {language === 'es' 
                 ? '¿Has sido diagnosticado con alguna de las siguientes condiciones?'
                 : 'Have you been diagnosed with any of the following conditions?'}
             </h1>
-            <p className="text-gray-500 text-sm mt-3">
+            <p className="page-subtitle text-sm mt-3">
               {language === 'es'
                 ? 'Preguntamos porque algunas condiciones pueden determinar qué tipo de tratamiento es adecuado para ti.'
                 : 'We ask because some conditions may determine what type of treatment is right for you.'}

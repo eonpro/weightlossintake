@@ -56,10 +56,10 @@ export default function HealthPage() {
         <div className="space-y-8">
           {/* Heading */}
           <div className="space-y-4">
-            <h1 className="text-3xl font-medium leading-tight">
+            <h1 className="page-title">
               Let's calculate your BMI
             </h1>
-            <p className="text-gray-500">
+            <p className="page-subtitle">
               This helps us determine the right treatment options for you.
             </p>
           </div>

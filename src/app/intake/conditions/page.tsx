@@ -66,10 +66,10 @@ export default function ConditionsPage() {
         <div className="space-y-8">
           {/* Heading */}
           <div className="space-y-4">
-            <h1 className="text-3xl font-medium leading-tight">
+            <h1 className="page-title">
               Do you have any of these conditions?
             </h1>
-            <p className="text-gray-500">
+            <p className="page-subtitle">
               Select all that apply. This helps ensure your safety.
             </p>
           </div>

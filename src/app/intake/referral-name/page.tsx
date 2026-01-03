@@ -66,7 +66,7 @@ export default function ReferralNamePage() {
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <div>
-            <h1 className="text-3xl font-medium leading-tight mb-3">
+            <h1 className="page-title mb-3">
               {referralType === 'friend_family' ? (
                 language === 'es' 
                   ? '¡Genial! ¿Cómo se llama tu amigo o familiar que te recomendó?'
@@ -77,7 +77,7 @@ export default function ReferralNamePage() {
                   : 'Excellent! What\'s the name of the EONMeds representative who helped you?'
               )}
             </h1>
-            <p className="text-gray-500">
+            <p className="page-subtitle">
               {referralType === 'friend_family' ? (
                 language === 'es'
                   ? 'Nos encanta recompensar a nuestros pacientes que comparten su experiencia con otros.'

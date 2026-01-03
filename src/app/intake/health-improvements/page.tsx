@@ -107,12 +107,12 @@ export default function HealthImprovementsPage() {
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <div>
-            <h1 className="text-3xl font-medium leading-tight mb-3">
+            <h1 className="page-title mb-3">
               {language === 'es' 
                 ? 'Aparte de perder peso, ¿hay otra área de tu salud que te gustaría mejorar?'
                 : 'Aside from losing weight, is there another area of your health you\'d like to improve?'}
             </h1>
-            <p className="text-gray-500">
+            <p className="page-subtitle">
               {language === 'es'
                 ? 'Esto nos ayuda a obtener una imagen completa de tus objetivos de salud y encontrar las opciones de tratamiento adecuadas para ti.'
                 : 'This helps us get a full picture of your health goals and find the right treatment options for you.'}

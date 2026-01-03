@@ -43,12 +43,12 @@ export default function SurgeryPage() {
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <div>
-            <h1 className="text-3xl font-medium leading-tight mb-2">
+            <h1 className="page-title mb-2">
               {language === 'es' 
                 ? '¿Ha tenido alguna cirugía o procedimiento médico?'
                 : 'Have you had any surgery or medical procedure?'}
             </h1>
-            <p className="text-gray-500">
+            <p className="page-subtitle">
               {language === 'es'
                 ? 'Esta información ayuda a su proveedor a comprender completamente su historial médico y a ofrecerle el tratamiento más adecuado'
                 : 'This information helps your provider fully understand your medical history and offer you the most appropriate treatment'}

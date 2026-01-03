@@ -54,12 +54,12 @@ export default function SemaglutideDosagePage() {
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <div>
-            <h1 className="text-3xl font-medium leading-tight mb-2">
+            <h1 className="page-title mb-2">
               {language === 'es' 
                 ? '¿Qué dosis de semaglutida inyectable (Ozempic®, Wegovy® o compuesta) está tomando?'
                 : 'What dose of injectable semaglutide (Ozempic®, Wegovy® or compounded) are you taking?'}
             </h1>
-            <p className="text-gray-500 text-sm">
+            <p className="page-subtitle text-sm">
               {language === 'es'
                 ? 'Indique su dosis actual en miligramos (mg) por semana.'
                 : 'Indicate your current dose in milligrams (mg) per week.'}

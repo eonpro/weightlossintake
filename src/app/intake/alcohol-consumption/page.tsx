@@ -67,12 +67,12 @@ export default function AlcoholConsumptionPage() {
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <div>
-            <h1 className="text-3xl font-medium leading-tight mb-3">
+            <h1 className="page-title mb-3">
               {language === 'es' 
                 ? '¿Con qué frecuencia tomas 5 o más bebidas alcohólicas en una sola ocasión?'
                 : 'How often do you have 5 or more alcoholic drinks on a single occasion?'}
             </h1>
-            <p className="text-gray-500">
+            <p className="page-subtitle">
               {language === 'es'
                 ? 'El alcohol a veces puede interferir con el efecto de ciertos medicamentos. Es importante que tu proveedor lo sepa para poder darte la mejor orientación posible.'
                 : 'Alcohol can sometimes interfere with the effect of certain medications. It\'s important for your provider to know so they can give you the best guidance possible.'}

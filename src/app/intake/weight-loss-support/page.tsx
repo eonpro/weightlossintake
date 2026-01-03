@@ -65,7 +65,7 @@ export default function WeightLossSupportPage() {
         <div className="space-y-8">
           {/* Title */}
           <div className="text-left">
-            <h1 className="text-3xl font-medium text-black">
+            <h1 className="page-title">
               {isSpanish 
                 ? '¿Qué haría más fácil para ti mantenerte en un programa de pérdida de peso?'
                 : 'What would make it easier for you to stick with a weight loss program?'}

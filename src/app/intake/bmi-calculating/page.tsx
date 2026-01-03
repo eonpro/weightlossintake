@@ -111,7 +111,7 @@ export default function BMICalculatingPage() {
       
       <div className="flex-1 flex flex-col items-center justify-center px-6">
       <div className="max-w-md w-full text-center space-y-8">
-        <h1 className="text-3xl font-medium text-gray-400">
+        <h1 className="page-title text-gray-400">
           {t('bmi.calculating.greeting')} <span className="text-black">{firstName}</span>...
         </h1>
         

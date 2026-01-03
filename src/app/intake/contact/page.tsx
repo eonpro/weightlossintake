@@ -58,10 +58,10 @@ export default function ContactPage() {
         <div className="space-y-8">
           {/* Heading */}
           <div className="space-y-4">
-            <h1 className="text-3xl font-medium leading-tight">
+            <h1 className="page-title">
               How can we reach you?
             </h1>
-            <p className="text-gray-500">
+            <p className="page-subtitle">
               We'll use this information to communicate about your treatment.
             </p>
           </div>

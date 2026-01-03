@@ -132,7 +132,7 @@ export default function ReviewPage() {
     <div className="min-h-screen bg-white flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         <div className="max-w-md w-full text-center space-y-8">
-          <h1 className="text-3xl font-medium">
+          <h1 className="page-title">
             <span className="text-gray-400">
               {language === 'es' ? 'Gracias, ' : 'Thank you, '}
             </span>

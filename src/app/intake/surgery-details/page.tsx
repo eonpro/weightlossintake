@@ -91,7 +91,7 @@ export default function SurgeryDetailsPage() {
       {/* Main content */}
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
-          <h1 className="text-3xl font-medium leading-tight">
+          <h1 className="page-title">
             {language === 'es' 
               ? '¿Ha tenido alguna cirugía o procedimiento médico?'
               : 'Have you had any surgery or medical procedure?'}
