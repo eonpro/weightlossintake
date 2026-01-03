@@ -475,10 +475,13 @@ export function collectIntakeData(): IntakeSubmission {
   const personalizedTreatment = sessionStorage.getItem('personalized_treatment_interest');
 
   // Consent tracking - using ACTUAL keys stored by landing page and consent page
-  // Landing page stores: privacy_policy_accepted (snake_case)
-  // Consent page stores: terms_of_use_accepted, telehealth_consent_accepted, etc. (snake_case)
-  const privacyPolicyAccepted = sessionStorage.getItem('privacy_policy_accepted');
-  const privacyPolicyAcceptedAt = sessionStorage.getItem('privacy_policy_accepted_at');
+  // Landing page stores: privacy_policy_accepted (initial click)
+  // Consent page stores: consent_privacy_policy_accepted (full legal consent)
+  // We prefer the consent page value (full legal consent) over the landing page click
+  const privacyPolicyAccepted = sessionStorage.getItem('consent_privacy_policy_accepted') 
+    || sessionStorage.getItem('privacy_policy_accepted');
+  const privacyPolicyAcceptedAt = sessionStorage.getItem('consent_privacy_policy_accepted_at')
+    || sessionStorage.getItem('privacy_policy_accepted_at');
   const termsOfUseAccepted = sessionStorage.getItem('terms_of_use_accepted');
   const termsOfUseAcceptedAt = sessionStorage.getItem('terms_of_use_accepted_at');
   const telehealthConsentAccepted = sessionStorage.getItem('telehealth_consent_accepted');
