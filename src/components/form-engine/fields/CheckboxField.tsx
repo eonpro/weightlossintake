@@ -32,13 +32,11 @@ export default function CheckboxField({
       >
         <div 
           className={`
-            mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0
+            mt-0.5 w-5 h-5 rounded flex items-center justify-center flex-shrink-0
             transition-all
-            ${checked 
-              ? 'bg-white border-[#413d3d]' 
-              : 'border-gray-300 bg-transparent'
-            }
+            ${checked ? 'bg-white' : 'bg-transparent'}
           `}
+          style={{ border: '1.5px solid #413d3d' }}
           onClick={() => !disabled && onChange(!checked)}
         >
           {checked && (

@@ -92,9 +92,14 @@ export default function ConsentPage() {
           <div className="border border-white/30 bg-white/10 rounded-2xl p-4 space-y-3">
             <label className="flex items-start space-x-3 cursor-pointer">
               <div className="mt-0.5 flex-shrink-0">
-                <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
-                  agreed ? 'bg-white border-[#413d3d]' : 'bg-transparent border-white/60'
-                }`}>
+                <div 
+                  className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 ${
+                    agreed ? 'bg-white' : 'bg-transparent'
+                  }`}
+                  style={{ 
+                    border: agreed ? '1.5px solid #413d3d' : '1.5px solid #413d3d'
+                  }}
+                >
                   {agreed && (
                     <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
