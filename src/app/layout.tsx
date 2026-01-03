@@ -1,13 +1,6 @@
 import type { Metadata } from "next";
-import { Poppins } from 'next/font/google';
 import "./globals.css";
 import ClientProviders from '@/components/ClientProviders';
-
-const poppins = Poppins({ 
-  weight: ['300', '400', '500', '600', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: "EONMeds - Medical Intake",
@@ -21,7 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.className} antialiased`}>
+      <head>
+        <link rel="stylesheet" href="https://use.typekit.net/gdk8cbv.css" />
+      </head>
+      <body className="font-sofia antialiased">
         <ClientProviders>
           {children}
         </ClientProviders>
