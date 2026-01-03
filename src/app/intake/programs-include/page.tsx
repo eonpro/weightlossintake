@@ -101,10 +101,10 @@ export default function ProgramsIncludePage() {
                 className="absolute bottom-0 left-0 w-24 h-24 md:w-32 md:h-32 object-cover"
               />
               <div className="flex-1 p-3 md:p-4 pl-28 md:pl-36">
-                <h3 className="text-base md:text-lg font-semibold text-black leading-tight">
+                <h3 className="text-[18px] md:text-[20px] font-semibold text-black leading-tight">
                   {program.title}
                 </h3>
-                <p className="text-xs md:text-sm text-gray-800 leading-tight mt-1">
+                <p className="text-[14px] md:text-[16px] text-gray-800 leading-tight mt-1">
                   {program.description}
                 </p>
               </div>

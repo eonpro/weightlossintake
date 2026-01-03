@@ -110,7 +110,7 @@ export default function ReviewPage() {
               const encodedData = btoa(JSON.stringify(qualificationData));
               
               // Redirect to checkout platform with data in URL
-              const checkoutUrl = `https://eonmedscheckout.vercel.app?q=${encodedData}`;
+              const checkoutUrl = `https://checkout.eonmeds.com?q=${encodedData}`;
               
               console.log('Redirecting to checkout:', checkoutUrl);
               window.location.href = checkoutUrl;

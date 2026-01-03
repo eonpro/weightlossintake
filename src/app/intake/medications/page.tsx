@@ -11,15 +11,19 @@ export default function MedicationsPage() {
   const { language } = useLanguage();
   const [selected, setSelected] = useState<'yes' | 'no' | null>(null);
 
-  const handleContinue = () => {
-    if (selected) {
-      sessionStorage.setItem('taking_medications', selected);
-      if (selected === 'yes') {
+  // Auto-advance on selection
+  const handleSelect = (option: 'yes' | 'no') => {
+    setSelected(option);
+    sessionStorage.setItem('taking_medications', option);
+
+    // Navigate after brief delay for visual feedback
+    setTimeout(() => {
+      if (option === 'yes') {
         router.push('/intake/medications-selection');
       } else {
         router.push('/intake/allergies');
       }
-    }
+    }, 300);
   };
 
   return (
@@ -50,10 +54,10 @@ export default function MedicationsPage() {
               : 'Are you currently taking any medications or supplements?'}
           </h1>
           
-          {/* Yes/No Options */}
+          {/* Yes/No Options - auto-advance on selection */}
           <div className="space-y-3">
             <button
-              onClick={() => setSelected('yes')}
+              onClick={() => handleSelect('yes')}
               className={`option-button w-full text-left p-4 rounded-full transition-all ${
                 selected === 'yes' ? 'selected' : ''
               }`}
@@ -70,14 +74,14 @@ export default function MedicationsPage() {
                     </svg>
                   )}
                 </div>
-                <span className="text-[16px] lg:text-lg font-medium leading-tight text-white">
+                <span className="text-[16px] lg:text-lg font-medium leading-tight">
                   {language === 'es' ? 'Sí' : 'Yes'}
                 </span>
               </div>
             </button>
             
             <button
-              onClick={() => setSelected('no')}
+              onClick={() => handleSelect('no')}
               className={`option-button w-full text-left p-4 rounded-full transition-all ${
                 selected === 'no' ? 'selected' : ''
               }`}
@@ -94,7 +98,7 @@ export default function MedicationsPage() {
                     </svg>
                   )}
                 </div>
-                <span className="text-[16px] lg:text-lg font-medium leading-tight text-white">
+                <span className="text-[16px] lg:text-lg font-medium leading-tight">
                   {language === 'es' ? 'No' : 'No'}
                 </span>
               </div>
@@ -103,35 +107,21 @@ export default function MedicationsPage() {
         </div>
       </div>
       
-      {/* Sticky bottom button */}
-      <div className="sticky-bottom-button max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={!selected}
-          className="continue-button"
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright footer */}
-        <div className="mt-6 text-center">
-          <p className="copyright-text">
-            {language === 'es' ? (
-              <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
-                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
-              </>
-            ) : (
-              <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
-                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
-              </>
-            )}
-          </p>
-        </div>
+      {/* Copyright footer */}
+      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
+        <p className="copyright-text text-center">
+          {language === 'es' ? (
+            <>
+              © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+              Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+            </>
+          ) : (
+            <>
+              © 2025 EONPro, LLC. All rights reserved.<br/>
+              Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+            </>
+          )}
+        </p>
       </div>
     </div>
   );

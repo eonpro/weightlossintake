@@ -105,10 +105,10 @@ export default function TreatmentBenefitsPage() {
                 <div className="flex items-stretch min-h-[120px] lg:min-h-[140px]">
                   {/* Text content - left side on both mobile and desktop */}
                   <div className="flex-1 p-4 lg:p-6 flex flex-col justify-center">
-                    <h2 className="text-lg lg:text-xl font-semibold mb-1 text-black">
+                    <h2 className="text-[20px] lg:text-[22px] font-semibold mb-1 text-black">
                       {language === 'es' ? benefit.title.es : benefit.title.en}
                     </h2>
-                    <p className="text-sm lg:text-base text-gray-700 leading-tight">
+                    <p className="text-[16px] lg:text-[18px] text-gray-700 leading-tight">
                       {language === 'es' ? benefit.description.es : benefit.description.en}
                     </p>
                   </div>
