@@ -90,18 +90,27 @@ interface IntakeRecord {
   floridaConsentAcceptedAt?: string;
 }
 
+// CORS headers for checkout domain (allow both production and dev URLs)
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
 export async function POST(request: NextRequest) {
   try {
     const data: IntakeRecord = await request.json();
-
+    
+    console.log('Received intake submission:', { sessionId: data.sessionId, firstName: data.firstName });
     // Check for required environment variables
     if (!AIRTABLE_PAT || !AIRTABLE_BASE_ID) {
-      console.warn('Airtable not configured. Storing locally only.');
+      console.error('Airtable not configured! AIRTABLE_PAT:', !!AIRTABLE_PAT, 'AIRTABLE_BASE_ID:', !!AIRTABLE_BASE_ID);
       return NextResponse.json({
-        success: true,
-        message: 'Data received (Airtable not configured)',
+        success: false,
+        error: 'Airtable not configured',
+        message: 'Add AIRTABLE_PAT and AIRTABLE_BASE_ID to environment variables',
         recordId: `LOCAL-${Date.now()}`
-      });
+      }, { headers: corsHeaders });
     }
 
     // Prepare fields for Airtable - ALL 58 FIELDS
@@ -221,11 +230,12 @@ export async function POST(request: NextRequest) {
 
     const result = await response.json();
 
+    console.log('Successfully saved to Airtable with ID:', result.id);
     return NextResponse.json({
       success: true,
       recordId: result.id,
       message: 'Successfully saved to Airtable'
-    });
+    }, { headers: corsHeaders });
 
   } catch (error) {
     console.error('Error saving to Airtable:', error);
@@ -234,17 +244,10 @@ export async function POST(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to save data'
       },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
-
-// CORS headers for checkout domain (allow both production and dev URLs)
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-};
 
 // Handle preflight requests
 export async function OPTIONS() {

@@ -99,11 +99,17 @@ export default function ReviewPage() {
               
               // Submit complete intake data to Airtable
               const intakeData = collectIntakeData();
+              console.log('Submitting intake data:', intakeData);
+
               const submissionResult = await submitIntake(intakeData);
-              
+              console.log('Submission result:', submissionResult);
+
               if (submissionResult.success && submissionResult.intakeId) {
                 // Store intake ID for reference (qualified page will use this)
                 sessionStorage.setItem('submitted_intake_id', submissionResult.intakeId);
+                console.log('Saved intake ID:', submissionResult.intakeId);
+              } else {
+                console.error('Submission failed:', submissionResult.error);
               }
               
               // Navigate to qualified page with celebration

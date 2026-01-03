@@ -474,19 +474,19 @@ export function collectIntakeData(): IntakeSubmission {
   const hasChronicConditions = sessionStorage.getItem('has_chronic_conditions');
   const personalizedTreatment = sessionStorage.getItem('personalized_treatment_interest');
 
-  // Consent tracking
-  const privacyPolicyAccepted = sessionStorage.getItem('privacy_policy_accepted');
-  const privacyPolicyAcceptedAt = sessionStorage.getItem('privacy_policy_accepted_at');
-  const termsOfUseAccepted = sessionStorage.getItem('terms_of_use_accepted');
-  const termsOfUseAcceptedAt = sessionStorage.getItem('terms_of_use_accepted_at');
-  const telehealthConsentAccepted = sessionStorage.getItem('telehealth_consent_accepted');
-  const telehealthConsentAcceptedAt = sessionStorage.getItem('telehealth_consent_accepted_at');
-  const cancellationPolicyAccepted = sessionStorage.getItem('cancellation_policy_accepted');
-  const cancellationPolicyAcceptedAt = sessionStorage.getItem('cancellation_policy_accepted_at');
-  const floridaBillOfRightsAccepted = sessionStorage.getItem('florida_bill_of_rights_accepted');
-  const floridaBillOfRightsAcceptedAt = sessionStorage.getItem('florida_bill_of_rights_accepted_at');
-  const floridaConsentAccepted = sessionStorage.getItem('florida_consent_accepted');
-  const floridaConsentAcceptedAt = sessionStorage.getItem('florida_consent_accepted_at');
+  // Consent tracking (keys match what's stored in consent/page.tsx)
+  const privacyPolicyAccepted = sessionStorage.getItem('privacyPolicyAccepted');
+  const privacyPolicyAcceptedAt = sessionStorage.getItem('privacyPolicyAcceptedAt');
+  const termsOfUseAccepted = sessionStorage.getItem('termsOfUseAccepted');
+  const termsOfUseAcceptedAt = sessionStorage.getItem('termsOfUseAcceptedAt');
+  const telehealthConsentAccepted = sessionStorage.getItem('telehealthConsentAccepted');
+  const telehealthConsentAcceptedAt = sessionStorage.getItem('telehealthConsentAcceptedAt');
+  const cancellationPolicyAccepted = sessionStorage.getItem('cancellationPolicyAccepted');
+  const cancellationPolicyAcceptedAt = sessionStorage.getItem('cancellationPolicyAcceptedAt');
+  const floridaBillOfRightsAccepted = sessionStorage.getItem('floridaBillOfRightsAccepted');
+  const floridaBillOfRightsAcceptedAt = sessionStorage.getItem('floridaBillOfRightsAcceptedAt');
+  const floridaConsentAccepted = sessionStorage.getItem('floridaConsentAccepted');
+  const floridaConsentAcceptedAt = sessionStorage.getItem('floridaConsentAcceptedAt');
 
   // Build weight object from separate keys
   const parsedHeight = heightData ? JSON.parse(heightData) : {};
