@@ -7,32 +7,75 @@ const AIRTABLE_TABLE_NAME = process.env.AIRTABLE_TABLE_NAME || 'Intake Submissio
 
 interface IntakeRecord {
   sessionId: string;
+  // Personal Info
   firstName?: string;
   lastName?: string;
   email?: string;
   phone?: string;
   dob?: string;
+  sex?: string;
+  bloodPressure?: string;
+  pregnancyBreastfeeding?: string;
+  // Address
   state?: string;
   address?: string;
+  // Weight & BMI
   currentWeight?: number;
   idealWeight?: number;
   heightFeet?: number;
   heightInches?: number;
   bmi?: number;
+  // Goals & Activity
   goals?: string;
   activityLevel?: string;
+  // Medical Conditions
   chronicConditions?: string;
   digestiveConditions?: string;
   medications?: string;
   allergies?: string;
   mentalHealthConditions?: string;
+  // Additional Medical History
+  surgeryHistory?: string;
+  surgeryDetails?: string;
+  familyConditions?: string;
+  kidneyConditions?: string;
+  medicalConditions?: string;
+  personalDiabetes?: string;
+  personalGastroparesis?: string;
+  personalPancreatitis?: string;
+  personalThyroidCancer?: string;
+  personalMen?: string;
+  hasMentalHealth?: string;
+  hasChronicConditions?: string;
+  // GLP-1 Profile
   glp1History?: string;
   glp1Type?: string;
   sideEffects?: string;
   medicationPreference?: string;
+  semaglutideDosage?: string;
+  semaglutideSideEffects?: string;
+  semaglutideSuccess?: string;
+  tirzepatideDosage?: string;
+  tirzepatideSideEffects?: string;
+  tirzepatideSuccess?: string;
+  dosageSatisfaction?: string;
+  dosageInterest?: string;
+  // Lifestyle
+  alcoholConsumption?: string;
+  recreationalDrugs?: string;
+  weightLossHistory?: string;
+  weightLossSupport?: string;
+  healthImprovements?: string;
+  // Referral
+  referralSources?: string;
+  referrerName?: string;
+  referrerType?: string;
+  // Qualification Status
   qualified?: boolean;
+  takingMedications?: string;
+  personalizedTreatmentInterest?: string;
   submittedAt?: string;
-  language?: string;
+  flowLanguage?: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -42,42 +85,94 @@ export async function POST(request: NextRequest) {
     // Check for required environment variables
     if (!AIRTABLE_PAT || !AIRTABLE_BASE_ID) {
       console.warn('Airtable not configured. Storing locally only.');
-      return NextResponse.json({ 
-        success: true, 
+      return NextResponse.json({
+        success: true,
         message: 'Data received (Airtable not configured)',
         recordId: `LOCAL-${Date.now()}`
       });
     }
 
-    // Prepare fields for Airtable
+    // Prepare fields for Airtable - ALL 58 FIELDS
     const fields: Record<string, unknown> = {
+      // Personal Info (8 fields)
       'Session ID': data.sessionId,
       'First Name': data.firstName || '',
       'Last Name': data.lastName || '',
       'Email': data.email || '',
       'Phone': data.phone || '',
       'Date of Birth': data.dob || '',
+      'Sex': data.sex || '',
+      'Blood Pressure': data.bloodPressure || '',
+      'Pregnancy/Breastfeeding': data.pregnancyBreastfeeding || '',
+
+      // Address (2 fields)
       'State': data.state || '',
       'Address': data.address || '',
+
+      // Weight & BMI (5 fields)
       'Current Weight (lbs)': data.currentWeight || 0,
       'Ideal Weight (lbs)': data.idealWeight || 0,
       'Height (feet)': data.heightFeet || 0,
       'Height (inches)': data.heightInches || 0,
       'BMI': data.bmi || 0,
+
+      // Goals & Activity (2 fields)
       'Goals': data.goals || '',
       'Activity Level': data.activityLevel || '',
+
+      // Medical Conditions (5 fields)
       'Chronic Conditions': data.chronicConditions || '',
       'Digestive Conditions': data.digestiveConditions || '',
       'Medications': data.medications || '',
       'Allergies': data.allergies || '',
       'Mental Health Conditions': data.mentalHealthConditions || '',
+
+      // Additional Medical History (12 fields)
+      'Surgery History': data.surgeryHistory || '',
+      'Surgery Details': data.surgeryDetails || '',
+      'Family Conditions': data.familyConditions || '',
+      'Kidney Conditions': data.kidneyConditions || '',
+      'Medical Conditions': data.medicalConditions || '',
+      'Personal Diabetes T2': data.personalDiabetes || '',
+      'Personal Gastroparesis': data.personalGastroparesis || '',
+      'Personal Pancreatitis': data.personalPancreatitis || '',
+      'Personal Thyroid Cancer': data.personalThyroidCancer || '',
+      'Personal MEN': data.personalMen || '',
+      'Has Mental Health': data.hasMentalHealth || '',
+      'Has Chronic Conditions': data.hasChronicConditions || '',
+
+      // GLP-1 Profile (12 fields)
       'GLP-1 History': data.glp1History || '',
       'GLP-1 Type': data.glp1Type || '',
       'Side Effects': data.sideEffects || '',
       'Medication Preference': data.medicationPreference || '',
+      'Semaglutide Dosage': data.semaglutideDosage || '',
+      'Semaglutide Side Effects': data.semaglutideSideEffects || '',
+      'Semaglutide Success': data.semaglutideSuccess || '',
+      'Tirzepatide Dosage': data.tirzepatideDosage || '',
+      'Tirzepatide Side Effects': data.tirzepatideSideEffects || '',
+      'Tirzepatide Success': data.tirzepatideSuccess || '',
+      'Dosage Satisfaction': data.dosageSatisfaction || '',
+      'Dosage Interest': data.dosageInterest || '',
+
+      // Lifestyle (5 fields)
+      'Alcohol Consumption': data.alcoholConsumption || '',
+      'Recreational Drugs': data.recreationalDrugs || '',
+      'Weight Loss History': data.weightLossHistory || '',
+      'Weight Loss Support': data.weightLossSupport || '',
+      'Health Improvements': data.healthImprovements || '',
+
+      // Referral (3 fields)
+      'Referral Sources': data.referralSources || '',
+      'Referrer Name': data.referrerName || '',
+      'Referrer Type': data.referrerType || '',
+
+      // Qualification Status (4 fields)
       'Qualified': data.qualified ?? false,
+      'Taking Medications': data.takingMedications || '',
+      'Personalized Treatment Interest': data.personalizedTreatmentInterest || '',
       'Submitted At': data.submittedAt || new Date().toISOString(),
-      'Language': data.language || 'en',
+      'Language': data.flowLanguage || 'en',
     };
 
     // Send to Airtable using Personal Access Token
@@ -100,9 +195,9 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await response.json();
-    
-    return NextResponse.json({ 
-      success: true, 
+
+    return NextResponse.json({
+      success: true,
       recordId: result.id,
       message: 'Successfully saved to Airtable'
     });
@@ -110,8 +205,8 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error saving to Airtable:', error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: error instanceof Error ? error.message : 'Failed to save data'
       },
       { status: 500 }
@@ -204,4 +299,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-

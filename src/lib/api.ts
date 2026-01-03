@@ -113,6 +113,9 @@ export interface IntakeSubmission {
     email?: string;
     phone?: string;
     dob?: any;
+    sex?: string;
+    bloodPressure?: string;
+    pregnancyBreastfeeding?: string;
   };
   address?: any;
   medicalProfile?: {
@@ -127,17 +130,51 @@ export interface IntakeSubmission {
     medications?: string[];
     allergies?: string[];
     mentalHealthConditions?: string[];
+    surgeryHistory?: string;
+    surgeryDetails?: string[];
+    familyConditions?: string[];
+    kidneyConditions?: string[];
+    medicalConditions?: string[];
+    personalDiabetes?: string;
+    personalGastroparesis?: string;
+    personalPancreatitis?: string;
+    personalThyroidCancer?: string;
+    personalMen?: string;
+    hasMentalHealth?: string;
+    hasChronicConditions?: string;
   };
   glp1Profile?: {
     history?: string;
     type?: string;
     sideEffects?: string[];
     medicationPreference?: string;
+    semaglutideDosage?: string;
+    semaglutideSideEffects?: string[];
+    semaglutideSuccess?: string;
+    tirzepatideDosage?: string;
+    tirzepatideSideEffects?: string[];
+    tirzepatideSuccess?: string;
+    dosageSatisfaction?: string;
+    dosageInterest?: string;
+  };
+  lifestyle?: {
+    alcoholConsumption?: string;
+    recreationalDrugs?: string[];
+    weightLossHistory?: string[];
+    weightLossSupport?: string[];
+    healthImprovements?: string[];
+  };
+  referral?: {
+    sources?: string[];
+    referrerName?: string;
+    referrerType?: string;
   };
   qualificationStatus?: {
     qualified?: boolean;
     completedAt?: string;
     checkpoints?: string[];
+    takingMedications?: string;
+    personalizedTreatmentInterest?: string;
   };
 }
 
@@ -200,9 +237,16 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
   error?: string;
 }> {
   try {
+    // Helper to convert arrays to comma-separated strings
+    const arrayToString = (arr: unknown[] | undefined | null): string => {
+      if (!arr || !Array.isArray(arr)) return '';
+      return arrayToEnglish(arr as string[]).join(', ');
+    };
+
     // Prepare data for Airtable - ALL RESPONSES IN ENGLISH regardless of flow language
     const airtableData = {
       sessionId: intakeData.sessionId,
+      // Personal Info
       firstName: intakeData.personalInfo?.firstName,
       lastName: intakeData.personalInfo?.lastName,
       email: intakeData.personalInfo?.email,
@@ -210,47 +254,71 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
       dob: (intakeData.personalInfo?.dob && typeof intakeData.personalInfo.dob === 'object')
         ? JSON.stringify(intakeData.personalInfo.dob)
         : intakeData.personalInfo?.dob || undefined,
+      sex: toEnglish(intakeData.personalInfo?.sex),
+      bloodPressure: toEnglish(intakeData.personalInfo?.bloodPressure),
+      pregnancyBreastfeeding: toEnglish(intakeData.personalInfo?.pregnancyBreastfeeding),
+      // Address
       state: intakeData.address?.state,
       address: (intakeData.address && typeof intakeData.address === 'object')
         ? JSON.stringify(intakeData.address)
         : intakeData.address || undefined,
+      // Weight & BMI
       currentWeight: intakeData.medicalProfile?.weight?.currentWeight,
       idealWeight: intakeData.medicalProfile?.weight?.idealWeight,
       heightFeet: intakeData.medicalProfile?.weight?.heightFeet,
       heightInches: intakeData.medicalProfile?.weight?.heightInches,
       bmi: intakeData.medicalProfile?.bmi,
-      // Convert goals to English
-      goals: Array.isArray(intakeData.medicalProfile?.goals) 
-        ? arrayToEnglish(intakeData.medicalProfile.goals).join(', ')
-        : toEnglish(intakeData.medicalProfile?.goals as string | undefined),
-      // Convert activity level to English
+      // Goals & Activity
+      goals: arrayToString(intakeData.medicalProfile?.goals),
       activityLevel: toEnglish(intakeData.medicalProfile?.activityLevel),
-      // Convert medical conditions to English
-      chronicConditions: Array.isArray(intakeData.medicalHistory?.chronicConditions)
-        ? arrayToEnglish(intakeData.medicalHistory.chronicConditions).join(', ')
-        : toEnglish(intakeData.medicalHistory?.chronicConditions as string | undefined),
-      digestiveConditions: Array.isArray(intakeData.medicalHistory?.digestiveConditions)
-        ? arrayToEnglish(intakeData.medicalHistory.digestiveConditions).join(', ')
-        : toEnglish(intakeData.medicalHistory?.digestiveConditions as string | undefined),
-      medications: Array.isArray(intakeData.medicalHistory?.medications)
-        ? arrayToEnglish(intakeData.medicalHistory.medications).join(', ')
-        : toEnglish(intakeData.medicalHistory?.medications as string | undefined),
-      allergies: Array.isArray(intakeData.medicalHistory?.allergies)
-        ? arrayToEnglish(intakeData.medicalHistory.allergies).join(', ')
-        : toEnglish(intakeData.medicalHistory?.allergies as string | undefined),
-      mentalHealthConditions: Array.isArray(intakeData.medicalHistory?.mentalHealthConditions)
-        ? arrayToEnglish(intakeData.medicalHistory.mentalHealthConditions).join(', ')
-        : toEnglish(intakeData.medicalHistory?.mentalHealthConditions as string | undefined),
-      // Convert GLP-1 related fields to English
+      // Medical Conditions
+      chronicConditions: arrayToString(intakeData.medicalHistory?.chronicConditions),
+      digestiveConditions: arrayToString(intakeData.medicalHistory?.digestiveConditions),
+      medications: arrayToString(intakeData.medicalHistory?.medications),
+      allergies: arrayToString(intakeData.medicalHistory?.allergies),
+      mentalHealthConditions: arrayToString(intakeData.medicalHistory?.mentalHealthConditions),
+      // Additional Medical History
+      surgeryHistory: toEnglish(intakeData.medicalHistory?.surgeryHistory),
+      surgeryDetails: arrayToString(intakeData.medicalHistory?.surgeryDetails),
+      familyConditions: arrayToString(intakeData.medicalHistory?.familyConditions),
+      kidneyConditions: arrayToString(intakeData.medicalHistory?.kidneyConditions),
+      medicalConditions: arrayToString(intakeData.medicalHistory?.medicalConditions),
+      personalDiabetes: toEnglish(intakeData.medicalHistory?.personalDiabetes),
+      personalGastroparesis: toEnglish(intakeData.medicalHistory?.personalGastroparesis),
+      personalPancreatitis: toEnglish(intakeData.medicalHistory?.personalPancreatitis),
+      personalThyroidCancer: toEnglish(intakeData.medicalHistory?.personalThyroidCancer),
+      personalMen: toEnglish(intakeData.medicalHistory?.personalMen),
+      hasMentalHealth: toEnglish(intakeData.medicalHistory?.hasMentalHealth),
+      hasChronicConditions: toEnglish(intakeData.medicalHistory?.hasChronicConditions),
+      // GLP-1 Profile
       glp1History: toEnglish(intakeData.glp1Profile?.history),
       glp1Type: toEnglish(intakeData.glp1Profile?.type),
-      sideEffects: Array.isArray(intakeData.glp1Profile?.sideEffects)
-        ? arrayToEnglish(intakeData.glp1Profile.sideEffects).join(', ')
-        : toEnglish(intakeData.glp1Profile?.sideEffects as string | undefined),
+      sideEffects: arrayToString(intakeData.glp1Profile?.sideEffects),
       medicationPreference: toEnglish(intakeData.glp1Profile?.medicationPreference),
+      semaglutideDosage: toEnglish(intakeData.glp1Profile?.semaglutideDosage),
+      semaglutideSideEffects: arrayToString(intakeData.glp1Profile?.semaglutideSideEffects),
+      semaglutideSuccess: toEnglish(intakeData.glp1Profile?.semaglutideSuccess),
+      tirzepatideDosage: toEnglish(intakeData.glp1Profile?.tirzepatideDosage),
+      tirzepatideSideEffects: arrayToString(intakeData.glp1Profile?.tirzepatideSideEffects),
+      tirzepatideSuccess: toEnglish(intakeData.glp1Profile?.tirzepatideSuccess),
+      dosageSatisfaction: toEnglish(intakeData.glp1Profile?.dosageSatisfaction),
+      dosageInterest: toEnglish(intakeData.glp1Profile?.dosageInterest),
+      // Lifestyle
+      alcoholConsumption: toEnglish(intakeData.lifestyle?.alcoholConsumption),
+      recreationalDrugs: arrayToString(intakeData.lifestyle?.recreationalDrugs),
+      weightLossHistory: arrayToString(intakeData.lifestyle?.weightLossHistory),
+      weightLossSupport: arrayToString(intakeData.lifestyle?.weightLossSupport),
+      healthImprovements: arrayToString(intakeData.lifestyle?.healthImprovements),
+      // Referral
+      referralSources: arrayToString(intakeData.referral?.sources),
+      referrerName: intakeData.referral?.referrerName,
+      referrerType: intakeData.referral?.referrerType,
+      // Qualification Status
       qualified: intakeData.qualificationStatus?.qualified,
+      takingMedications: toEnglish(intakeData.qualificationStatus?.takingMedications),
+      personalizedTreatmentInterest: toEnglish(intakeData.qualificationStatus?.personalizedTreatmentInterest),
       submittedAt: intakeData.qualificationStatus?.completedAt || new Date().toISOString(),
-      // Keep track of original flow language for reference (stored in localStorage by LanguageContext)
+      // Keep track of original flow language
       flowLanguage: isBrowser ? (localStorage.getItem('preferredLanguage') || 'en') : 'en',
     };
 
@@ -300,38 +368,83 @@ export function collectIntakeData(): IntakeSubmission {
   if (!isBrowser) {
     throw new Error('collectIntakeData must be called from client-side code');
   }
-  
+
   const sessionId = getSessionId();
-  
+
   // Parse stored data - using CORRECT sessionStorage keys
   const nameData = sessionStorage.getItem('intake_name');
   const contactData = sessionStorage.getItem('intake_contact');
   const dobData = sessionStorage.getItem('intake_dob');
   const addressData = sessionStorage.getItem('intake_address');
-  
+
   // Weight data is stored in separate keys
   const currentWeight = sessionStorage.getItem('intake_current_weight');
   const idealWeight = sessionStorage.getItem('intake_ideal_weight');
   const heightData = sessionStorage.getItem('intake_height');
-  
+
   // Goals stored with 'intake_' prefix
   const goalsData = sessionStorage.getItem('intake_goals');
   const activityData = sessionStorage.getItem('activity_level');
-  
+
   // Medical history
   const chronicConditions = sessionStorage.getItem('chronic_conditions');
   const digestiveConditions = sessionStorage.getItem('digestive_conditions');
-  // Medications stored as 'current_medications', not 'medications_list'
   const medications = sessionStorage.getItem('current_medications');
   const allergies = sessionStorage.getItem('allergies');
   const mentalHealth = sessionStorage.getItem('mental_health_conditions');
-  
+
   // GLP-1 data
   const glp1History = sessionStorage.getItem('glp1_history');
   const glp1Type = sessionStorage.getItem('glp1_type');
   const sideEffects = sessionStorage.getItem('common_side_effects');
   const medicationPref = sessionStorage.getItem('medication_preference');
-  
+
+  // === ADDITIONAL FIELDS ===
+  // Personal/Medical
+  const sexAssigned = sessionStorage.getItem('intake_sex');
+  const bloodPressure = sessionStorage.getItem('blood_pressure');
+  const pregnancyBreastfeeding = sessionStorage.getItem('pregnancy_breastfeeding');
+
+  // Additional Medical History
+  const surgeryHistory = sessionStorage.getItem('surgery_history');
+  const surgeryDetails = sessionStorage.getItem('surgery_details');
+  const familyConditions = sessionStorage.getItem('family_conditions');
+  const kidneyConditions = sessionStorage.getItem('kidney_conditions');
+  const medicalConditions = sessionStorage.getItem('medical_conditions');
+  const personalDiabetes = sessionStorage.getItem('personal_diabetes_t2');
+  const personalGastroparesis = sessionStorage.getItem('personal_gastroparesis');
+  const personalPancreatitis = sessionStorage.getItem('personal_pancreatitis');
+  const personalThyroidCancer = sessionStorage.getItem('personal_thyroid_cancer');
+  const personalMen = sessionStorage.getItem('personal_men');
+
+  // GLP-1 Specific
+  const semaglutideDosage = sessionStorage.getItem('semaglutide_dosage');
+  const semaglutideSideEffects = sessionStorage.getItem('semaglutide_side_effects');
+  const semaglutideSuccess = sessionStorage.getItem('semaglutide_success');
+  const tirzepatideDosage = sessionStorage.getItem('tirzepatide_dosage');
+  const tirzepatideSideEffects = sessionStorage.getItem('tirzepatide_side_effects');
+  const tirzepatideSuccess = sessionStorage.getItem('tirzepatide_success');
+  const dosageSatisfaction = sessionStorage.getItem('dosage_satisfaction');
+  const dosageInterest = sessionStorage.getItem('dosage_interest');
+
+  // Lifestyle
+  const alcoholConsumption = sessionStorage.getItem('alcohol_consumption');
+  const recreationalDrugs = sessionStorage.getItem('recreational_drugs');
+  const weightLossHistory = sessionStorage.getItem('weight_loss_history');
+  const weightLossSupport = sessionStorage.getItem('weight_loss_support');
+  const healthImprovements = sessionStorage.getItem('health_improvements');
+
+  // Referral
+  const referralSources = sessionStorage.getItem('referral_sources');
+  const referrerName = sessionStorage.getItem('referrer_name');
+  const referrerType = sessionStorage.getItem('referrer_type');
+
+  // Other flags
+  const takingMedications = sessionStorage.getItem('taking_medications');
+  const hasMentalHealth = sessionStorage.getItem('has_mental_health_condition');
+  const hasChronicConditions = sessionStorage.getItem('has_chronic_conditions');
+  const personalizedTreatment = sessionStorage.getItem('personalized_treatment_interest');
+
   // Build weight object from separate keys
   const parsedHeight = heightData ? JSON.parse(heightData) : {};
   const weightObject = {
@@ -340,13 +453,16 @@ export function collectIntakeData(): IntakeSubmission {
     heightFeet: parsedHeight.feet || null,
     heightInches: parsedHeight.inches || null
   };
-  
+
   const intakeData: IntakeSubmission = {
     sessionId,
     personalInfo: {
       ...(nameData ? JSON.parse(nameData) : {}),
       ...(contactData ? JSON.parse(contactData) : {}),
-      dob: dobData || null
+      dob: dobData || null,
+      sex: sexAssigned || '',
+      bloodPressure: bloodPressure || '',
+      pregnancyBreastfeeding: pregnancyBreastfeeding || ''
     },
     address: addressData ? JSON.parse(addressData) : null,
     medicalProfile: {
@@ -360,21 +476,55 @@ export function collectIntakeData(): IntakeSubmission {
       digestiveConditions: digestiveConditions ? JSON.parse(digestiveConditions) : [],
       medications: medications ? JSON.parse(medications) : [],
       allergies: allergies ? JSON.parse(allergies) : [],
-      mentalHealthConditions: mentalHealth ? JSON.parse(mentalHealth) : []
+      mentalHealthConditions: mentalHealth ? JSON.parse(mentalHealth) : [],
+      surgeryHistory: surgeryHistory || '',
+      surgeryDetails: surgeryDetails ? JSON.parse(surgeryDetails) : [],
+      familyConditions: familyConditions ? JSON.parse(familyConditions) : [],
+      kidneyConditions: kidneyConditions ? JSON.parse(kidneyConditions) : [],
+      medicalConditions: medicalConditions ? JSON.parse(medicalConditions) : [],
+      personalDiabetes: personalDiabetes || '',
+      personalGastroparesis: personalGastroparesis || '',
+      personalPancreatitis: personalPancreatitis || '',
+      personalThyroidCancer: personalThyroidCancer || '',
+      personalMen: personalMen || '',
+      hasMentalHealth: hasMentalHealth || '',
+      hasChronicConditions: hasChronicConditions || ''
     },
     glp1Profile: {
       history: glp1History || '',
       type: glp1Type || '',
       sideEffects: sideEffects ? JSON.parse(sideEffects) : [],
-      medicationPreference: medicationPref || ''
+      medicationPreference: medicationPref || '',
+      semaglutideDosage: semaglutideDosage || '',
+      semaglutideSideEffects: semaglutideSideEffects ? JSON.parse(semaglutideSideEffects) : [],
+      semaglutideSuccess: semaglutideSuccess || '',
+      tirzepatideDosage: tirzepatideDosage || '',
+      tirzepatideSideEffects: tirzepatideSideEffects ? JSON.parse(tirzepatideSideEffects) : [],
+      tirzepatideSuccess: tirzepatideSuccess || '',
+      dosageSatisfaction: dosageSatisfaction || '',
+      dosageInterest: dosageInterest || ''
+    },
+    lifestyle: {
+      alcoholConsumption: alcoholConsumption || '',
+      recreationalDrugs: recreationalDrugs ? JSON.parse(recreationalDrugs) : [],
+      weightLossHistory: weightLossHistory ? JSON.parse(weightLossHistory) : [],
+      weightLossSupport: weightLossSupport ? JSON.parse(weightLossSupport) : [],
+      healthImprovements: healthImprovements ? JSON.parse(healthImprovements) : []
+    },
+    referral: {
+      sources: referralSources ? JSON.parse(referralSources) : [],
+      referrerName: referrerName || '',
+      referrerType: referrerType || ''
     },
     qualificationStatus: {
       qualified: true,
       completedAt: new Date().toISOString(),
-      checkpoints: JSON.parse(sessionStorage.getItem('completed_checkpoints') || '[]')
+      checkpoints: JSON.parse(sessionStorage.getItem('completed_checkpoints') || '[]'),
+      takingMedications: takingMedications || '',
+      personalizedTreatmentInterest: personalizedTreatment || ''
     }
   };
-  
+
   return intakeData;
 }
 
