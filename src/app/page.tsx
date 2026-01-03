@@ -68,9 +68,9 @@ export default function Home() {
     <>
       {/* Privacy and terms text - closer to button */}
       <div className="mb-4">
-        <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight" style={{ fontWeight: 450 }}>
+        <p className="text-[11px] lg:text-[13px] text-gray-400 leading-tight" style={{ fontWeight: 450 }}>
           {t('landing.disclaimer1')}
-          <a href="#" className="text-gray-400 underline" style={{ fontSize: '10.5px' }}>{t('landing.disclaimer.privacy')}</a>
+          <a href="#" className="text-gray-400 underline" style={{ fontSize: '12.5px' }}>{t('landing.disclaimer.privacy')}</a>
           {t('landing.disclaimer1.end')}
         </p>
       </div>
