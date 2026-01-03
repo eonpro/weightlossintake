@@ -72,10 +72,10 @@ export default function QualifiedPage() {
     
     // Get the intake ID if available
     const intakeId = sessionStorage.getItem('submitted_intake_id');
-    let checkoutUrl = 'https://eonmeds-checkout.vercel.app';
+    let checkoutUrl = 'https://checkout.eonmeds.com';
     
     if (intakeId) {
-      checkoutUrl = `https://eonmeds-checkout.vercel.app?ref=${intakeId}`;
+      checkoutUrl = `https://checkout.eonmeds.com?ref=${intakeId}`;
     }
     
     window.location.replace(checkoutUrl);
@@ -141,18 +141,19 @@ export default function QualifiedPage() {
         {/* Checkout button */}
         <button
           onClick={handleCheckout}
-          className="w-full max-w-sm bg-[#413d3d] hover:bg-[#2a2727] text-white py-4 px-8 rounded-full flex items-center justify-between transition-colors"
+          className="w-full max-w-sm bg-[#413d3d] hover:bg-[#2a2727] py-4 px-8 rounded-full flex items-center justify-between transition-colors"
+          style={{ color: '#ffffff' }}
         >
           <div className="text-left">
-            <div className="font-semibold text-base">
+            <div className="font-semibold text-base" style={{ color: '#ffffff' }}>
               {language === 'es' ? 'Completar Checkout' : 'Complete Check Out'}
             </div>
-            <div className="text-sm opacity-80">
+            <div className="text-sm" style={{ color: 'rgba(255,255,255,0.8)' }}>
               {language === 'es' ? 'Descuentos aplicados al checkout' : 'Discounts applied at check out'}
             </div>
           </div>
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: '#ffffff' }}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
           </svg>
         </button>
       </div>

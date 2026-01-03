@@ -70,7 +70,7 @@ export default function BMIWidget({ bmi, language }: BMIWidgetProps) {
         }}
       >
         <div className="relative">
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 text-white text-[11px] font-semibold tracking-wide px-4 py-2 rounded-full whitespace-nowrap shadow-lg">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 text-[11px] font-semibold tracking-wide px-4 py-2 rounded-full whitespace-nowrap shadow-lg" style={{ color: '#ffffff' }}>
             {statusText} · {getBMICategory(bmi)}
           </div>
           {/* Triangle pointer */}

@@ -239,9 +239,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// CORS headers for checkout domain
+// CORS headers for checkout domain (allow both production and dev URLs)
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*', // Allow all origins for now, can be restricted to specific domains
+  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
