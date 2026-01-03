@@ -98,10 +98,10 @@ export default function ObesityStatsPage() {
 
       {/* Sticky bottom button with gradient */}
       <div className="fixed bottom-0 left-0 right-0 z-50">
-        {/* Gradient overlay */}
-        <div className="h-16 bg-gradient-to-t from-[#ddd3c9] to-transparent"></div>
-        {/* Button container */}
-        <div className="bg-gradient-to-r from-[#d2c7bb] to-[#e9e1d7] px-6 pt-2 pb-6">
+        {/* Gradient overlay - full width */}
+        <div className="h-20 w-screen bg-gradient-to-t from-[#ddd3c9] to-transparent"></div>
+        {/* Button container - full width */}
+        <div className="w-screen bg-gradient-to-r from-[#d2c7bb] to-[#e9e1d7] px-6 pt-2 pb-6">
           <div className="max-w-md lg:max-w-lg mx-auto">
             <button 
               onClick={handleNext}

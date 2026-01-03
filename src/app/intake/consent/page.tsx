@@ -42,7 +42,7 @@ export default function ConsentPage() {
       {/* EONMeds Logo */}
       <EonmedsLogo compact={true} />
       
-      <div className="flex-1 px-6 lg:px-8 py-8 max-w-md lg:max-w-lg mx-auto w-full">
+      <div className="flex-1 px-6 lg:px-8 py-8 pb-52 max-w-md lg:max-w-lg mx-auto w-full overflow-y-auto">
         <div className="space-y-6">
           <div>
             <h1 className="page-title mb-4">{t('consent.title')}</h1>
