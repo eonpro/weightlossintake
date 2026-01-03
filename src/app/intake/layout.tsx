@@ -68,6 +68,26 @@ const INTAKE_STORAGE_KEYS = [
   'kidney_conditions',
   'medical_conditions',
   'family_conditions',
+  // Consent tracking keys (snake_case as stored by pages)
+  'privacy_policy_accepted',
+  'privacy_policy_accepted_at',
+  'terms_of_use_accepted',
+  'terms_of_use_accepted_at',
+  'consent_privacy_policy_accepted',
+  'consent_privacy_policy_accepted_at',
+  'telehealth_consent_accepted',
+  'telehealth_consent_accepted_at',
+  'cancellation_policy_accepted',
+  'cancellation_policy_accepted_at',
+  'florida_bill_of_rights_accepted',
+  'florida_bill_of_rights_accepted_at',
+  'florida_consent_accepted',
+  'florida_consent_accepted_at',
+  // Submission tracking
+  'submission_status',
+  'submission_error',
+  'submitted_intake_id',
+  'checkout_redirect_in_progress',
 ];
 
 // Clear all intake data from both sessionStorage and localStorage
