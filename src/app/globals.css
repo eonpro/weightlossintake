@@ -465,7 +465,7 @@ button, .button-like {
   right: 0;
   z-index: 50;
   padding: 0 24px 24px;
-  background: transparent;
+  background: linear-gradient(to right, #d2c7bb, #e9e1d7);
 }
 
 .sticky-bottom-button::before {
@@ -475,19 +475,8 @@ button, .button-like {
   left: 0;
   right: 0;
   height: 64px;
-  background: linear-gradient(to top, rgba(233, 225, 215, 1) 0%, rgba(233, 225, 215, 0) 100%);
+  background: linear-gradient(to top, #ddd3c9 0%, transparent 100%);
   pointer-events: none;
-}
-
-.sticky-bottom-button::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #e9e1d7;
-  z-index: -1;
 }
 
 /* Ensure html/body have proper background for status bar */

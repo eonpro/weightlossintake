@@ -41,9 +41,9 @@ export default function IntakePageLayout({
         {/* Fixed button area at bottom with gradient */}
         <div className="fixed bottom-0 left-0 right-0 z-50">
           {/* Gradient overlay */}
-          <div className="h-8 bg-gradient-to-t from-[#e9e1d7] to-transparent"></div>
+          <div className="h-16 bg-gradient-to-t from-[#ddd3c9] to-transparent"></div>
           {/* Button container */}
-          <div className="bg-[#e9e1d7] px-6 pt-2 pb-6">
+          <div className="bg-gradient-to-r from-[#d2c7bb] to-[#e9e1d7] px-6 pt-2 pb-6">
             <div className="max-w-md mx-auto">
               {button}
               {copyright && (
