@@ -28,7 +28,7 @@ export default function ConsentPage() {
     <div className="min-h-screen flex flex-col">
       {/* Progress bar */}
       <div className="w-full h-1 bg-white/20">
-        <div className="h-full w-[8%] bg-[#b8e64a] transition-all duration-300"></div>
+        <div className="h-full w-[8%] bg-[#f0feab] transition-all duration-300"></div>
       </div>
       
       <div className="px-6 lg:px-8 pt-6 max-w-md lg:max-w-lg mx-auto w-full">
@@ -111,14 +111,14 @@ export default function ConsentPage() {
               />
               <div className="text-[9px] md:text-[12.5px] text-[#413d3d]/80">
                 {t('consent.agreement.start')}
-                <a href="#" className="text-[#6b8e23] underline font-medium">{t('consent.agreement.terms')}</a>
+                <a href="#" className="text-[#4fa87f] underline font-medium">{t('consent.agreement.terms')}</a>
                 {t('consent.agreement.and')}
-                <a href="#" className="text-[#6b8e23] underline font-medium">{t('consent.agreement.privacy')}</a>, 
-                <a href="#" className="text-[#6b8e23] underline font-medium">{t('consent.agreement.telehealth')}</a> and{' '}
-                <a href="#" className="text-[#6b8e23] underline font-medium">{t('consent.agreement.cancellation')}</a>
+                <a href="#" className="text-[#4fa87f] underline font-medium">{t('consent.agreement.privacy')}</a>, 
+                <a href="#" className="text-[#4fa87f] underline font-medium">{t('consent.agreement.telehealth')}</a> and{' '}
+                <a href="#" className="text-[#4fa87f] underline font-medium">{t('consent.agreement.cancellation')}</a>
                 {t('consent.agreement.florida')}
-                <a href="#" className="text-[#6b8e23] underline font-medium">{t('consent.agreement.florida.bill')}</a> and the{' '}
-                <a href="#" className="text-[#6b8e23] underline font-medium">{t('consent.agreement.florida.consent')}</a>.
+                <a href="#" className="text-[#4fa87f] underline font-medium">{t('consent.agreement.florida.bill')}</a> and the{' '}
+                <a href="#" className="text-[#4fa87f] underline font-medium">{t('consent.agreement.florida.consent')}</a>.
               </div>
             </label>
           </div>
