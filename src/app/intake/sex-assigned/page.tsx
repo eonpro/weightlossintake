@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -11,13 +10,10 @@ export default function SexAssignedPage() {
   const router = useRouter();
   const { t } = useTranslation();
   const { language } = useLanguage();
-  const [selected, setSelected] = useState('');
 
-  const handleContinue = () => {
-    if (selected) {
-      sessionStorage.setItem('intake_sex', selected);
-      router.push('/intake/activity-level');
-    }
+  const handleSelect = (value: string) => {
+    sessionStorage.setItem('intake_sex', value);
+    router.push('/intake/activity-level');
   };
 
   return (
@@ -56,47 +52,17 @@ export default function SexAssignedPage() {
           {/* Options */}
           <div className="space-y-3">
             <button
-              onClick={() => setSelected('man')}
-              className={`option-button w-full text-left p-4 rounded-full transition-all ${
-                selected === 'man' ? 'selected' : ''
-              }`}
+              onClick={() => handleSelect('man')}
+              className="option-button w-full text-left p-4 rounded-full transition-all"
             >
-              <div className="flex items-center">
-                <div className={`w-5 h-5 rounded mr-3 flex items-center justify-center flex-shrink-0 border ${
-                  selected === 'man'
-                    ? 'bg-white/30 border-white/60'
-                    : 'border-white/40'
-                }`}>
-                  {selected === 'man' && (
-                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
-                <span className="text-[16px] lg:text-lg font-medium leading-tight text-white">{t('sex.man')}</span>
-              </div>
+              <span className="text-[16px] lg:text-lg font-medium leading-tight">{t('sex.man')}</span>
             </button>
             
             <button
-              onClick={() => setSelected('woman')}
-              className={`option-button w-full text-left p-4 rounded-full transition-all ${
-                selected === 'woman' ? 'selected' : ''
-              }`}
+              onClick={() => handleSelect('woman')}
+              className="option-button w-full text-left p-4 rounded-full transition-all"
             >
-              <div className="flex items-center">
-                <div className={`w-5 h-5 rounded mr-3 flex items-center justify-center flex-shrink-0 border ${
-                  selected === 'woman'
-                    ? 'bg-white/30 border-white/60'
-                    : 'border-white/40'
-                }`}>
-                  {selected === 'woman' && (
-                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
-                <span className="text-[16px] lg:text-lg font-medium leading-tight text-white">{t('sex.woman')}</span>
-              </div>
+              <span className="text-[16px] lg:text-lg font-medium leading-tight">{t('sex.woman')}</span>
             </button>
           </div>
           
@@ -109,35 +75,21 @@ export default function SexAssignedPage() {
         </div>
       </div>
       
-      {/* Sticky bottom button */}
-      <div className="sticky-bottom-button max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={!selected}
-          className="continue-button"
-        >
-          <span>{t('sex.continue')}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright footer */}
-        <div className="mt-6 text-center">
-          <p className="copyright-text">
-            {language === 'es' ? (
-              <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
-                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
-              </>
-            ) : (
-              <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
-                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
-              </>
-            )}
-          </p>
-        </div>
+      {/* Copyright footer */}
+      <div className="px-6 lg:px-8 pb-6 max-w-md lg:max-w-2xl mx-auto w-full">
+        <p className="copyright-text text-center">
+          {language === 'es' ? (
+            <>
+              © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+              Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+            </>
+          ) : (
+            <>
+              © 2025 EONPro, LLC. All rights reserved.<br/>
+              Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+            </>
+          )}
+        </p>
       </div>
     </div>
   );

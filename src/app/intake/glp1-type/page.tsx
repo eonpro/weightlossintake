@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -11,7 +10,6 @@ export default function GLP1TypePage() {
   const router = useRouter();
   const { t } = useTranslation();
   const { language } = useLanguage();
-  const [selected, setSelected] = useState('');
 
   const medications = [
     {
@@ -55,19 +53,17 @@ export default function GLP1TypePage() {
     }
   ];
 
-  const handleContinue = () => {
-    if (selected) {
-      sessionStorage.setItem('glp1_type', selected);
-      
-      // Navigate based on selection
-      if (selected === 'semaglutide') {
-        router.push('/intake/semaglutide-dosage');
-      } else if (selected === 'tirzepatide') {
-        router.push('/intake/tirzepatide-dosage');
-      } else {
-        // For other medications, skip to digestive conditions
-        router.push('/intake/dosage-satisfaction');
-      }
+  const handleSelect = (value: string) => {
+    sessionStorage.setItem('glp1_type', value);
+    
+    // Navigate based on selection
+    if (value === 'semaglutide') {
+      router.push('/intake/semaglutide-dosage');
+    } else if (value === 'tirzepatide') {
+      router.push('/intake/tirzepatide-dosage');
+    } else {
+      // For other medications, skip to digestive conditions
+      router.push('/intake/dosage-satisfaction');
     }
   };
 
@@ -103,26 +99,15 @@ export default function GLP1TypePage() {
             {medications.map((med) => (
               <button
                 key={med.id}
-                onClick={() => setSelected(med.id)}
-                className={`option-button w-full p-4 text-left rounded-full transition-all flex items-center ${
-                  selected === med.id ? 'selected' : ''
-                }`}
+                onClick={() => handleSelect(med.id)}
+                className="option-button w-full p-4 text-left rounded-full transition-all"
               >
-                <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center mr-3 transition-all ${
-                  selected === med.id ? 'bg-white/30 border-white/60' : 'border-white/40'
-                }`}>
-                  {selected === med.id && (
-                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
                 <div>
-                  <span className="text-base lg:text-lg block text-white">
+                  <span className="text-base lg:text-lg block">
                     {language === 'es' ? med.es : med.en}
                   </span>
                   {med.subLabel && (
-                    <span className="text-sm text-white/60">
+                    <span className="text-sm opacity-60">
                       ({language === 'es' ? med.subLabel.es : med.subLabel.en})
                     </span>
                   )}
@@ -133,35 +118,21 @@ export default function GLP1TypePage() {
         </div>
       </div>
 
-      {/* Sticky bottom button */}
-      <div className="sticky-bottom-button max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={!selected}
-          className="continue-button"
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright footer */}
-        <div className="mt-6 text-center">
-          <p className="copyright-text">
-            {language === 'es' ? (
-              <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
-                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
-              </>
-            ) : (
-              <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
-                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
-              </>
-            )}
-          </p>
-        </div>
+      {/* Copyright footer */}
+      <div className="px-6 lg:px-8 pb-6 max-w-md lg:max-w-2xl mx-auto w-full">
+        <p className="copyright-text text-center">
+          {language === 'es' ? (
+            <>
+              © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+              Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+            </>
+          ) : (
+            <>
+              © 2025 EONPro, LLC. All rights reserved.<br/>
+              Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+            </>
+          )}
+        </p>
       </div>
     </div>
   );

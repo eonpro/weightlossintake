@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -11,7 +10,6 @@ export default function BloodPressurePage() {
   const router = useRouter();
   const { t } = useTranslation();
   const { language } = useLanguage();
-  const [selected, setSelected] = useState('');
 
   const bloodPressureOptions = [
     { 
@@ -58,11 +56,9 @@ export default function BloodPressurePage() {
     }
   ];
 
-  const handleContinue = () => {
-    if (selected) {
-      sessionStorage.setItem('blood_pressure', selected);
-      router.push('/intake/treatment-benefits');
-    }
+  const handleSelect = (value: string) => {
+    sessionStorage.setItem('blood_pressure', value);
+    router.push('/intake/treatment-benefits');
   };
 
   return (
@@ -104,28 +100,15 @@ export default function BloodPressurePage() {
             {bloodPressureOptions.map((option) => (
               <button
                 key={option.id}
-                onClick={() => setSelected(option.id)}
-                className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
-                  selected === option.id
-                    ? 'bg-[#f0feab] border-2 border-[#f0feab]'
-                    : 'bg-white border-2 border-gray-200'
-                }`}
+                onClick={() => handleSelect(option.id)}
+                className="option-button w-full p-4 text-left rounded-full transition-all"
               >
-                <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center mr-3 transition-all ${
-                  selected === option.id ? 'bg-gray-200 border-gray-400' : 'bg-white border-gray-300'
-                }`}>
-                  {selected === option.id && (
-                    <svg className="w-3 h-3 text-black" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                </div>
                 <div>
                   <span className="text-base lg:text-lg block">
                     {language === 'es' ? option.es : option.en}
                   </span>
                   {option.subLabel && (
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm opacity-60">
                       ({language === 'es' ? option.subLabel.es : option.subLabel.en})
                     </span>
                   )}
@@ -136,28 +119,20 @@ export default function BloodPressurePage() {
         </div>
       </div>
 
-      {/* Bottom section */}
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={!selected}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-            selected 
-              ? 'bg-black text-white hover:bg-gray-900' 
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-
-        {/* Copyright text */}
-        <p className="text-[9px] lg:text-[11px] text-gray-400 text-center mt-4 leading-tight">
-          {language === 'es' 
-            ? '© 2025 EONPro, LLC. Todos los derechos reservados. Proceso exclusivo y protegido. Prohibida su copia o reproducción sin autorización.'
-            : '© 2025 EONPro, LLC. All rights reserved. Exclusive and protected process. Copying or reproduction without authorization is prohibited.'}
+      {/* Copyright footer */}
+      <div className="px-6 lg:px-8 pb-6 max-w-md lg:max-w-2xl mx-auto w-full">
+        <p className="copyright-text text-center">
+          {language === 'es' ? (
+            <>
+              © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+              Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+            </>
+          ) : (
+            <>
+              © 2025 EONPro, LLC. All rights reserved.<br/>
+              Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+            </>
+          )}
         </p>
       </div>
     </div>

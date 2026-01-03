@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -11,7 +10,6 @@ export default function GLP1HistoryPage() {
   const router = useRouter();
   const { t } = useTranslation();
   const { language } = useLanguage();
-  const [selected, setSelected] = useState('');
 
   const options = [
     {
@@ -31,14 +29,12 @@ export default function GLP1HistoryPage() {
     }
   ];
 
-  const handleContinue = () => {
-    if (selected) {
-      sessionStorage.setItem('glp1_history', selected);
-      if (selected === 'currently_taking' || selected === 'previously_taken') {
-        router.push('/intake/glp1-type');
-      } else {
-        router.push('/intake/dosage-satisfaction');
-      }
+  const handleSelect = (value: string) => {
+    sessionStorage.setItem('glp1_history', value);
+    if (value === 'currently_taking' || value === 'previously_taken') {
+      router.push('/intake/glp1-type');
+    } else {
+      router.push('/intake/dosage-satisfaction');
     }
   };
 
@@ -81,21 +77,10 @@ export default function GLP1HistoryPage() {
             {options.map((option) => (
               <button
                 key={option.id}
-                onClick={() => setSelected(option.id)}
-                className={`option-button w-full p-4 text-left rounded-full transition-all flex items-center ${
-                  selected === option.id ? 'selected' : ''
-                }`}
+                onClick={() => handleSelect(option.id)}
+                className="option-button w-full p-4 text-left rounded-full transition-all"
               >
-                <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center mr-3 transition-all ${
-                  selected === option.id ? 'bg-white/30 border-white/60' : 'border-white/40'
-                }`}>
-                  {selected === option.id && (
-                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
-                <span className="text-base lg:text-lg text-white">
+                <span className="text-base lg:text-lg">
                   {language === 'es' ? option.es : option.en}
                 </span>
               </button>
@@ -104,35 +89,21 @@ export default function GLP1HistoryPage() {
         </div>
       </div>
 
-      {/* Sticky bottom button */}
-      <div className="sticky-bottom-button max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={!selected}
-          className="continue-button"
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright footer */}
-        <div className="mt-6 text-center">
-          <p className="copyright-text">
-            {language === 'es' ? (
-              <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
-                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
-              </>
-            ) : (
-              <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
-                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
-              </>
-            )}
-          </p>
-        </div>
+      {/* Copyright footer */}
+      <div className="px-6 lg:px-8 pb-6 max-w-md lg:max-w-2xl mx-auto w-full">
+        <p className="copyright-text text-center">
+          {language === 'es' ? (
+            <>
+              © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+              Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+            </>
+          ) : (
+            <>
+              © 2025 EONPro, LLC. All rights reserved.<br/>
+              Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+            </>
+          )}
+        </p>
       </div>
     </div>
   );

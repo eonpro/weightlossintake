@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -11,13 +10,10 @@ export default function PregnancyPage() {
   const router = useRouter();
   const { t } = useTranslation();
   const { language } = useLanguage();
-  const [selected, setSelected] = useState('');
 
-  const handleContinue = () => {
-    if (selected) {
-      sessionStorage.setItem('pregnancy_breastfeeding', selected);
-      router.push('/intake/surgery');
-    }
+  const handleSelect = (value: string) => {
+    sessionStorage.setItem('pregnancy_breastfeeding', value);
+    router.push('/intake/surgery');
   };
 
   return (
@@ -51,93 +47,41 @@ export default function PregnancyPage() {
           {/* Yes/No options */}
           <div className="space-y-3">
             <button
-              onClick={() => setSelected('yes')}
-              className={`w-full text-left p-4 rounded-2xl border transition-all ${
-                selected === 'yes'
-                  ? 'border-[#f0feab] bg-[#f0feab]'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
+              onClick={() => handleSelect('yes')}
+              className="option-button w-full text-left p-4 rounded-full transition-all"
             >
-              <div className="flex items-center">
-                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center flex-shrink-0 ${
-                  selected === 'yes'
-                    ? 'border-[#f0feab] bg-[#f0feab]'
-                    : 'border-gray-300'
-                }`}>
-                  {selected === 'yes' && (
-                    <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
-                <span className="text-[16px] lg:text-lg font-medium leading-tight">
-                  {language === 'es' ? 'Sí' : 'Yes'}
-                </span>
-              </div>
+              <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                {language === 'es' ? 'Sí' : 'Yes'}
+              </span>
             </button>
             
             <button
-              onClick={() => setSelected('no')}
-              className={`w-full text-left p-4 rounded-2xl border transition-all ${
-                selected === 'no'
-                  ? 'border-[#f0feab] bg-[#f0feab]'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
+              onClick={() => handleSelect('no')}
+              className="option-button w-full text-left p-4 rounded-full transition-all"
             >
-              <div className="flex items-center">
-                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center flex-shrink-0 ${
-                  selected === 'no'
-                    ? 'border-[#f0feab] bg-[#f0feab]'
-                    : 'border-gray-300'
-                }`}>
-                  {selected === 'no' && (
-                    <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
-                <span className="text-[16px] lg:text-lg font-medium leading-tight">
-                  No
-                </span>
-              </div>
+              <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                No
+              </span>
             </button>
           </div>
         </div>
       </div>
       
-      {/* Continue button */}
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={!selected}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-colors ${
-            selected
-              ? 'bg-black text-white hover:bg-gray-800' 
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-          }`}
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright footer */}
-        <div className="mt-6 text-center">
-          <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
-            {language === 'es' ? (
-              <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
-                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
-              </>
-            ) : (
-              <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
-                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
-              </>
-            )}
-          </p>
-        </div>
+      {/* Copyright footer */}
+      <div className="px-6 lg:px-8 pb-6 max-w-md lg:max-w-2xl mx-auto w-full">
+        <p className="copyright-text text-center">
+          {language === 'es' ? (
+            <>
+              © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+              Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+            </>
+          ) : (
+            <>
+              © 2025 EONPro, LLC. All rights reserved.<br/>
+              Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+            </>
+          )}
+        </p>
       </div>
     </div>
   );

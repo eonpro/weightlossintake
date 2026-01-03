@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -11,13 +10,10 @@ export default function MedicationPreferencePage() {
   const router = useRouter();
   const { t } = useTranslation();
   const { language } = useLanguage();
-  const [selected, setSelected] = useState<string | null>(null);
 
-  const handleContinue = () => {
-    if (selected) {
-      sessionStorage.setItem('medication_preference', selected);
-      router.push('/intake/research-done');
-    }
+  const handleSelect = (value: string) => {
+    sessionStorage.setItem('medication_preference', value);
+    router.push('/intake/research-done');
   };
 
   return (
@@ -49,86 +45,42 @@ export default function MedicationPreferencePage() {
           <div className="space-y-3">
             {/* Option 1 */}
             <button
-              onClick={() => setSelected('recommendation')}
-              className={`option-button w-full text-left p-4 rounded-full transition-all ${
-                selected === 'recommendation' ? 'selected' : ''
-              }`}
+              onClick={() => handleSelect('recommendation')}
+              className="option-button w-full text-left p-4 rounded-full transition-all"
             >
-              <div className="flex items-center">
-                <div className={`w-5 h-5 mr-3 rounded flex items-center justify-center flex-shrink-0 border-2 ${
-                  selected === 'recommendation'
-                    ? 'bg-white border-[#413d3d]'
-                    : 'border-white/60 bg-transparent'
-                }`}>
-                  {selected === 'recommendation' && (
-                    <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
-                <span className="text-[16px] lg:text-lg font-medium leading-tight">
-                  {t('medication.option1')}
-                </span>
-              </div>
+              <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                {t('medication.option1')}
+              </span>
             </button>
             
             {/* Option 2 */}
             <button
-              onClick={() => setSelected('have_in_mind')}
-              className={`option-button w-full text-left p-4 rounded-full transition-all ${
-                selected === 'have_in_mind' ? 'selected' : ''
-              }`}
+              onClick={() => handleSelect('have_in_mind')}
+              className="option-button w-full text-left p-4 rounded-full transition-all"
             >
-              <div className="flex items-center">
-                <div className={`w-5 h-5 mr-3 rounded flex items-center justify-center flex-shrink-0 border-2 ${
-                  selected === 'have_in_mind'
-                    ? 'bg-white border-[#413d3d]'
-                    : 'border-white/60 bg-transparent'
-                }`}>
-                  {selected === 'have_in_mind' && (
-                    <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
-                <span className="text-[16px] lg:text-lg font-medium leading-tight">
-                  {t('medication.option2')}
-                </span>
-              </div>
+              <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                {t('medication.option2')}
+              </span>
             </button>
           </div>
         </div>
       </div>
       
-      {/* Sticky bottom button */}
-      <div className="sticky-bottom-button max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={!selected}
-          className="continue-button"
-        >
-          <span>{t('medication.continue')}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright footer */}
-        <div className="mt-6 text-center">
-          <p className="copyright-text">
-            {language === 'es' ? (
-              <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
-                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
-              </>
-            ) : (
-              <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
-                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
-              </>
-            )}
-          </p>
-        </div>
+      {/* Copyright footer */}
+      <div className="px-6 lg:px-8 pb-6 max-w-md lg:max-w-2xl mx-auto w-full">
+        <p className="copyright-text text-center">
+          {language === 'es' ? (
+            <>
+              © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+              Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+            </>
+          ) : (
+            <>
+              © 2025 EONPro, LLC. All rights reserved.<br/>
+              Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+            </>
+          )}
+        </p>
       </div>
     </div>
   );

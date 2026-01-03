@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -11,16 +10,13 @@ export default function MentalHealthPage() {
   const router = useRouter();
   const { t } = useTranslation();
   const { language } = useLanguage();
-  const [selected, setSelected] = useState<string>('');
 
-  const handleContinue = () => {
-    if (selected) {
-      sessionStorage.setItem('has_mental_health_condition', selected);
-      if (selected === 'yes') {
-        router.push('/intake/mental-health-conditions');
-      } else {
-        router.push('/intake/programs-include');
-      }
+  const handleSelect = (value: string) => {
+    sessionStorage.setItem('has_mental_health_condition', value);
+    if (value === 'yes') {
+      router.push('/intake/mental-health-conditions');
+    } else {
+      router.push('/intake/programs-include');
     }
   };
 
@@ -63,85 +59,41 @@ export default function MentalHealthPage() {
           {/* Options */}
           <div className="space-y-3">
             <button
-              onClick={() => setSelected('yes')}
-              className={`option-button w-full text-left p-4 rounded-full transition-all ${
-                selected === 'yes' ? 'selected' : ''
-              }`}
+              onClick={() => handleSelect('yes')}
+              className="option-button w-full text-left p-4 rounded-full transition-all"
             >
-              <div className="flex items-center">
-                <div className={`w-5 h-5 rounded mr-3 flex items-center justify-center flex-shrink-0 border ${
-                  selected === 'yes'
-                    ? 'bg-white/30 border-white/60'
-                    : 'border-white/40'
-                }`}>
-                  {selected === 'yes' && (
-                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
-                <span className="text-[16px] lg:text-lg font-medium leading-tight text-white">
-                  {language === 'es' ? 'Sí' : 'Yes'}
-                </span>
-              </div>
+              <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                {language === 'es' ? 'Sí' : 'Yes'}
+              </span>
             </button>
             
             <button
-              onClick={() => setSelected('no')}
-              className={`option-button w-full text-left p-4 rounded-full transition-all ${
-                selected === 'no' ? 'selected' : ''
-              }`}
+              onClick={() => handleSelect('no')}
+              className="option-button w-full text-left p-4 rounded-full transition-all"
             >
-              <div className="flex items-center">
-                <div className={`w-5 h-5 rounded mr-3 flex items-center justify-center flex-shrink-0 border ${
-                  selected === 'no'
-                    ? 'bg-white/30 border-white/60'
-                    : 'border-white/40'
-                }`}>
-                  {selected === 'no' && (
-                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
-                <span className="text-[16px] lg:text-lg font-medium leading-tight text-white">
-                  {language === 'es' ? 'No' : 'No'}
-                </span>
-              </div>
+              <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                {language === 'es' ? 'No' : 'No'}
+              </span>
             </button>
           </div>
         </div>
       </div>
       
-      {/* Sticky bottom button */}
-      <div className="sticky-bottom-button max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={!selected}
-          className="continue-button"
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright footer */}
-        <div className="mt-6 text-center">
-          <p className="copyright-text">
-            {language === 'es' ? (
-              <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
-                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
-              </>
-            ) : (
-              <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
-                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
-              </>
-            )}
-          </p>
-        </div>
+      {/* Copyright footer */}
+      <div className="px-6 lg:px-8 pb-6 max-w-md lg:max-w-2xl mx-auto w-full">
+        <p className="copyright-text text-center">
+          {language === 'es' ? (
+            <>
+              © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+              Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+            </>
+          ) : (
+            <>
+              © 2025 EONPro, LLC. All rights reserved.<br/>
+              Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+            </>
+          )}
+        </p>
       </div>
     </div>
   );
