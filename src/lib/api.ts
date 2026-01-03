@@ -1,5 +1,10 @@
 // API functions for submitting intake data at checkpoints
+// Note: These functions use browser APIs (localStorage, sessionStorage)
+// and should only be called from client-side code
 import { translations } from '@/translations';
+
+// Helper to check if we're in a browser environment
+const isBrowser = typeof window !== 'undefined';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.eonpro.io';
 
@@ -246,7 +251,7 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
       qualified: intakeData.qualificationStatus?.qualified,
       submittedAt: intakeData.qualificationStatus?.completedAt || new Date().toISOString(),
       // Keep track of original flow language for reference (stored in localStorage by LanguageContext)
-      flowLanguage: localStorage.getItem('preferredLanguage') || 'en',
+      flowLanguage: isBrowser ? (localStorage.getItem('preferredLanguage') || 'en') : 'en',
     };
 
     // Send to Airtable API route
@@ -260,8 +265,8 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
 
     const result = await response.json();
     
-    // Save submission status locally
-    if (result.success) {
+    // Save submission status locally (only in browser)
+    if (result.success && isBrowser) {
       sessionStorage.setItem('intake_submitted', 'true');
       sessionStorage.setItem('intake_id', result.recordId || `INTAKE-${Date.now()}`);
     }
@@ -276,8 +281,10 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
     
     // Fallback: save locally even if API fails - but report as failure
     const fallbackId = `LOCAL-${Date.now()}`;
-    sessionStorage.setItem('intake_pending_sync', 'true');
-    sessionStorage.setItem('intake_id', fallbackId);
+    if (isBrowser) {
+      sessionStorage.setItem('intake_pending_sync', 'true');
+      sessionStorage.setItem('intake_id', fallbackId);
+    }
     
     return {
       success: false,
@@ -288,7 +295,12 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
 }
 
 // Collect all session data for submission
+// Must be called from client-side code only
 export function collectIntakeData(): IntakeSubmission {
+  if (!isBrowser) {
+    throw new Error('collectIntakeData must be called from client-side code');
+  }
+  
   const sessionId = getSessionId();
   
   // Parse stored data - using CORRECT sessionStorage keys

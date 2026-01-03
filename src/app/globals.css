@@ -333,25 +333,30 @@ button, .button-like {
   }
 }
 
-/* Sticky bottom button container */
+/* Sticky bottom button container - fixed at bottom on all pages */
 .sticky-bottom-button {
-  position: sticky;
+  position: fixed;
   bottom: 0;
-  background: transparent;
-  padding: 16px 50px 24px 50px;
-  margin-top: auto;
-  z-index: 10;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 50;
+  padding: 24px;
+  padding-top: 48px;
+  background: linear-gradient(to top, #ffffff 0%, #ffffff 60%, transparent 100%);
 }
 
 @media (min-width: 768px) {
   .sticky-bottom-button {
-    padding: 16px 35px 24px 35px;
+    padding: 24px 35px;
+    padding-top: 48px;
   }
 }
 
 @media (min-width: 1024px) {
   .sticky-bottom-button {
-    padding: 16px 32px 32px 32px;
+    padding: 24px 32px;
+    padding-top: 48px;
   }
 }
 
@@ -458,18 +463,7 @@ button, .button-like {
   z-index: 50;
 }
 
-/* Sticky bottom button - for pages without IntakePageLayout */
-.sticky-bottom-button {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  z-index: 50;
-  padding: 24px;
-  padding-top: 48px;
-  background: linear-gradient(to top, #ffffff 0%, #ffffff 60%, transparent 100%);
-}
+/* Note: .sticky-bottom-button is defined above at line ~337 */
 
 /* Ensure html/body have proper background for status bar */
 html, body {
