@@ -274,15 +274,15 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
   } catch (error) {
     console.error('Intake submission failed:', error);
     
-    // Fallback: save locally even if API fails
+    // Fallback: save locally even if API fails - but report as failure
     const fallbackId = `LOCAL-${Date.now()}`;
-    sessionStorage.setItem('intake_submitted', 'true');
+    sessionStorage.setItem('intake_pending_sync', 'true');
     sessionStorage.setItem('intake_id', fallbackId);
     
     return {
-      success: true, // Still return success so user can proceed
+      success: false,
       intakeId: fallbackId,
-      error: error instanceof Error ? error.message : 'Saved locally (API unavailable)'
+      error: error instanceof Error ? error.message : 'API unavailable - data saved locally for retry'
     };
   }
 }
