@@ -239,6 +239,18 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// CORS headers for checkout domain
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*', // Allow all origins for now, can be restricted to specific domains
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+// Handle preflight requests
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 // GET endpoint to fetch patient checkout data by record ID
 // HIPAA Compliant: Returns only non-PHI data needed for checkout pre-fill
 export async function GET(request: NextRequest) {
@@ -254,14 +266,14 @@ export async function GET(request: NextRequest) {
       message: configured
         ? 'Airtable integration is configured'
         : 'Airtable credentials not set. Add AIRTABLE_PAT and AIRTABLE_BASE_ID to environment variables.'
-    });
+    }, { headers: corsHeaders });
   }
 
   // Validate record ID format (Airtable IDs start with 'rec')
   if (!recordId.startsWith('rec')) {
     return NextResponse.json(
       { success: false, error: 'Invalid record reference' },
-      { status: 400 }
+      { status: 400, headers: corsHeaders }
     );
   }
 
@@ -269,7 +281,7 @@ export async function GET(request: NextRequest) {
   if (!AIRTABLE_PAT || !AIRTABLE_BASE_ID) {
     return NextResponse.json(
       { success: false, error: 'Airtable not configured' },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 
@@ -290,7 +302,7 @@ export async function GET(request: NextRequest) {
       if (response.status === 404) {
         return NextResponse.json(
           { success: false, error: 'Record not found' },
-          { status: 404 }
+          { status: 404, headers: corsHeaders }
         );
       }
       throw new Error(`Airtable API error: ${response.status}`);
@@ -314,13 +326,13 @@ export async function GET(request: NextRequest) {
       }
     };
 
-    return NextResponse.json(checkoutData);
+    return NextResponse.json(checkoutData, { headers: corsHeaders });
 
   } catch (error) {
     console.error('Error fetching from Airtable:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch data' },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
