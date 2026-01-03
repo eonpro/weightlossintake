@@ -97,7 +97,7 @@ export default function TirzepatideSideEffectsPage() {
       </div>
       
       {/* Back button */}
-      <div className="px-6 lg:px-8 pt-6">
+      <div className="px-6 lg:px-8 pt-8 lg:pt-6">
         <Link href="/intake/tirzepatide-dosage" className="inline-block p-2 -ml-2 hover:bg-white/10 rounded-lg">
           <svg className="w-6 h-6 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
@@ -109,7 +109,7 @@ export default function TirzepatideSideEffectsPage() {
       <EonmedsLogo />
       
       {/* Main content */}
-      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <div>
             <h1 className="text-3xl font-medium leading-tight mb-2">

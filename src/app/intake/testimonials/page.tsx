@@ -55,7 +55,7 @@ export default function TestimonialsPage() {
         <div className="h-full w-5/6 bg-[#f0feab] transition-all duration-300"></div>
       </div>
       
-      <div className="px-6 lg:px-8 pt-6">
+      <div className="px-6 lg:px-8 pt-8 lg:pt-6">
         <Link href="/intake/bmi-result" className="inline-block p-2 -ml-2 hover:bg-white/10 rounded-lg">
           <svg className="w-6 h-6 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
@@ -66,7 +66,7 @@ export default function TestimonialsPage() {
       {/* EONMeds Logo */}
       <EonmedsLogo compact={true} />
       
-      <div className="flex-1 flex flex-col px-6 lg:px-8 py-6 max-w-md lg:max-w-lg mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-6 pb-40 max-w-md lg:max-w-lg mx-auto w-full">
         {/* Header with Icon */}
         <div className="space-y-4 mb-6">
           <div className="flex justify-start">

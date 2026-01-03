@@ -56,7 +56,7 @@ export default function ProgramsIncludePage() {
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#d2c7bb] to-[#e9e1d7] flex flex-col">
       {/* Back button */}
-      <div className="px-6 lg:px-8 pt-6">
+      <div className="px-6 lg:px-8 pt-8 lg:pt-6">
         <Link 
           href="/intake/mental-health" 
           className="inline-block p-2 -ml-2 hover:bg-white/10 rounded-lg"
@@ -71,7 +71,7 @@ export default function ProgramsIncludePage() {
       <EonmedsLogo compact={true} />
       
       {/* Main content */}
-      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-lg mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-lg mx-auto w-full">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-medium leading-tight">
