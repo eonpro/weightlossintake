@@ -115,9 +115,9 @@ export default function ViewportAwareLayout({
         </div>
       )}
       
-      {/* Logo if provided */}
+      {/* Logo if provided - extra top margin if no back button to clear language selector */}
       {logo && (
-        <div className={dynamicStyles.logoMargin}>
+        <div className={backButton ? dynamicStyles.logoMargin : 'mt-14 lg:mt-16'}>
           {logo}
         </div>
       )}
