@@ -70,6 +70,17 @@ const INTAKE_STORAGE_KEYS = [
   'family_conditions',
 ];
 
+// Clear all intake data from both sessionStorage and localStorage
+function clearAllIntakeData() {
+  // Clear sessionStorage keys
+  INTAKE_STORAGE_KEYS.forEach(key => {
+    sessionStorage.removeItem(key);
+  });
+  
+  // Clear Zustand persisted store from localStorage
+  localStorage.removeItem('eon-intake-storage');
+}
+
 export default function IntakeLayout({ children }: IntakeLayoutProps) {
   const { language } = useLanguage();
   const router = useRouter();
@@ -85,13 +96,12 @@ export default function IntakeLayout({ children }: IntakeLayoutProps) {
     if (navigationType === 'reload') {
       const hadPreviousData = sessionStorage.getItem('intake_goals') || 
                               sessionStorage.getItem('intake_name') ||
-                              sessionStorage.getItem('intake_state');
+                              sessionStorage.getItem('intake_state') ||
+                              localStorage.getItem('eon-intake-storage');
       
       if (hadPreviousData) {
         // Clear all intake data on refresh
-        INTAKE_STORAGE_KEYS.forEach(key => {
-          sessionStorage.removeItem(key);
-        });
+        clearAllIntakeData();
         
         // Redirect to the start of the intake
         router.replace('/');
@@ -102,29 +112,29 @@ export default function IntakeLayout({ children }: IntakeLayoutProps) {
     // Set flag to indicate legitimate navigation
     sessionStorage.setItem('intake_navigation_flag', 'true');
 
-    // Warning message based on language
-    const warningMessage = language === 'es'
-      ? '¿Estás seguro de que deseas salir? Si actualizas o cierras esta página, perderás todo tu progreso y tendrás que comenzar el formulario desde el principio.'
-      : 'Are you sure you want to leave? If you refresh or close this page, you will lose all your progress and will have to start the form from the beginning.';
-
-    // Handler for beforeunload event
+    // Handler for beforeunload event - shows browser's native warning dialog
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       // Check if user has started the intake (has any data in session)
       const hasStarted = sessionStorage.getItem('intake_goals') || 
                          sessionStorage.getItem('intake_name') ||
                          sessionStorage.getItem('intake_state') ||
-                         sessionStorage.getItem('intake_contact');
+                         sessionStorage.getItem('intake_contact') ||
+                         localStorage.getItem('eon-intake-storage');
       
       // Only show warning if user has entered some data
       if (hasStarted) {
+        // Prevent the default action (leaving the page)
         e.preventDefault();
-        // Modern browsers require returnValue to be set
-        e.returnValue = warningMessage;
-        return warningMessage;
+        
+        // Chrome requires returnValue to be set
+        // Note: Modern browsers show a generic message for security reasons
+        // but the dialog WILL appear
+        e.returnValue = '';
+        return '';
       }
     };
 
-    // Add event listener
+    // Add event listener for refresh/close warning
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     // Cleanup on unmount
