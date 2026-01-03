@@ -108,51 +108,39 @@ export default function ViewportAwareLayout({
       {/* Progress bar */}
       {progressBar}
       
-      {/* Back button area - dynamically sized and aligned with content */}
+      {/* Back button area - aligned with content */}
       {backButton && (
         <div className={`px-6 lg:px-8 ${dynamicStyles.backButtonPadding} max-w-md lg:max-w-2xl mx-auto w-full`}>
           {backButton}
         </div>
       )}
       
-      {/* Main content wrapper - consistent alignment on all screen sizes */}
-      <div className="flex-1 flex flex-col">
-        {/* Logo if provided - extra top margin if no back button to clear language selector */}
-        {logo && (
-          <div className={backButton ? dynamicStyles.logoMargin : 'mt-14 lg:mt-16'}>
-            {logo}
-          </div>
-        )}
-        
-        {/* Content area - same max-width as logo for alignment */}
-        <div 
-          className="flex-1 overflow-y-auto px-6 lg:px-8"
-          style={{ paddingBottom: `${dynamicStyles.scrollPadding}px` }}
-        >
-          <div className={`max-w-md lg:max-w-2xl mx-auto w-full ${dynamicStyles.contentPadding} ${dynamicStyles.elementSpacing}`}>
-            {/* Apply title spacing class if in compact mode */}
-            {compactMode ? (
-              <div className={dynamicStyles.titleSpacing}>
-                {children}
-              </div>
-            ) : (
-              children
-            )}
-            
-            {/* Desktop: Show button inline with content */}
-            <div className="hidden lg:block mt-8">
-              {button}
-              {copyright && (
-                <div className="mt-4">
-                  {copyright}
-                </div>
-              )}
-            </div>
-          </div>
+      {/* Logo if provided - extra top margin if no back button to clear language selector */}
+      {logo && (
+        <div className={backButton ? dynamicStyles.logoMargin : 'mt-14 lg:mt-16'}>
+          {logo}
         </div>
-        
-        {/* Mobile: Fixed button area at bottom */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 w-full z-10 px-6 pb-6 pt-12" style={{ background: 'linear-gradient(to top, #ffffff 0%, #ffffff 50%, transparent 100%)' }}>
+      )}
+      
+      {/* Content area - flex-1 to push button to bottom */}
+      <div 
+        className="flex-1 overflow-y-auto px-6 lg:px-8"
+        style={{ paddingBottom: `${dynamicStyles.scrollPadding}px` }}
+      >
+        <div className={`max-w-md lg:max-w-2xl mx-auto w-full ${dynamicStyles.contentPadding} ${dynamicStyles.elementSpacing}`}>
+          {compactMode ? (
+            <div className={dynamicStyles.titleSpacing}>
+              {children}
+            </div>
+          ) : (
+            children
+          )}
+        </div>
+      </div>
+      
+      {/* Button area - ALWAYS at bottom on ALL screen sizes */}
+      <div className="fixed bottom-0 left-0 right-0 w-full z-10 px-6 lg:px-8 pb-6 pt-12" style={{ background: 'linear-gradient(to top, #ffffff 0%, #ffffff 50%, transparent 100%)' }}>
+        <div className="max-w-md lg:max-w-2xl mx-auto w-full">
           {button}
           {copyright && (
             <div className={dynamicStyles.copyrightMargin}>
