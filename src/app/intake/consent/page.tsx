@@ -106,26 +106,24 @@ export default function ConsentPage() {
 
           {/* Consent Section */}
           <div className="border border-gray-200 bg-gray-50 rounded-xl p-3">
-            <label className="flex items-start space-x-3 cursor-pointer" onClick={() => setAgreed(!agreed)}>
-              <div className="mt-0.5 flex-shrink-0">
-                <div
-                  className="w-5 h-5 rounded flex items-center justify-center flex-shrink-0 bg-white"
-                  style={{ border: '1.5px solid #413d3d' }}
-                >
-                  {agreed && (
-                    <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
-              </div>
-              <input
-                type="checkbox"
-                checked={agreed}
-                onChange={(e) => setAgreed(e.target.checked)}
-                className="sr-only"
-              />
-              <div className="text-[9px] md:text-[11px] text-[#413d3d]/80 leading-tight">
+            <div className="flex items-start space-x-3">
+              <button
+                type="button"
+                onClick={() => setAgreed(!agreed)}
+                className="mt-0.5 flex-shrink-0 w-5 h-5 rounded flex items-center justify-center bg-white cursor-pointer"
+                style={{ border: '1.5px solid #413d3d' }}
+                aria-label="Accept terms and conditions"
+              >
+                {agreed && (
+                  <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </button>
+              <div
+                className="text-[9px] md:text-[11px] text-[#413d3d]/80 leading-tight cursor-pointer"
+                onClick={() => setAgreed(!agreed)}
+              >
                 {t('consent.agreement.start')}
                 <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.terms')}</a>
                 {t('consent.agreement.and')}
@@ -136,7 +134,7 @@ export default function ConsentPage() {
                 <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.florida.bill')}</a> and the{' '}
                 <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.florida.consent')}</a>.
               </div>
-            </label>
+            </div>
           </div>
         </div>
       </div>
