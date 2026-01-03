@@ -240,15 +240,15 @@ export default function AddressPage() {
   useEnterNavigation(handleContinue);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Progress bar */}
-      <div className="w-full h-1 bg-gray-100">
-        <div className="h-full w-1/4 bg-[#f0feab] transition-all duration-300"></div>
+      <div className="w-full h-1 bg-white/20">
+        <div className="h-full w-1/4 bg-[#b8e64a] transition-all duration-300"></div>
       </div>
       
       <div className="px-6 lg:px-8 pt-6">
-        <Link href="/intake/support-info" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <Link href="/intake/support-info" className="inline-block p-2 -ml-2 hover:bg-white/10 rounded-lg">
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </Link>
@@ -277,19 +277,19 @@ export default function AddressPage() {
       <div className="flex-1 px-6 lg:px-8 py-4 max-w-md lg:max-w-lg mx-auto w-full">
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-medium mb-4">{t('address.title')}</h1>
-            <p className="text-gray-500 mb-1">{t('address.subtitle')}</p>
-            <p className="text-sm text-gray-400">{t('address.asterisk')}</p>
+            <h1 className="page-title mb-4">{t('address.title')}</h1>
+            <p className="page-subtitle mb-1">{t('address.subtitle')}</p>
+            <p className="text-sm text-white/50">{t('address.asterisk')}</p>
           </div>
 
           {/* Google Map - Only show after address is entered */}
           {showMap && (
-            <div ref={mapRef} className="w-full h-64 rounded-2xl border border-gray-200 bg-gray-100 relative overflow-hidden">
+            <div ref={mapRef} className="w-full h-64 rounded-2xl border border-white/20 bg-white/10 relative overflow-hidden">
               {mapError && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-2xl">
+                <div className="absolute inset-0 flex items-center justify-center bg-white/10 rounded-2xl">
                   <div className="text-center">
-                    <p className="text-gray-500 text-sm">Map unavailable</p>
-                    <p className="text-gray-400 text-xs mt-1">Enter address manually</p>
+                    <p className="text-white/70 text-sm">Map unavailable</p>
+                    <p className="text-white/50 text-xs mt-1">Enter address manually</p>
                   </div>
                 </div>
               )}
@@ -309,7 +309,7 @@ export default function AddressPage() {
                   setShowApartmentWarning(shouldSuggestApartment(e.target.value));
                 }
               }}
-              className="w-full p-4 text-base md:text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
+              className="input-field w-full"
             />
             
             <input
@@ -317,7 +317,7 @@ export default function AddressPage() {
               placeholder={t('address.apartment')}
               value={apartment}
               onChange={(e) => setApartment(e.target.value)}
-              className="w-full p-4 text-base md:text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
+              className="input-field w-full"
             />
             
             {/* Apartment Warning */}
@@ -343,20 +343,17 @@ export default function AddressPage() {
               </div>
             )}
             
-            <p className="text-xs text-gray-400">{t('address.apartment.note')}</p>
+            <p className="text-xs text-white/50">{t('address.apartment.note')}</p>
           </div>
         </div>
       </div>
       
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
+      {/* Sticky bottom button */}
+      <div className="sticky-bottom-button max-w-md lg:max-w-lg mx-auto w-full">
         <button 
           onClick={handleContinue}
           disabled={!address}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-            address 
-              ? 'bg-black text-white hover:bg-gray-900' 
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
+          className="continue-button"
         >
           <span>{t('address.continue')}</span>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -366,7 +363,7 @@ export default function AddressPage() {
         
         {/* Copyright footer */}
         <div className="mt-6 text-center">
-          <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
+          <p className="copyright-text">
             {language === 'es' ? (
               <>
                 © 2025 EONPro, LLC. Todos los derechos reservados.<br/>

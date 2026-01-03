@@ -25,15 +25,15 @@ export default function ConsentPage() {
   useEnterNavigation(handleContinue);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Progress bar */}
-      <div className="w-full h-1 bg-gray-100">
-        <div className="h-full w-[8%] bg-[#f0feab] transition-all duration-300"></div>
+      <div className="w-full h-1 bg-white/20">
+        <div className="h-full w-[8%] bg-[#b8e64a] transition-all duration-300"></div>
       </div>
       
       <div className="px-6 lg:px-8 pt-6">
-        <Link href="/intake/research-done" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <Link href="/intake/research-done" className="inline-block p-2 -ml-2 hover:bg-white/10 rounded-lg">
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </Link>
@@ -45,9 +45,9 @@ export default function ConsentPage() {
       <div className="flex-1 px-6 lg:px-8 py-8 max-w-md lg:max-w-lg mx-auto w-full">
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-medium mb-4">{t('consent.title')}</h1>
-            <p className="text-gray-600 mb-2">{t('consent.subtitle')}</p>
-            <p className="text-gray-600">{t('consent.remember')}</p>
+            <h1 className="page-title mb-4">{t('consent.title')}</h1>
+            <p className="page-subtitle mb-2">{t('consent.subtitle')}</p>
+            <p className="page-subtitle">{t('consent.remember')}</p>
           </div>
 
           <div className="space-y-3">
@@ -89,15 +89,15 @@ export default function ConsentPage() {
           </div>
 
           {/* Consent Section */}
-          <div className="border border-[#4fa87f] bg-[#f9f9f9] rounded-2xl p-4 space-y-3">
+          <div className="border border-white/30 bg-white/10 rounded-2xl p-4 space-y-3">
             <label className="flex items-start space-x-3 cursor-pointer">
               <div className="mt-0.5 flex-shrink-0">
-                <div className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 ${
-                  agreed ? 'bg-[#4fa87f] border-[#4fa87f]' : 'bg-white border-gray-300'
+                <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
+                  agreed ? 'bg-[#333] border-[#333]' : 'bg-transparent border-white/60'
                 }`}>
                   {agreed && (
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
                   )}
                 </div>
@@ -108,31 +108,28 @@ export default function ConsentPage() {
                 onChange={(e) => setAgreed(e.target.checked)}
                 className="sr-only"
               />
-              <div className="text-[9px] md:text-[12.5px]">
+              <div className="text-[9px] md:text-[12.5px] text-white/80">
                 {t('consent.agreement.start')}
-                <a href="#" className="text-[#4fa87f] underline">{t('consent.agreement.terms')}</a>
+                <a href="#" className="text-[#f0feab] underline">{t('consent.agreement.terms')}</a>
                 {t('consent.agreement.and')}
-                <a href="#" className="text-[#4fa87f] underline">{t('consent.agreement.privacy')}</a>, 
-                <a href="#" className="text-[#4fa87f] underline">{t('consent.agreement.telehealth')}</a> and{' '}
-                <a href="#" className="text-[#4fa87f] underline">{t('consent.agreement.cancellation')}</a>
+                <a href="#" className="text-[#f0feab] underline">{t('consent.agreement.privacy')}</a>, 
+                <a href="#" className="text-[#f0feab] underline">{t('consent.agreement.telehealth')}</a> and{' '}
+                <a href="#" className="text-[#f0feab] underline">{t('consent.agreement.cancellation')}</a>
                 {t('consent.agreement.florida')}
-                <a href="#" className="text-[#4fa87f] underline">{t('consent.agreement.florida.bill')}</a> and the{' '}
-                <a href="#" className="text-[#4fa87f] underline">{t('consent.agreement.florida.consent')}</a>.
+                <a href="#" className="text-[#f0feab] underline">{t('consent.agreement.florida.bill')}</a> and the{' '}
+                <a href="#" className="text-[#f0feab] underline">{t('consent.agreement.florida.consent')}</a>.
               </div>
             </label>
           </div>
         </div>
       </div>
       
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
+      {/* Sticky bottom button */}
+      <div className="sticky-bottom-button max-w-md lg:max-w-lg mx-auto w-full">
         <button 
           onClick={handleContinue}
           disabled={!agreed}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-            agreed 
-              ? 'bg-black text-white hover:bg-gray-900' 
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
+          className="continue-button"
         >
           <span>{t('consent.continue')}</span>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,7 +139,7 @@ export default function ConsentPage() {
         
         {/* Copyright footer */}
         <div className="mt-6 text-center">
-          <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
+          <p className="copyright-text">
             {language === 'es' ? (
               <>
                 © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
