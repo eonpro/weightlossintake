@@ -106,8 +106,8 @@ body {
 
 /* Option buttons styling */
 .option-button {
-  background-color: var(--input-bg);
-  border: none;
+  background-color: rgba(255, 255, 255, 0.25);
+  border: 2px solid transparent;
   color: white;
   border-radius: 9999px;
   padding: 1rem 1.5rem;
@@ -115,11 +115,42 @@ body {
 }
 
 .option-button.selected {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: #f0feab;
+  border-color: #f0feab;
+  color: #333;
 }
 
-.option-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+.option-button.selected span,
+.option-button.selected .text-white {
+  color: #333 !important;
+}
+
+.option-button:hover:not(.selected) {
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Checkbox styling for options */
+.option-checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.option-checkbox.checked {
+  background: #333;
+  border-color: #333;
+}
+
+.option-button.selected .option-checkbox {
+  background: #333;
+  border-color: #333;
 }
 
 /* Copyright text */
@@ -301,21 +332,21 @@ button, .button-like {
   padding: 16px;
   font-size: 16px;
   font-weight: 500;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: white;
+  border: 2px solid rgba(0, 0, 0, 0.1);
   border-radius: 16px;
-  color: white;
+  color: #333;
   outline: none;
   transition: all 0.2s;
 }
 
 .input-field::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(0, 0, 0, 0.4);
 }
 
 .input-field:focus {
-  border-color: rgba(255, 255, 255, 0.6);
-  background: rgba(255, 255, 255, 0.2);
+  border-color: #4fa87f;
+  background: white;
 }
 
 /* Select field styling */
@@ -324,10 +355,10 @@ button, .button-like {
   padding-right: 48px;
   font-size: 16px;
   font-weight: 500;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: white;
+  border: 2px solid rgba(0, 0, 0, 0.1);
   border-radius: 16px;
-  color: white;
+  color: #333;
   outline: none;
   appearance: none;
   -webkit-appearance: none;
@@ -335,12 +366,12 @@ button, .button-like {
 }
 
 .select-field:focus {
-  border-color: rgba(255, 255, 255, 0.6);
-  background: rgba(255, 255, 255, 0.2);
+  border-color: #4fa87f;
+  background: white;
 }
 
 .select-field option {
-  background: #d2c7bb;
+  background: white;
   color: #333;
 }
 

@@ -47,7 +47,7 @@ export default function Home() {
   // Show intro animation if needed (either not mounted yet or showIntro is true)
   if (!mounted || showIntro) {
     return (
-      <div className={`min-h-screen bg-white flex flex-col items-center justify-center transition-opacity duration-700 ease-out ${
+      <div className={`min-h-screen bg-gradient-to-r from-[#d2c7bb] to-[#e9e1d7] flex flex-col items-center justify-center transition-opacity duration-700 ease-out ${
         fadeOut ? 'opacity-0' : 'opacity-100'
       }`}>
         <div className="flex items-center justify-center">

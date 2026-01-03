@@ -89,10 +89,10 @@ export default function GoalsPage() {
                 }`}
               >
                 <div className="flex items-center">
-                  <div className={`w-5 h-5 mr-3 rounded flex items-center justify-center flex-shrink-0 border ${
+                  <div className={`w-5 h-5 mr-3 rounded flex items-center justify-center flex-shrink-0 border-2 ${
                     selected.includes(option)
-                      ? 'bg-white/30 border-white/60'
-                      : 'border-white/40'
+                      ? 'bg-[#333] border-[#333]'
+                      : 'border-white/60 bg-transparent'
                   }`}>
                     {selected.includes(option) && (
                       <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,7 +100,7 @@ export default function GoalsPage() {
                       </svg>
                     )}
                   </div>
-                  <span className="text-[16px] lg:text-lg font-medium leading-tight text-white">{t(option)}</span>
+                  <span className="text-[16px] lg:text-lg font-medium leading-tight">{t(option)}</span>
                 </div>
               </button>
             ))}
