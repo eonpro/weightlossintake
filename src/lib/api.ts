@@ -265,8 +265,10 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
       // Weight & BMI
       currentWeight: intakeData.medicalProfile?.weight?.currentWeight,
       idealWeight: intakeData.medicalProfile?.weight?.idealWeight,
-      heightFeet: intakeData.medicalProfile?.weight?.heightFeet,
-      heightInches: intakeData.medicalProfile?.weight?.heightInches,
+      // Combine height into single field (e.g., "5'10\"")
+      height: intakeData.medicalProfile?.weight?.heightFeet 
+        ? `${intakeData.medicalProfile.weight.heightFeet}'${intakeData.medicalProfile.weight.heightInches || 0}"`
+        : '',
       bmi: intakeData.medicalProfile?.bmi,
       // Goals & Activity
       goals: arrayToString(intakeData.medicalProfile?.goals),

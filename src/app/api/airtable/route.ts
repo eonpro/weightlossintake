@@ -22,8 +22,7 @@ interface IntakeRecord {
   // Weight & BMI
   currentWeight?: number;
   idealWeight?: number;
-  heightFeet?: number;
-  heightInches?: number;
+  height?: string;
   bmi?: number;
   // Goals & Activity
   goals?: string;
@@ -109,11 +108,10 @@ export async function POST(request: NextRequest) {
       'State': data.state || '',
       'Address': data.address || '',
 
-      // Weight & BMI (5 fields)
+      // Weight & BMI (4 fields)
       'Current Weight (lbs)': data.currentWeight || 0,
       'Ideal Weight (lbs)': data.idealWeight || 0,
-      'Height (feet)': data.heightFeet || 0,
-      'Height (inches)': data.heightInches || 0,
+      'Height': data.height || '',
       'BMI': data.bmi || 0,
 
       // Goals & Activity (2 fields)
