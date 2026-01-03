@@ -203,14 +203,12 @@ export default function ContactInfoPage() {
     <button 
       onClick={handleContinue}
       disabled={!email || !phone || !consent || isSubmitting}
-      className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-        email && phone && consent && !isSubmitting
-          ? 'bg-black text-white hover:bg-gray-900' 
-          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+      className={`continue-button ${
+        (!email || !phone || !consent || isSubmitting) ? '!bg-gray-400 !cursor-not-allowed' : ''
       }`}
     >
-      <span>{isSubmitting ? (language === 'es' ? 'Procesando...' : 'Processing...') : (language === 'es' ? 'Continuar' : 'Continue')}</span>
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <span className="text-white">{isSubmitting ? (language === 'es' ? 'Procesando...' : 'Processing...') : (language === 'es' ? 'Continuar' : 'Continue')}</span>
+      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
       </svg>
     </button>
@@ -255,9 +253,7 @@ export default function ContactInfoPage() {
                 placeholder="Email"
                 value={email}
                 onChange={handleEmailChange}
-                className={`w-full p-4 text-[16px] md:text-lg font-medium placeholder:font-medium border rounded-2xl focus:outline-none ${
-                  emailError ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-gray-400'
-                }`}
+                className={`input-field ${emailError ? '!border-red-500' : ''}`}
               />
               {emailError && (
                 <p className="text-red-500 text-sm mt-1">{emailError}</p>
@@ -271,7 +267,7 @@ export default function ContactInfoPage() {
                   <button 
                     type="button"
                     onClick={() => setShowCountryDropdown(!showCountryDropdown)}
-                    className="flex items-center space-x-2 p-4 border border-gray-200 rounded-2xl"
+                    className="input-field flex items-center space-x-2 !w-auto"
                   >
                     <span className="text-2xl">{selectedCountry.flag}</span>
                     <span className="text-[16px] md:text-base font-medium">+1</span>
@@ -281,7 +277,7 @@ export default function ContactInfoPage() {
                   </button>
                   
                   {showCountryDropdown && (
-                    <div className="absolute z-10 mt-2 w-48 bg-white border border-gray-200 rounded-2xl shadow-lg">
+                    <div className="absolute z-10 mt-2 w-48 bg-[#eae3db] border border-[#d2c7bb] rounded-2xl shadow-lg">
                       {countries.map(c => (
                         <button
                           key={c.code}
@@ -291,8 +287,8 @@ export default function ContactInfoPage() {
                             setPhone(''); // Reset phone when country changes
                             setPhoneError('');
                           }}
-                          className={`w-full flex items-center space-x-3 p-3 hover:bg-gray-50 first:rounded-t-2xl last:rounded-b-2xl ${
-                            country === c.code ? 'bg-gray-100' : ''
+                          className={`w-full flex items-center space-x-3 p-3 hover:bg-[#d2c7bb]/50 first:rounded-t-2xl last:rounded-b-2xl ${
+                            country === c.code ? 'bg-[#d2c7bb]/30' : ''
                           }`}
                         >
                           <span className="text-2xl">{c.flag}</span>
@@ -309,9 +305,7 @@ export default function ContactInfoPage() {
                   value={phone}
                   onChange={handlePhoneChange}
                   inputMode="numeric"
-                  className={`flex-1 min-w-0 p-4 text-[16px] md:text-lg font-medium placeholder:font-medium border rounded-2xl focus:outline-none ${
-                    phoneError ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-gray-400'
-                  }`}
+                  className={`input-field flex-1 min-w-0 ${phoneError ? '!border-red-500' : ''}`}
                 />
               </div>
               {phoneError && (
@@ -324,12 +318,10 @@ export default function ContactInfoPage() {
               <button
                 type="button"
                 onClick={() => setConsent(!consent)}
-                className={`mt-0.5 w-6 h-6 rounded-md border flex items-center justify-center transition-all flex-shrink-0 ${
-                  consent ? 'bg-gray-200 border-gray-400' : 'bg-white border-gray-300'
-                }`}
+                className={`checkbox-option mt-0.5 flex items-center justify-center flex-shrink-0 ${consent ? 'checked' : ''}`}
               >
                 {consent && (
-                  <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 )}
@@ -344,8 +336,8 @@ export default function ContactInfoPage() {
           </div>
 
           {/* SMS Disclosure */}
-          <div className="bg-gray-50 rounded-2xl p-4">
-            <p className="text-xs text-gray-600 leading-relaxed">
+          <div className="info-container">
+            <p className="text-xs leading-relaxed">
               {language === 'es'
                 ? 'Para ayudar a garantizar la seguridad del paciente, necesitamos verificar tu número de teléfono. Al proporcionarlo y continuar, consientes recibir mensajes de texto de EONPro para verificación y otros usos legalmente permitidos relacionados con tu cuenta y nuestros servicios. Esto puede incluir confirmaciones de pedidos, actualizaciones de envío y mensajes de tu proveedor. Pueden aplicarse tarifas de mensajes y datos. La frecuencia de los mensajes puede variar. Responde AYUDA para asistencia o STOP para cancelar la suscripción. Pueden aplicarse tarifas estándar de mensajes y datos. Estos mensajes pueden incluir recordatorios médicos, actualizaciones de tratamiento, promociones y otra información relacionada con tu atención.'
                 : 'To help ensure patient safety, we need to verify your phone number. By providing it and continuing, you consent to receive text messages from EONPro for verification and other legally permitted uses related to your account and our services. This may include order confirmations, shipping updates, and messages from your provider. Message and data rates may apply. Message frequency may vary. Reply HELP for assistance or STOP to unsubscribe. Standard message and data rates may apply. These messages may include medical reminders, treatment updates, promotions, and other information related to your care.'}

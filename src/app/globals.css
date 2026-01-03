@@ -48,8 +48,8 @@
 }
 
 .checkbox-option.checked {
-  background: #413d3d;
-  border-color: #413d3d;
+  background: #000000;
+  border-color: #000000;
 }
 
 /* Override all border-2 checkboxes to 1px */
@@ -159,13 +159,13 @@ h1, h2, h3, h4, h5, h6, p, span, label, a, div, li, td, th {
 }
 
 .option-checkbox.checked {
-  background: #333;
-  border-color: #333;
+  background: #000000;
+  border-color: #000000;
 }
 
 .option-button.selected .option-checkbox {
-  background: #333;
-  border-color: #333;
+  background: #000000;
+  border-color: #000000;
 }
 
 /* Copyright text */
@@ -394,7 +394,7 @@ button, .button-like {
 .continue-button {
   width: 100%;
   background: #000000;
-  color: #ffffff;
+  color: #ffffff !important;
   padding: 16px 32px;
   border-radius: 9999px;
   font-size: 18px;
@@ -407,14 +407,27 @@ button, .button-like {
   border: none;
 }
 
+.continue-button span,
+.continue-button svg {
+  color: #ffffff !important;
+}
+
 .continue-button:hover {
   background: #1a1a1a;
 }
 
 .continue-button:disabled {
   background: #666666;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.5) !important;
   cursor: not-allowed;
+}
+
+/* Info container - for info boxes that should have beige background */
+.info-container {
+  background: #eae3db;
+  border-radius: 16px;
+  padding: 16px 20px;
+  color: #413d3d;
 }
 
 /* Smooth scrolling for better mobile experience */
