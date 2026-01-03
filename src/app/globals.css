@@ -408,8 +408,11 @@ button, .button-like {
 }
 
 .continue-button span,
-.continue-button svg {
+.continue-button svg,
+.continue-button * {
   color: #ffffff !important;
+  fill: none;
+  stroke: #ffffff;
 }
 
 .continue-button:hover {
