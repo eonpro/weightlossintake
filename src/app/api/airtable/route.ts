@@ -119,16 +119,89 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET endpoint to check configuration status
-export async function GET() {
-  const configured = !!(AIRTABLE_PAT && AIRTABLE_BASE_ID);
-  
-  return NextResponse.json({
-    configured,
-    tableName: AIRTABLE_TABLE_NAME,
-    message: configured 
-      ? 'Airtable integration is configured' 
-      : 'Airtable credentials not set. Add AIRTABLE_PAT and AIRTABLE_BASE_ID to environment variables.'
-  });
+// GET endpoint to fetch patient checkout data by record ID
+// HIPAA Compliant: Returns only non-PHI data needed for checkout pre-fill
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const recordId = searchParams.get('ref');
+
+  // If no record ID, return config status
+  if (!recordId) {
+    const configured = !!(AIRTABLE_PAT && AIRTABLE_BASE_ID);
+    return NextResponse.json({
+      configured,
+      tableName: AIRTABLE_TABLE_NAME,
+      message: configured
+        ? 'Airtable integration is configured'
+        : 'Airtable credentials not set. Add AIRTABLE_PAT and AIRTABLE_BASE_ID to environment variables.'
+    });
+  }
+
+  // Validate record ID format (Airtable IDs start with 'rec')
+  if (!recordId.startsWith('rec')) {
+    return NextResponse.json(
+      { success: false, error: 'Invalid record reference' },
+      { status: 400 }
+    );
+  }
+
+  // Check for required environment variables
+  if (!AIRTABLE_PAT || !AIRTABLE_BASE_ID) {
+    return NextResponse.json(
+      { success: false, error: 'Airtable not configured' },
+      { status: 500 }
+    );
+  }
+
+  try {
+    // Fetch record from Airtable
+    const response = await fetch(
+      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}/${recordId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${AIRTABLE_PAT}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return NextResponse.json(
+          { success: false, error: 'Record not found' },
+          { status: 404 }
+        );
+      }
+      throw new Error(`Airtable API error: ${response.status}`);
+    }
+
+    const record = await response.json();
+
+    // HIPAA Compliant: Only return data needed for checkout pre-fill
+    // Do NOT return sensitive medical information
+    const checkoutData = {
+      success: true,
+      data: {
+        firstName: record.fields['First Name'] || '',
+        lastName: record.fields['Last Name'] || '',
+        email: record.fields['Email'] || '',
+        phone: record.fields['Phone'] || '',
+        state: record.fields['State'] || '',
+        address: record.fields['Address'] || '',
+        medicationPreference: record.fields['Medication Preference'] || '',
+        qualified: record.fields['Qualified'] ?? false,
+      }
+    };
+
+    return NextResponse.json(checkoutData);
+
+  } catch (error) {
+    console.error('Error fetching from Airtable:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch data' },
+      { status: 500 }
+    );
+  }
 }
 
