@@ -67,17 +67,11 @@ export default function Home() {
   const buttonWithDisclaimer = (
     <>
       {/* Privacy and terms text - closer to button */}
-      <div className="space-y-2 mb-4">
-        <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
+      <div className="mb-4">
+        <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight" style={{ fontWeight: 450 }}>
           {t('landing.disclaimer1')}
-          <a href="#" className="text-gray-400 underline">{t('landing.disclaimer.privacy')}</a>
+          <a href="#" className="text-gray-400 underline" style={{ fontSize: '10.5px' }}>{t('landing.disclaimer.privacy')}</a>
           {t('landing.disclaimer1.end')}
-        </p>
-        
-        <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
-          {t('landing.disclaimer2.start')}
-          <a href="#" className="text-gray-400 underline">{t('landing.disclaimer.terms')}</a>
-          {t('landing.disclaimer2.end')}
         </p>
       </div>
       
