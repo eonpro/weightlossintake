@@ -64,8 +64,8 @@ export default function ConsentPage() {
                 />
               </div>
               <div className="flex-1 flex flex-col justify-center px-4 py-3">
-                <h3 className="font-bold text-base leading-tight mb-1">{t('consent.health.title')}</h3>
-                <p className="text-xs leading-snug">{t('consent.health.subtitle')}</p>
+                <h3 className="font-bold text-[18px] leading-tight mb-1">{t('consent.health.title')}</h3>
+                <p className="text-[14px] leading-snug">{t('consent.health.subtitle')}</p>
               </div>
             </div>
 
@@ -82,8 +82,8 @@ export default function ConsentPage() {
                 />
               </div>
               <div className="flex-1 flex flex-col justify-center px-4 py-3">
-                <h3 className="font-bold text-base leading-tight mb-1">{t('consent.doctor.title')}</h3>
-                <p className="text-xs leading-snug text-gray-600">{t('consent.doctor.subtitle')}</p>
+                <h3 className="font-bold text-[18px] leading-tight mb-1">{t('consent.doctor.title')}</h3>
+                <p className="text-[14px] leading-snug">{t('consent.doctor.subtitle')}</p>
               </div>
             </div>
           </div>

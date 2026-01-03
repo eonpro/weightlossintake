@@ -102,9 +102,9 @@ button[class*="bg-black"] * {
 /* Page title - consistent styling */
 .page-title {
   font-size: 1.875rem; /* 30px */
-  font-weight: 360;
+  font-weight: 460;
   color: #413d3d;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 @media (min-width: 1024px) {
