@@ -306,11 +306,11 @@ button, .button-like {
   }
 }
 
-/* Continue button - consistent styling */
+/* Continue button - consistent styling (BLACK with WHITE text) */
 .continue-button {
   width: 100%;
-  background: var(--input-bg);
-  color: white;
+  background: #000000;
+  color: #ffffff;
   padding: 16px 32px;
   border-radius: 9999px;
   font-size: 18px;
@@ -324,11 +324,11 @@ button, .button-like {
 }
 
 .continue-button:hover {
-  background: rgba(233, 225, 216, 0.8);
+  background: #1a1a1a;
 }
 
 .continue-button:disabled {
-  background: rgba(233, 225, 216, 0.5);
+  background: #666666;
   color: rgba(255, 255, 255, 0.5);
   cursor: not-allowed;
 }
