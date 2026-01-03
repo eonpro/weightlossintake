@@ -430,6 +430,54 @@ button, .button-like {
   color: #413d3d;
 }
 
+/* Sticky bottom button container with gradient overlay */
+.sticky-button-container {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 24px 24px;
+  background: linear-gradient(to top, #e9e1d7 60%, transparent 100%);
+  z-index: 50;
+}
+
+/* Sticky bottom button - for pages without IntakePageLayout */
+.sticky-bottom-button {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 0 24px 24px;
+}
+
+.sticky-bottom-button::before {
+  content: '';
+  position: absolute;
+  top: -48px;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: linear-gradient(to top, #e9e1d7 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.sticky-bottom-button > * {
+  position: relative;
+  background: #e9e1d7;
+  padding-top: 8px;
+}
+
+/* Ensure html/body have proper background for status bar */
+html, body {
+  background-color: #d2c7bb;
+}
+
+/* Safe area padding for mobile devices with notches */
+.safe-area-top {
+  padding-top: max(env(safe-area-inset-top), 12px);
+}
+
 /* Smooth scrolling for better mobile experience */
 @media (max-width: 768px) {
   html {
@@ -455,5 +503,10 @@ button, .button-like {
   input[type="text"],
   input[type="number"] {
     font-weight: 500; /* medium weight */
+  }
+  
+  /* Add more top padding on mobile to avoid overlap with language selector */
+  .pt-6 {
+    padding-top: 2rem !important;
   }
 }
