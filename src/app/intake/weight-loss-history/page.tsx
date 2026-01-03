@@ -98,7 +98,7 @@ export default function WeightLossHistoryPage() {
                 }`}
               >
                 <span className="text-base lg:text-lg">{reason.label}</span>
-                <div className={`w-5 h-5 flex-shrink-0 rounded border-2 flex items-center justify-center transition-all ${
+                <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center transition-all ${
                   selectedReasons.includes(reason.id)
                     ? 'bg-gray-200 border-gray-400'
                     : 'bg-white border-gray-300'

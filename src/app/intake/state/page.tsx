@@ -140,7 +140,7 @@ export default function StatePage() {
           {/* Terms and Conditions Checkbox */}
           <div className="mt-6">
             <label className="flex items-start cursor-pointer" onClick={() => setTermsAccepted(!termsAccepted)}>
-              <div className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
+              <div className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 ${
                 termsAccepted ? 'bg-[#f0feab] border-[#f0feab]' : 'border-gray-300'
               }`}>
                 {termsAccepted && (

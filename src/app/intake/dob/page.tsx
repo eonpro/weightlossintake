@@ -184,7 +184,7 @@ export default function DOBPage() {
             </div>
             
             <label className="flex items-center space-x-3 cursor-pointer" onClick={() => setCertified(!certified)}>
-              <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 cursor-pointer ${
+              <div className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 cursor-pointer ${
                 certified ? 'bg-gray-200 border-gray-400' : 'border-gray-300'
               }`}>
                 {certified && (

@@ -73,7 +73,7 @@ export default function DosageInterestPage() {
                 }`}
               >
                 <span className="text-base lg:text-lg">{option.label}</span>
-                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                <div className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all ${
                   selected === option.id
                     ? 'bg-gray-200 border-gray-400'
                     : 'bg-white border-gray-300'

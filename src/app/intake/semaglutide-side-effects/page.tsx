@@ -135,7 +135,7 @@ export default function SemaglutideSideEffectsPage() {
                     : 'bg-white border-2 border-gray-200'
                 }`}
               >
-                <div className={`w-5 h-5 flex-shrink-0 rounded border-2 flex items-center justify-center mr-3 transition-all ${
+                <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center mr-3 transition-all ${
                   selectedItems.includes(effect.id) ? 'bg-gray-200 border-gray-400' : 'bg-white border-gray-300'
                 }`}>
                   {selectedItems.includes(effect.id) && (

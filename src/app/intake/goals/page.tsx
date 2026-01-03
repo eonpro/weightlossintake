@@ -86,19 +86,19 @@ export default function GoalsPage() {
                 onClick={() => toggleOption(option)}
                 className={`w-full text-left p-4 rounded-2xl border transition-all ${
                   selected.includes(option) 
-                    ? 'border-[#f0feab] bg-[#f0feab]' 
+                    ? 'border-[#c8e64a] bg-[#f0feab]' 
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
                 <div className="flex items-center">
-                  <div className={`w-5 h-5 mr-3 rounded border-2 flex items-center justify-center flex-shrink-0 ${
+                  <div className={`w-5 h-5 mr-3 rounded flex items-center justify-center flex-shrink-0 ${
                     selected.includes(option)
-                      ? 'bg-gray-200 border-gray-400'
-                      : 'border-gray-300'
+                      ? 'bg-white border border-gray-400'
+                      : 'border border-gray-300'
                   }`}>
                     {selected.includes(option) && (
-                      <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                       </svg>
                     )}
                   </div>
@@ -117,7 +117,8 @@ export default function GoalsPage() {
         </div>
       </div>
       
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
+      {/* Sticky bottom button */}
+      <div className="sticky-bottom-button max-w-md lg:max-w-2xl mx-auto w-full">
         <button 
           onClick={handleContinue}
           className="w-full bg-black text-white py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 hover:bg-gray-900"
