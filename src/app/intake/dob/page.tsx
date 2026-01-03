@@ -129,15 +129,15 @@ export default function DOBPage() {
   useEnterNavigation(handleContinue);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Progress bar */}
-      <div className="w-full h-1 bg-gray-100">
-        <div className="h-full w-[14%] bg-[#f0feab] transition-all duration-300"></div>
+      <div className="w-full h-1 bg-white/20">
+        <div className="h-full w-[14%] bg-[#b8e64a] transition-all duration-300"></div>
       </div>
       
       <div className="px-6 lg:px-8 pt-6">
-        <Link href="/intake/name" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <Link href="/intake/name" className="inline-block p-2 -ml-2 hover:bg-white/10 rounded-lg">
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </Link>
@@ -149,8 +149,8 @@ export default function DOBPage() {
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <div className="space-y-4">
-            <h1 className="text-3xl font-medium">{t('dob.title')}</h1>
-            <p className="text-gray-500 font-light">{t('dob.subtitle')}</p>
+            <h1 className="page-title">{t('dob.title')}</h1>
+            <p className="page-subtitle">{t('dob.subtitle')}</p>
           </div>
           
           <div className="space-y-6">
@@ -161,21 +161,21 @@ export default function DOBPage() {
                 value={dob}
                 onChange={handleDateChange}
                 maxLength={10}
-                className={`w-full p-4 text-base md:text-lg font-medium border rounded-2xl focus:outline-none focus:border-gray-400 ${
+                className={`input-field w-full ${
                   (showDateError && dob.length !== 10) || (showAgeError && !isOver18)
                     ? 'border-red-500'
-                    : 'border-gray-200'
+                    : ''
                 }`}
               />
               {showDateError && dob.length !== 10 && (
-                <p className="text-red-500 text-sm mt-2">
+                <p className="text-red-300 text-sm mt-2">
                   {language === 'es' 
                     ? 'Por favor, ingresa una fecha de nacimiento completa (MM/DD/AAAA)'
                     : 'Please enter a complete date of birth (MM/DD/YYYY)'}
                 </p>
               )}
               {(dob.length === 10 && !isOver18 && showAgeError) && (
-                <p className="text-red-500 text-sm mt-2">
+                <p className="text-red-300 text-sm mt-2">
                   {language === 'es'
                     ? 'Debes tener al menos 18 años para continuar'
                     : 'You must be at least 18 years old to continue'}
@@ -185,32 +185,30 @@ export default function DOBPage() {
             
             <label className="flex items-center space-x-3 cursor-pointer" onClick={() => setCertified(!certified)}>
               <div className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 cursor-pointer ${
-                certified ? 'bg-gray-200 border-gray-400' : 'border-gray-300'
+                certified ? 'bg-white/30 border-white/60' : 'border-white/40'
               }`}>
                 {certified && (
-                  <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                   </svg>
                 )}
               </div>
-              <span className="text-xs md:text-sm font-light">{t('dob.certifyAge')}</span>
+              <span className="text-xs md:text-sm text-white/80">{t('dob.certifyAge')}</span>
             </label>
             
-            <p className="text-xs text-gray-500 font-light">
+            <p className="text-xs text-white/60">
               {t('dob.ageRequirement')}
             </p>
           </div>
         </div>
       </div>
       
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
+      {/* Sticky bottom button */}
+      <div className="sticky-bottom-button max-w-md lg:max-w-2xl mx-auto w-full">
         <button 
           onClick={handleContinue}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-            dob.length === 10 && certified && isOver18
-              ? 'bg-black text-white hover:bg-gray-900' 
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
+          disabled={!(dob.length === 10 && certified && isOver18)}
+          className="continue-button"
         >
           <span>{t('dob.continue')}</span>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -220,7 +218,7 @@ export default function DOBPage() {
         
         {/* Copyright footer */}
         <div className="mt-6 text-center">
-          <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
+          <p className="copyright-text">
             {language === 'es' ? (
               <>
                 © 2025 EONPro, LLC. Todos los derechos reservados.<br/>

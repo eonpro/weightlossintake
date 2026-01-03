@@ -26,15 +26,15 @@ export default function NamePage() {
   useEnterNavigation(handleContinue);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Progress bar */}
-      <div className="w-full h-1 bg-gray-100">
-        <div className="h-full w-[12%] bg-[#f0feab] transition-all duration-300"></div>
+      <div className="w-full h-1 bg-white/20">
+        <div className="h-full w-[12%] bg-[#b8e64a] transition-all duration-300"></div>
       </div>
       
       <div className="px-6 lg:px-8 pt-6">
-        <Link href="/intake/state" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <Link href="/intake/state" className="inline-block p-2 -ml-2 hover:bg-white/10 rounded-lg">
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </Link>
@@ -46,12 +46,12 @@ export default function NamePage() {
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <div className="space-y-4">
-            <h1 className="text-3xl font-medium">{t('name.title')}</h1>
-            <p className="text-gray-500">{t('name.subtitle')}</p>
+            <h1 className="page-title">{t('name.title')}</h1>
+            <p className="page-subtitle">{t('name.subtitle')}</p>
           </div>
           
           <div className="space-y-6">
-            <p className="text-gray-400 text-sm">{t('name.basicInfo')}</p>
+            <p className="text-white/60 text-sm">{t('name.basicInfo')}</p>
             <div className="space-y-4">
               <input
                 type="text"
@@ -67,7 +67,7 @@ export default function NamePage() {
                     setFirstName('');
                   }
                 }}
-                className="w-full p-4 text-base md:text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
+                className="input-field w-full"
               />
               <input
                 type="text"
@@ -83,22 +83,19 @@ export default function NamePage() {
                     setLastName('');
                   }
                 }}
-                className="w-full p-4 text-base md:text-lg font-medium border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
+                className="input-field w-full"
               />
             </div>
           </div>
         </div>
       </div>
       
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
+      {/* Sticky bottom button */}
+      <div className="sticky-bottom-button max-w-md lg:max-w-2xl mx-auto w-full">
         <button 
           onClick={handleContinue}
           disabled={!firstName || !lastName}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-            firstName && lastName 
-              ? 'bg-black text-white hover:bg-gray-900' 
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
+          className="continue-button"
         >
           <span>{t('name.continue')}</span>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,7 +105,7 @@ export default function NamePage() {
         
         {/* Copyright footer */}
         <div className="mt-6 text-center">
-          <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
+          <p className="copyright-text">
             {language === 'es' ? (
               <>
                 © 2025 EONPro, LLC. Todos los derechos reservados.<br/>

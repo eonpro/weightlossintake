@@ -39,20 +39,20 @@ export default function ObesityStatsPage() {
   const isSpanish = language === 'es';
   
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Progress bar */}
-      <div className="w-full h-1 bg-gray-100">
-        <div className="h-full w-[4%] bg-[#f0feab] transition-all duration-300"></div>
+      <div className="w-full h-1 bg-white/20">
+        <div className="h-full w-[4%] bg-[#b8e64a] transition-all duration-300"></div>
       </div>
       
       {/* Back button */}
-      <div className="p-4">
+      <div className="px-6 lg:px-8 pt-6">
         <button
           onClick={handleBack}
-          className="text-gray-600 hover:text-gray-800 flex items-center gap-2"
+          className="inline-block p-2 -ml-2 hover:bg-white/10 rounded-lg"
         >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </button>
       </div>
@@ -73,7 +73,7 @@ export default function ObesityStatsPage() {
             alt="Obesity statistics"
             width={500}
             height={600}
-            className="w-full h-auto"
+            className="w-full h-auto rounded-2xl"
             priority
           />
           
@@ -86,7 +86,7 @@ export default function ObesityStatsPage() {
               }
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-gray-500 hover:text-gray-700 underline transition-colors"
+              className="text-xs text-white/60 hover:text-white/80 underline transition-colors"
             >
               {isSpanish 
                 ? 'Fuente: Oficina de Salud de Minorías - HHS' 
@@ -96,17 +96,34 @@ export default function ObesityStatsPage() {
         </div>
       </div>
 
-      {/* Next button */}
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
+      {/* Sticky bottom button */}
+      <div className="sticky-bottom-button max-w-md lg:max-w-lg mx-auto w-full">
         <button 
           onClick={handleNext}
-          className="w-full bg-black text-white py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 hover:bg-gray-900"
+          className="continue-button"
         >
           <span>{isSpanish ? 'Continuar' : 'Continue'}</span>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
           </svg>
         </button>
+        
+        {/* Copyright footer */}
+        <div className="mt-6 text-center">
+          <p className="copyright-text">
+            {isSpanish ? (
+              <>
+                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+              </>
+            ) : (
+              <>
+                © 2025 EONPro, LLC. All rights reserved.<br/>
+                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+              </>
+            )}
+          </p>
+        </div>
       </div>
     </div>
   );

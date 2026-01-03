@@ -18,7 +18,7 @@ export default function IntakePageLayout({
   backButton 
 }: IntakePageLayoutProps) {
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Progress bar */}
       {progressBar}
       
@@ -38,12 +38,10 @@ export default function IntakePageLayout({
           </div>
         </div>
         
-        {/* Fixed button area at bottom with gradient */}
+        {/* Fixed button area at bottom */}
         <div className="fixed bottom-0 left-0 right-0">
-          {/* Gradient overlay for natural fade - taller for smoother transition */}
-          <div className="absolute bottom-full h-16 w-full bg-gradient-to-t from-white via-white/95 to-transparent pointer-events-none"></div>
           {/* Button container */}
-          <div className="bg-white px-6 pt-2 pb-4">
+          <div className="px-6 pt-2 pb-4">
             {button}
             {copyright && (
               <div className="mt-3">
