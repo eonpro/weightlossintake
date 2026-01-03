@@ -101,28 +101,13 @@ export default function ReviewPage() {
               const intakeData = collectIntakeData();
               const submissionResult = await submitIntake(intakeData);
               
-              // HIPAA Compliant: Only pass the record ID, not PHI
-              // Checkout will fetch data securely via authenticated API
-              let checkoutUrl = 'https://eonmeds-checkout.vercel.app';
-
               if (submissionResult.success && submissionResult.intakeId) {
-                // Store intake ID for reference
+                // Store intake ID for reference (qualified page will use this)
                 sessionStorage.setItem('submitted_intake_id', submissionResult.intakeId);
-
-                // Pass only the record ID (not PHI) to checkout
-                // Checkout app will securely fetch patient data from Airtable
-                checkoutUrl = `https://eonmeds-checkout.vercel.app?ref=${submissionResult.intakeId}`;
               }
               
-              // Set flag to skip beforeunload warning for seamless transition
-              sessionStorage.setItem('checkout_redirect_in_progress', 'true');
-              
-              // Remove beforeunload handler for seamless transition to checkout
-              window.onbeforeunload = null;
-              
-              // Redirect seamlessly to checkout
-              console.log('Redirecting to checkout with record reference');
-              window.location.replace(checkoutUrl);
+              // Navigate to qualified page with celebration
+              router.push('/intake/qualified');
             }, 1500);
           }
           return 100;

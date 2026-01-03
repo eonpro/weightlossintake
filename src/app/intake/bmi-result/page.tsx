@@ -6,18 +6,18 @@ import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import EonmedsLogo from '@/components/EonmedsLogo';
+import BMIWidget from '@/components/BMIWidget';
 import { submitCheckpoint, markCheckpointCompleted } from '@/lib/api';
 
 export default function BMIResultPage() {
   const router = useRouter();
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const [bmi, setBmi] = useState(0);
   const [currentWeight, setCurrentWeight] = useState(0);
   const [idealWeight, setIdealWeight] = useState(0);
   const [heightStr, setHeightStr] = useState('');
   const [firstName, setFirstName] = useState('');
-  const [indicatorPosition, setIndicatorPosition] = useState(0);
-  const [showIndicator, setShowIndicator] = useState(false);
 
   useEffect(() => {
     // Get data from session storage
@@ -41,19 +41,6 @@ export default function BMIResultPage() {
       setBmi(finalBMI);
       setCurrentWeight(weight);
       setHeightStr(`${height.feet}'${height.inches}"`);
-      
-      // Calculate indicator position (BMI range is 18.5 to 40)
-      const minBMI = 18.5;
-      const maxBMI = 40;
-      const position = ((finalBMI) - minBMI) / (maxBMI - minBMI) * 100;
-      
-      // Animate the indicator after a short delay
-      setTimeout(() => {
-        setShowIndicator(true);
-        setTimeout(() => {
-          setIndicatorPosition(Math.min(Math.max(position, 0), 100));
-        }, 100);
-      }, 500);
       
       // Submit BMI checkpoint
       const checkpointData = {
@@ -128,37 +115,8 @@ export default function BMIResultPage() {
               {t('bmi.result.disclaimer')}
             </p>
             
-            {/* BMI Range Bar */}
-            <div className="space-y-2 mt-4">
-              <div className="flex justify-end">
-                <div className="bg-white rounded-full px-3 py-1">
-                  <span className="font-medium text-black" style={{ fontSize: '11px' }}>{t('bmi.result.approvedBMI')}</span>
-                </div>
-              </div>
-              
-              <div className="relative h-7 bg-gradient-to-r from-[#f4c790] via-[#8ed5a1] to-[#8ed5a1] rounded-full overflow-visible">
-                {showIndicator && (
-                  <div 
-                    className="absolute"
-                    style={{ 
-                      left: `${indicatorPosition}%`,
-                      top: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      transition: 'left 1.5s ease-out'
-                    }}
-                  >
-                    <div className="w-7 h-7 bg-white rounded-full border-2 border-gray-300 shadow-md"></div>
-                  </div>
-                )}
-              </div>
-              
-              <div className="flex justify-between text-sm text-black font-normal px-1">
-                <span>18.5</span>
-                <span>25</span>
-                <span>30</span>
-                <span>40</span>
-              </div>
-            </div>
+            {/* BMI Range Bar - Animated Widget */}
+            <BMIWidget bmi={bmi} language={language as 'en' | 'es'} />
             
             {/* Approval Message */}
             <div className="bg-[#e4fb74] rounded-2xl p-3 flex items-start space-x-3 mt-3">
