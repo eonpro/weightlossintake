@@ -141,20 +141,14 @@ export default function ViewportAwareLayout({
           </div>
         </div>
         
-        {/* Fixed button area - height adapts to device */}
-        <div className="fixed bottom-0 left-0 right-0 z-10">
-          {/* Gradient overlay - full width */}
-          <div className={`w-screen bg-gradient-to-t from-[#ddd3c9] to-transparent pointer-events-none ${dynamicStyles.gradientHeight}`}></div>
-          
-          {/* Button container with dynamic padding - full width */}
-          <div className={`w-screen bg-gradient-to-r from-[#d2c7bb] to-[#e9e1d7] px-6 ${dynamicStyles.buttonPadding} safe-area-bottom`}>
-            {button}
-            {copyright && (
-              <div className={dynamicStyles.copyrightMargin}>
-                {copyright}
-              </div>
-            )}
-          </div>
+        {/* Fixed button area - simple gradient fade */}
+        <div className="fixed bottom-0 left-0 right-0 w-full z-10 px-6 pb-6 pt-12" style={{ background: 'linear-gradient(to top, #e0d6cc 0%, #e0d6cc 50%, transparent 100%)' }}>
+          {button}
+          {copyright && (
+            <div className={dynamicStyles.copyrightMargin}>
+              {copyright}
+            </div>
+          )}
         </div>
       </div>
       

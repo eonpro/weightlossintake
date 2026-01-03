@@ -38,20 +38,15 @@ export default function IntakePageLayout({
           </div>
         </div>
         
-        {/* Fixed button area at bottom with gradient */}
-        <div className="fixed bottom-0 left-0 right-0 z-50">
-          {/* Gradient overlay - full width */}
-          <div className="h-20 w-screen bg-gradient-to-t from-[#ddd3c9] to-transparent"></div>
-          {/* Button container - full width gradient */}
-          <div className="w-screen bg-gradient-to-r from-[#d2c7bb] to-[#e9e1d7] px-6 pt-2 pb-6">
-            <div className="max-w-md mx-auto">
-              {button}
-              {copyright && (
-                <div className="mt-3">
-                  {copyright}
-                </div>
-              )}
-            </div>
+        {/* Fixed button area at bottom with gradient fade */}
+        <div className="fixed bottom-0 left-0 right-0 w-full z-50 px-6 pb-6 pt-12" style={{ background: 'linear-gradient(to top, #e0d6cc 0%, #e0d6cc 50%, transparent 100%)' }}>
+          <div className="max-w-md mx-auto">
+            {button}
+            {copyright && (
+              <div className="mt-3">
+                {copyright}
+              </div>
+            )}
           </div>
         </div>
       </div>
