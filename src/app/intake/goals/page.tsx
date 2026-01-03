@@ -89,13 +89,13 @@ export default function GoalsPage() {
                 }`}
               >
                 <div className="flex items-center">
-                  <div className={`w-5 h-5 mr-3 rounded flex items-center justify-center flex-shrink-0 border-2 ${
+                  <div className={`w-5 h-5 mr-3 rounded flex items-center justify-center flex-shrink-0 border ${
                     selected.includes(option)
-                      ? 'bg-[#333] border-[#333]'
-                      : 'border-white/60 bg-transparent'
+                      ? 'bg-white border-[#413d3d]'
+                      : 'border-[#413d3d]/40 bg-transparent'
                   }`}>
                     {selected.includes(option) && (
-                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                       </svg>
                     )}
