@@ -104,7 +104,7 @@ export default function ViewportAwareLayout({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#d2c7bb] to-[#e9e1d7] flex flex-col" style={{ minHeight: viewportHeight ? `${viewportHeight}px` : '100vh' }}>
+    <div className="min-h-screen bg-white flex flex-col" style={{ minHeight: viewportHeight ? `${viewportHeight}px` : '100vh' }}>
       {/* Progress bar */}
       {progressBar}
       
@@ -142,7 +142,7 @@ export default function ViewportAwareLayout({
         </div>
         
         {/* Fixed button area - simple gradient fade */}
-        <div className="fixed bottom-0 left-0 right-0 w-full z-10 px-6 pb-6 pt-12" style={{ background: 'linear-gradient(to top, #e0d6cc 0%, #e0d6cc 50%, transparent 100%)' }}>
+        <div className="fixed bottom-0 left-0 right-0 w-full z-10 px-6 pb-6 pt-12" style={{ background: 'linear-gradient(to top, #ffffff 0%, #ffffff 50%, transparent 100%)' }}>
           {button}
           {copyright && (
             <div className={dynamicStyles.copyrightMargin}>

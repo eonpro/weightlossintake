@@ -13,13 +13,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="bg-[#d2c7bb]">
+    <html lang="en" className="bg-white">
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/gdk8cbv.css" />
-        <meta name="theme-color" content="#d2c7bb" />
+        <meta name="theme-color" content="#ffffff" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
-      <body className="font-sofia antialiased bg-gradient-to-r from-[#d2c7bb] to-[#e9e1d7]">
+      <body className="font-sofia antialiased bg-white">
         <ClientProviders>
           {children}
         </ClientProviders>

@@ -99,7 +99,7 @@ export default function BMICalculatingPage() {
   }, [router, t]); // Add proper dependencies
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#d2c7bb] to-[#e9e1d7] flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Back button */}
       <div className="px-6 lg:px-8 pt-6">
         <Link href="/intake/current-weight" className="inline-block p-2 -ml-2 hover:bg-white/10 rounded-lg">

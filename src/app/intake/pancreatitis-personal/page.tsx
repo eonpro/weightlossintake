@@ -21,7 +21,7 @@ export default function PancreatitisPersonalPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#d2c7bb] to-[#e9e1d7] flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Progress bar */}
       <div className="w-full h-1 bg-white/20">
         <div className="h-full w-[94%] bg-[#f0feab] transition-all duration-300"></div>

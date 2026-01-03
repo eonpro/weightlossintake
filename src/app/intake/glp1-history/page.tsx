@@ -32,9 +32,9 @@ export default function GLP1HistoryPage() {
   const handleSelect = (value: string) => {
     sessionStorage.setItem('glp1_history', value);
     if (value === 'currently_taking' || value === 'previously_taken') {
-      router.push('/intake/glp1-type');
-    } else {
-      router.push('/intake/dosage-satisfaction');
+        router.push('/intake/glp1-type');
+      } else {
+        router.push('/intake/dosage-satisfaction');
     }
   };
 

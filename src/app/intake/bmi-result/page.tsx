@@ -81,7 +81,7 @@ export default function BMIResultPage() {
     Math.round(((idealWeight / Math.pow((parseInt(heightStr.split("'")[0]) * 12 + parseInt(heightStr.split("'")[1] || '0')), 2)) * 703) * 100) / 100 : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#d2c7bb] to-[#e9e1d7] flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Progress bar */}
       <div className="w-full h-1 bg-white/20">
         <div className="h-full w-4/6 bg-[#f0feab] transition-all duration-300"></div>

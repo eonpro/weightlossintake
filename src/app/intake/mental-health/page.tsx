@@ -14,9 +14,9 @@ export default function MentalHealthPage() {
   const handleSelect = (value: string) => {
     sessionStorage.setItem('has_mental_health_condition', value);
     if (value === 'yes') {
-      router.push('/intake/mental-health-conditions');
-    } else {
-      router.push('/intake/programs-include');
+        router.push('/intake/mental-health-conditions');
+      } else {
+        router.push('/intake/programs-include');
     }
   };
 
@@ -62,18 +62,18 @@ export default function MentalHealthPage() {
               onClick={() => handleSelect('yes')}
               className="option-button w-full text-left p-4 rounded-full transition-all"
             >
-              <span className="text-[16px] lg:text-lg font-medium leading-tight">
-                {language === 'es' ? 'Sí' : 'Yes'}
-              </span>
+                <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                  {language === 'es' ? 'Sí' : 'Yes'}
+                </span>
             </button>
             
             <button
               onClick={() => handleSelect('no')}
               className="option-button w-full text-left p-4 rounded-full transition-all"
             >
-              <span className="text-[16px] lg:text-lg font-medium leading-tight">
-                {language === 'es' ? 'No' : 'No'}
-              </span>
+                <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                  {language === 'es' ? 'No' : 'No'}
+                </span>
             </button>
           </div>
         </div>

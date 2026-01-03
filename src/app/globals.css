@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background-start: #d2c7bb;
-  --background-end: #e9e1d7;
-  --foreground: #ffffff;
-  --input-bg: #e9e1d8;
+  --background-start: #ffffff;
+  --background-end: #ffffff;
+  --foreground: #413d3d;
+  --input-bg: #f5f5f5;
   
   /* Dynamic viewport height for mobile browsers */
   --vh: 1vh;
@@ -50,7 +50,7 @@
 .checkbox-option.checked {
   background: #ffffff;
   border-color: #413d3d;
-}
+  }
 
 /* Override all border-2 checkboxes to 1px */
 button .border-2.rounded {
@@ -58,7 +58,7 @@ button .border-2.rounded {
 }
 
 body {
-  background: linear-gradient(to right, var(--background-start), var(--background-end));
+  background: #ffffff;
   color: #413d3d;
   font-family: "sofia-pro", sans-serif;
   letter-spacing: -0.025em;
@@ -134,8 +134,8 @@ button[class*="bg-black"] * {
 
 /* Option buttons styling */
 .option-button {
-  background-color: rgba(255, 255, 255, 0.5);
-  border: 2px solid transparent;
+  background-color: #f8f8f8;
+  border: 1px solid #e0e0e0;
   color: #413d3d;
   border-radius: 9999px;
   padding: 1rem 1.5rem;
@@ -154,7 +154,8 @@ button[class*="bg-black"] * {
 }
 
 .option-button:hover:not(.selected) {
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: #f0f0f0;
+  border-color: #d0d0d0;
 }
 
 /* Checkbox styling for options */
@@ -453,7 +454,7 @@ button, .button-like {
   left: 0;
   right: 0;
   padding: 16px 24px 24px;
-  background: linear-gradient(to top, #e9e1d7 60%, transparent 100%);
+  background: linear-gradient(to top, #ffffff 60%, transparent 100%);
   z-index: 50;
 }
 
@@ -467,12 +468,12 @@ button, .button-like {
   z-index: 50;
   padding: 24px;
   padding-top: 48px;
-  background: linear-gradient(to top, #e0d6cc 0%, #e0d6cc 60%, transparent 100%);
+  background: linear-gradient(to top, #ffffff 0%, #ffffff 60%, transparent 100%);
 }
 
 /* Ensure html/body have proper background for status bar */
 html, body {
-  background-color: #d2c7bb;
+  background-color: #ffffff;
 }
 
 /* Safe area padding for mobile devices with notches */

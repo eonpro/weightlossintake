@@ -47,7 +47,7 @@ export default function ActivityLevelPage() {
 
   const handleSelect = (value: string) => {
     sessionStorage.setItem('activity_level', value);
-    router.push('/intake/mental-health');
+      router.push('/intake/mental-health');
   };
 
   return (
@@ -87,11 +87,11 @@ export default function ActivityLevelPage() {
                 onClick={() => handleSelect(level.value)}
                 className="option-button w-full text-left p-4 rounded-full transition-all"
               >
-                <div>
-                  <div className="text-[16px] lg:text-lg font-medium leading-tight">{level.label}</div>
-                  {level.description && (
+                  <div>
+                    <div className="text-[16px] lg:text-lg font-medium leading-tight">{level.label}</div>
+                    {level.description && (
                     <div className="text-sm opacity-60 mt-1">{level.description}</div>
-                  )}
+                    )}
                 </div>
               </button>
             ))}

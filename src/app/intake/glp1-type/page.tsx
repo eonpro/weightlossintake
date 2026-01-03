@@ -55,15 +55,15 @@ export default function GLP1TypePage() {
 
   const handleSelect = (value: string) => {
     sessionStorage.setItem('glp1_type', value);
-    
-    // Navigate based on selection
+      
+      // Navigate based on selection
     if (value === 'semaglutide') {
-      router.push('/intake/semaglutide-dosage');
+        router.push('/intake/semaglutide-dosage');
     } else if (value === 'tirzepatide') {
-      router.push('/intake/tirzepatide-dosage');
-    } else {
-      // For other medications, skip to digestive conditions
-      router.push('/intake/dosage-satisfaction');
+        router.push('/intake/tirzepatide-dosage');
+      } else {
+        // For other medications, skip to digestive conditions
+        router.push('/intake/dosage-satisfaction');
     }
   };
 

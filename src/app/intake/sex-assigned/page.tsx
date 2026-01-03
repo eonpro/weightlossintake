@@ -13,7 +13,7 @@ export default function SexAssignedPage() {
 
   const handleSelect = (value: string) => {
     sessionStorage.setItem('intake_sex', value);
-    router.push('/intake/activity-level');
+      router.push('/intake/activity-level');
   };
 
   return (
@@ -55,14 +55,14 @@ export default function SexAssignedPage() {
               onClick={() => handleSelect('man')}
               className="option-button w-full text-left p-4 rounded-full transition-all"
             >
-              <span className="text-[16px] lg:text-lg font-medium leading-tight">{t('sex.man')}</span>
+                <span className="text-[16px] lg:text-lg font-medium leading-tight">{t('sex.man')}</span>
             </button>
             
             <button
               onClick={() => handleSelect('woman')}
               className="option-button w-full text-left p-4 rounded-full transition-all"
             >
-              <span className="text-[16px] lg:text-lg font-medium leading-tight">{t('sex.woman')}</span>
+                <span className="text-[16px] lg:text-lg font-medium leading-tight">{t('sex.woman')}</span>
             </button>
           </div>
           
@@ -74,22 +74,22 @@ export default function SexAssignedPage() {
           </div>
         </div>
       </div>
-      
-      {/* Copyright footer */}
+        
+        {/* Copyright footer */}
       <div className="px-6 lg:px-8 pb-6 max-w-md lg:max-w-2xl mx-auto w-full">
         <p className="copyright-text text-center">
-          {language === 'es' ? (
-            <>
-              © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
-              Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
-            </>
-          ) : (
-            <>
-              © 2025 EONPro, LLC. All rights reserved.<br/>
-              Exclusive and protected process. Copying or reproduction without authorization is prohibited.
-            </>
-          )}
-        </p>
+            {language === 'es' ? (
+              <>
+                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+              </>
+            ) : (
+              <>
+                © 2025 EONPro, LLC. All rights reserved.<br/>
+                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+              </>
+            )}
+          </p>
       </div>
     </div>
   );

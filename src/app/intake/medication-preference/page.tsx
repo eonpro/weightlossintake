@@ -13,7 +13,7 @@ export default function MedicationPreferencePage() {
 
   const handleSelect = (value: string) => {
     sessionStorage.setItem('medication_preference', value);
-    router.push('/intake/research-done');
+      router.push('/intake/research-done');
   };
 
   return (
@@ -48,9 +48,9 @@ export default function MedicationPreferencePage() {
               onClick={() => handleSelect('recommendation')}
               className="option-button w-full text-left p-4 rounded-full transition-all"
             >
-              <span className="text-[16px] lg:text-lg font-medium leading-tight">
-                {t('medication.option1')}
-              </span>
+                <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                  {t('medication.option1')}
+                </span>
             </button>
             
             {/* Option 2 */}
@@ -58,29 +58,29 @@ export default function MedicationPreferencePage() {
               onClick={() => handleSelect('have_in_mind')}
               className="option-button w-full text-left p-4 rounded-full transition-all"
             >
-              <span className="text-[16px] lg:text-lg font-medium leading-tight">
-                {t('medication.option2')}
-              </span>
+                <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                  {t('medication.option2')}
+                </span>
             </button>
           </div>
         </div>
       </div>
-      
-      {/* Copyright footer */}
+        
+        {/* Copyright footer */}
       <div className="px-6 lg:px-8 pb-6 max-w-md lg:max-w-2xl mx-auto w-full">
         <p className="copyright-text text-center">
-          {language === 'es' ? (
-            <>
-              © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
-              Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
-            </>
-          ) : (
-            <>
-              © 2025 EONPro, LLC. All rights reserved.<br/>
-              Exclusive and protected process. Copying or reproduction without authorization is prohibited.
-            </>
-          )}
-        </p>
+            {language === 'es' ? (
+              <>
+                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+              </>
+            ) : (
+              <>
+                © 2025 EONPro, LLC. All rights reserved.<br/>
+                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+              </>
+            )}
+          </p>
       </div>
     </div>
   );
