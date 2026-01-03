@@ -274,29 +274,29 @@ export default function AddressPage() {
         </div>
       </div>
       
-      <div className="flex-1 px-6 lg:px-8 py-4 max-w-md lg:max-w-lg mx-auto w-full">
-        <div className="space-y-6">
+      <div className="flex-1 px-6 lg:px-8 py-4 pb-48 max-w-md lg:max-w-lg mx-auto w-full overflow-y-auto">
+        <div className="space-y-4">
           <div>
-            <h1 className="page-title mb-4">{t('address.title')}</h1>
-            <p className="page-subtitle mb-1">{t('address.subtitle')}</p>
-            <p className="text-sm text-white/50">{t('address.asterisk')}</p>
+            <h1 className="page-title mb-2">{t('address.title')}</h1>
+            <p className="page-subtitle text-sm mb-1">{t('address.subtitle')}</p>
+            <p className="text-xs text-[#413d3d]/50">{t('address.asterisk')}</p>
           </div>
 
           {/* Google Map - Only show after address is entered */}
           {showMap && (
-            <div ref={mapRef} className="w-full h-64 rounded-2xl border border-white/20 bg-white/10 relative overflow-hidden">
+            <div ref={mapRef} className="w-full h-48 rounded-2xl border border-white/20 bg-white/10 relative overflow-hidden">
               {mapError && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/10 rounded-2xl">
                   <div className="text-center">
                     <p className="text-[#413d3d]/70 text-sm">Map unavailable</p>
-                    <p className="text-white/50 text-xs mt-1">Enter address manually</p>
+                    <p className="text-[#413d3d]/50 text-xs mt-1">Enter address manually</p>
                   </div>
                 </div>
               )}
             </div>
           )}
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             <input
               ref={inputRef}
               type="text"
@@ -343,7 +343,7 @@ export default function AddressPage() {
               </div>
             )}
             
-            <p className="text-xs text-white/50">{t('address.apartment.note')}</p>
+            <p className="text-xs text-[#413d3d]/50">{t('address.apartment.note')}</p>
           </div>
         </div>
       </div>
