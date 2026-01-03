@@ -61,6 +61,7 @@ body {
   background: #ffffff;
   color: #413d3d;
   font-family: "sofia-pro", sans-serif;
+  font-weight: 450; /* Base weight increased by 50 */
   letter-spacing: -0.025em;
   min-height: 100vh;
   
@@ -102,7 +103,7 @@ button[class*="bg-black"] * {
 /* Page title - consistent styling */
 .page-title {
   font-size: 1.875rem; /* 30px */
-  font-weight: 460;
+  font-weight: 510; /* Increased by 50 */
   color: #413d3d;
   line-height: 1.1;
 }
@@ -116,7 +117,7 @@ button[class*="bg-black"] * {
 /* Page subtitle */
 .page-subtitle {
   color: rgba(65, 61, 61, 0.7);
-  font-weight: 300;
+  font-weight: 350; /* Increased by 50 */
 }
 
 /* Input fields styling */
