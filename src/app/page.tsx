@@ -71,9 +71,9 @@ export default function Home() {
     <>
       {/* Privacy and terms text - closer to button */}
       <div className="mb-4">
-        <p className="text-[11px] lg:text-[13px] text-gray-400 leading-tight" style={{ fontWeight: 450 }}>
+        <p className="text-[11px] lg:text-[13px] leading-tight" style={{ fontWeight: 450, color: 'rgba(65, 61, 61, 0.6)' }}>
           {t('landing.disclaimer1')}
-          <a href="#" className="text-gray-400 underline" style={{ fontSize: '12.5px' }}>{t('landing.disclaimer.privacy')}</a>
+          <a href="#" className="underline" style={{ fontSize: '12.5px', color: 'rgba(65, 61, 61, 0.6)' }}>{t('landing.disclaimer.privacy')}</a>
           {t('landing.disclaimer1.end')}
         </p>
       </div>
@@ -86,6 +86,14 @@ export default function Home() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
         </svg>
       </button>
+      
+      {/* Copyright footer - matching other pages */}
+      <div className="mt-6 text-center">
+        <p className="copyright-text">
+          © 2025 EONPro, LLC. All rights reserved.<br/>
+          Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+        </p>
+      </div>
     </>
   );
 
@@ -98,10 +106,10 @@ export default function Home() {
     >
       {/* Title and subtitle */}
       <div className="text-left title-spacing">
-        <h1 className="text-3xl lg:text-4xl font-medium text-[#4fa87f] leading-none mb-2 lg:mb-4">
+        <h1 className="page-title" style={{ color: '#4fa87f' }}>
           {t('landing.title')}
         </h1>
-        <p className="text-xl lg:text-2xl text-black font-normal leading-tight">
+        <p className="page-subtitle">
           {t('landing.subtitle')}
         </p>
       </div>
