@@ -54,14 +54,14 @@ export default function ProgramsIncludePage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-gradient-to-r from-[#d2c7bb] to-[#e9e1d7] flex flex-col">
       {/* Back button */}
       <div className="px-6 lg:px-8 pt-6">
         <Link 
           href="/intake/mental-health" 
-          className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg"
+          className="inline-block p-2 -ml-2 hover:bg-white/10 rounded-lg"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </Link>
@@ -117,7 +117,7 @@ export default function ProgramsIncludePage() {
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
         <button 
           onClick={handleContinue}
-          className="w-full bg-black text-white py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 hover:bg-gray-800 transition-colors"
+          className="continue-button"
         >
           <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

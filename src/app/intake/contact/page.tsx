@@ -35,9 +35,9 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-gradient-to-r from-[#d2c7bb] to-[#e9e1d7] flex flex-col">
       {/* Progress bar */}
-      <div className="w-full h-1 bg-gray-100">
+      <div className="w-full h-1 bg-white/20">
         <div className="h-full w-[30%] bg-[#f0feab] transition-all duration-300"></div>
       </div>
 
@@ -45,9 +45,9 @@ export default function ContactPage() {
       <div className="px-6 lg:px-8 pt-6">
         <button
           onClick={handleBack}
-          className="p-2 -ml-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 -ml-2 hover:bg-white/10 rounded-lg transition-colors"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
@@ -111,7 +111,7 @@ export default function ContactPage() {
           }`}
         >
           <span>Continue</span>
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </button>

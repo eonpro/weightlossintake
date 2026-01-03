@@ -129,7 +129,7 @@ export default function ReviewPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-gradient-to-r from-[#d2c7bb] to-[#e9e1d7] flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         <div className="max-w-md w-full text-center space-y-8">
           <h1 className="text-3xl font-medium">
