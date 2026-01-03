@@ -42,7 +42,7 @@ export default function ObesityStatsPage() {
     <div className="min-h-screen bg-white flex flex-col">
       {/* Progress bar */}
       <div className="w-full h-1 bg-white/20">
-        <div className="h-full w-[4%] bg-[#b8e64a] transition-all duration-300"></div>
+        <div className="h-full w-[4%] bg-[#f0feab] transition-all duration-300"></div>
       </div>
       
       {/* Back button - extra top padding for mobile */}
@@ -86,7 +86,7 @@ export default function ObesityStatsPage() {
               }
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-white/60 hover:text-white/80 underline transition-colors"
+              className="text-xs text-[#413d3d]/60 hover:text-[#413d3d]/80 underline transition-colors"
             >
               {isSpanish 
                 ? 'Fuente: Oficina de Salud de Minorías - HHS' 

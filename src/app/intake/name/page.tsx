@@ -29,7 +29,7 @@ export default function NamePage() {
     <div className="min-h-screen flex flex-col">
       {/* Progress bar */}
       <div className="w-full h-1 bg-white/20">
-        <div className="h-full w-[12%] bg-[#b8e64a] transition-all duration-300"></div>
+        <div className="h-full w-[12%] bg-[#f0feab] transition-all duration-300"></div>
       </div>
       
       <div className="px-6 lg:px-8 pt-6 max-w-md lg:max-w-2xl mx-auto w-full">
@@ -47,11 +47,11 @@ export default function NamePage() {
         <div className="space-y-8">
           <div className="space-y-3">
             <h1 className="page-title">{t('name.title')}</h1>
-            <p className="text-[18px] lg:text-[20px] text-[#413d3d]/70 leading-snug" style={{ fontWeight: 350 }}>{t('name.subtitle')}</p>
+            <p className="page-subtitle">{t('name.subtitle')}</p>
           </div>
           
           <div className="space-y-6">
-            <p className="text-white/60 text-sm">{t('name.basicInfo')}</p>
+            <p className="text-[#413d3d]/60 text-sm">{t('name.basicInfo')}</p>
             <div className="space-y-4">
               <input
                 type="text"

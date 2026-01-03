@@ -132,7 +132,7 @@ export default function DOBPage() {
     <div className="min-h-screen flex flex-col">
       {/* Progress bar */}
       <div className="w-full h-1 bg-white/20">
-        <div className="h-full w-[14%] bg-[#b8e64a] transition-all duration-300"></div>
+        <div className="h-full w-[14%] bg-[#f0feab] transition-all duration-300"></div>
       </div>
       
       <div className="px-6 lg:px-8 pt-6 max-w-md lg:max-w-2xl mx-auto w-full">
@@ -199,7 +199,7 @@ export default function DOBPage() {
               <span className="text-sm text-[#413d3d]" style={{ fontWeight: 500 }}>{t('dob.certifyAge')}</span>
             </label>
             
-            <p className="text-xs text-white/60">
+            <p className="text-xs text-[#413d3d]/60">
               {t('dob.ageRequirement')}
             </p>
           </div>

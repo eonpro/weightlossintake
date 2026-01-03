@@ -52,7 +52,7 @@ export default function StatePage() {
     <div className="min-h-screen flex flex-col">
       {/* Progress bar */}
       <div className="w-full h-1 bg-white/20">
-        <div className="h-full w-[10%] bg-[#b8e64a] transition-all duration-300"></div>
+        <div className="h-full w-[10%] bg-[#f0feab] transition-all duration-300"></div>
       </div>
       
       {/* Back button */}
@@ -77,7 +77,7 @@ export default function StatePage() {
           
           {/* State Dropdown */}
           <div className="relative">
-            <label className="block text-sm text-white/70 mb-2">{t('state.label')}</label>
+            <label className="block text-sm text-[#413d3d]/70 mb-2">{t('state.label')}</label>
             <div className="relative">
               <select
                 value={selectedState}
@@ -114,7 +114,7 @@ export default function StatePage() {
                   </svg>
                 )}
               </div>
-              <span className="ml-3 text-[10.5px] md:text-[12.5px] text-white/80 leading-tight">
+              <span className="ml-3 text-[10.5px] md:text-[12.5px] text-[#413d3d]/80 leading-tight">
                 {selectedState === 'Florida' ? (
                   <>
                     {t('state.terms.agree')}<a href={isSpanish ? "https://www.eonmeds.com/terminosycondiciones" : "https://www.eonmeds.com/termsandconditions"} target="_blank" rel="noopener noreferrer" className="text-[#f0feab] underline" onClick={(e) => e.stopPropagation()}>{t('state.terms.link')}</a>, <a href={isSpanish ? "https://www.eonmeds.com/floridaweightlossconsumerbillofrights" : "https://www.eonmeds.com/floridaweightlossconsumerbillofrightseng"} target="_blank" rel="noopener noreferrer" className="text-[#f0feab] underline" onClick={(e) => e.stopPropagation()}>{t('state.terms.flBill')}</a>, <a href={isSpanish ? "https://www.eonmeds.com/floridatelehealthconsent" : "https://www.eonmeds.com/florida-telehealth-consent"} target="_blank" rel="noopener noreferrer" className="text-[#f0feab] underline" onClick={(e) => e.stopPropagation()}>{t('state.terms.flConsent')}</a>, <a href={isSpanish ? "https://www.eonmeds.com/consentimientodetelemedicina" : "https://www.eonmeds.com/telehealth-consent"} target="_blank" rel="noopener noreferrer" className="text-[#f0feab] underline" onClick={(e) => e.stopPropagation()}>{t('state.terms.telehealth')}</a>{t('state.terms.acknowledge')}<a href={isSpanish ? "https://www.eonmeds.com/politicadeprivacidad" : "https://www.eonmeds.com/privacypolicy"} target="_blank" rel="noopener noreferrer" className="text-[#f0feab] underline" onClick={(e) => e.stopPropagation()}>{t('state.terms.privacy')}</a>.
