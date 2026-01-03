@@ -9,8 +9,11 @@ interface EonmedsLogoProps {
 }
 
 export default function EonmedsLogo({ compact = false, showLottie = true }: EonmedsLogoProps) {
+  // Use same max-width constraint as content to ensure alignment
+  const maxWidthClass = compact ? 'max-w-md lg:max-w-lg' : 'max-w-md lg:max-w-2xl';
+  
   return (
-    <div className="px-6 lg:px-8 mb-4 w-full">
+    <div className={`px-6 lg:px-8 mb-4 ${maxWidthClass} mx-auto w-full`}>
       <div className="flex items-center justify-between">
         <img 
           src="https://static.wixstatic.com/shapes/c49a9b_a0bd04a723284392ac265f9e53628dd6.svg"

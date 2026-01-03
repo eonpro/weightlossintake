@@ -108,9 +108,9 @@ export default function ViewportAwareLayout({
       {/* Progress bar */}
       {progressBar}
       
-      {/* Back button area - dynamically sized */}
+      {/* Back button area - dynamically sized and aligned with content */}
       {backButton && (
-        <div className={`px-6 lg:px-8 ${dynamicStyles.backButtonPadding}`}>
+        <div className={`px-6 lg:px-8 ${dynamicStyles.backButtonPadding} max-w-md lg:max-w-2xl mx-auto w-full`}>
           {backButton}
         </div>
       )}
