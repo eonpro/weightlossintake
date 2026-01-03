@@ -114,8 +114,15 @@ export default function ReviewPage() {
                 checkoutUrl = `https://eonmeds-checkout.vercel.app?ref=${submissionResult.intakeId}`;
               }
               
+              // Set flag to skip beforeunload warning for seamless transition
+              sessionStorage.setItem('checkout_redirect_in_progress', 'true');
+              
+              // Remove beforeunload handler for seamless transition to checkout
+              window.onbeforeunload = null;
+              
+              // Redirect seamlessly to checkout
               console.log('Redirecting to checkout with record reference');
-              window.location.href = checkoutUrl;
+              window.location.replace(checkoutUrl);
             }, 1500);
           }
           return 100;
@@ -133,22 +140,22 @@ export default function ReviewPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center px-6">
-        <div className="max-w-md w-full text-center space-y-8">
-          <h1 className="page-title">
+        <div className="max-w-md w-full text-center space-y-6">
+          <h1 className="text-2xl">
             <span className="text-gray-400">
               {language === 'es' ? 'Gracias, ' : 'Thank you, '}
             </span>
-            <span className="text-black">{firstName || ''}</span>
+            <span className="text-black font-semibold">{firstName || ''}</span>
           </h1>
           
-          {/* Lottie Animation - using the same medical/processing animation */}
+          {/* Lottie Animation - Medical processing animation */}
           <div className="flex justify-center">
-            <div className="w-56 h-56 relative">
+            <div className="w-40 h-40 relative">
               <iframe
-                src="https://lottie.host/embed/dc97beb4-edb5-4eb6-93d3-b263f384588b/duQ85tdg83.lottie"
+                src="https://lottie.host/embed/9fb843e1-1010-4dd3-bb0c-c9e194ec74ef/FPTlU6rmSq.lottie"
                 style={{ 
-                  width: '224px', 
-                  height: '224px',
+                  width: '160px', 
+                  height: '160px',
                   border: 'none',
                   background: 'transparent'
                 }}
@@ -157,22 +164,29 @@ export default function ReviewPage() {
             </div>
           </div>
           
-          <div className="space-y-2">
-            <p className="text-2xl text-gray-400 leading-tight">
+          <div className="space-y-1">
+            <p className="text-lg text-gray-400 leading-tight">
               {language === 'es' 
-                ? 'Tu información esta siendo asignada a un médico licenciado en'
-                : 'Your information is being assigned to a licensed physician in'}
+                ? 'Tu información esta siendo asignada a un'
+                : 'Your information is being assigned to a'}
             </p>
-            <p className="text-2xl text-black font-medium">
-              {state || ''} <span className="text-gray-400">{language === 'es' ? 'via' : 'via'}</span>
-            </p>
-            <p className="text-2xl text-black font-medium">
-              EONPro MedLink.
+            <p className="text-lg">
+              <span className="text-[#4fa87f] font-semibold">{state || ''}</span>
+              <span className="text-gray-400"> {language === 'es' ? 'médico licenciado via' : 'licensed physician via'}</span>
             </p>
           </div>
           
+          {/* MedLink Logo */}
+          <div className="flex justify-center mt-2">
+            <img 
+              src="https://static.wixstatic.com/shapes/c49a9b_f5e1ceda9f1341bc9e97cc0a6b4d19a3.svg"
+              alt="MedLink"
+              className="h-10"
+            />
+          </div>
+          
           {/* Progress Bar */}
-          <div className="mt-6 px-8">
+          <div className="mt-4 px-8">
             <div className="bg-gray-200 rounded-full h-2 overflow-hidden">
               <div 
                 className="bg-gradient-to-r from-blue-400 to-purple-400 h-full transition-all duration-300 ease-out"
@@ -182,7 +196,7 @@ export default function ReviewPage() {
             <p className="mt-2 text-sm font-medium text-gray-600">{progress}%</p>
           </div>
           
-          <div className="mt-4 h-8">
+          <div className="mt-2 h-6">
             <p className="text-sm text-gray-500 italic">
               {language === 'es' 
                 ? `Procesando tu información${dots}`

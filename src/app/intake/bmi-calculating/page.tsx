@@ -115,14 +115,14 @@ export default function BMICalculatingPage() {
           {t('bmi.calculating.greeting')} <span className="text-black">{firstName}</span>...
         </h1>
         
-        {/* Lottie Animation - Your exact animation via iframe */}
+        {/* Lottie Animation - Scale/BMI calculating animation */}
         <div className="flex justify-center">
-          <div className="w-56 h-56 relative">
+          <div className="w-40 h-40 relative">
             <iframe
-              src="https://lottie.host/embed/dc97beb4-edb5-4eb6-93d3-b263f384588b/duQ85tdg83.lottie"
+              src="https://lottie.host/embed/9ac83824-a212-4120-a230-69bb96ec0aab/DmWr5YKiHt.lottie"
               style={{ 
-                width: '224px', 
-                height: '224px',
+                width: '160px', 
+                height: '160px',
                 border: 'none',
                 background: 'transparent'
               }}

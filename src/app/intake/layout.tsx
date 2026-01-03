@@ -114,6 +114,12 @@ export default function IntakeLayout({ children }: IntakeLayoutProps) {
 
     // Handler for beforeunload event - shows browser's native warning dialog
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      // Skip warning if checkout redirect is in progress
+      const isCheckoutRedirect = sessionStorage.getItem('checkout_redirect_in_progress');
+      if (isCheckoutRedirect === 'true') {
+        return;
+      }
+      
       // Check if user has started the intake (has any data in session)
       const hasStarted = sessionStorage.getItem('intake_goals') || 
                          sessionStorage.getItem('intake_name') ||

@@ -13,11 +13,13 @@ export default function PersonalizedTreatmentPage() {
   const { language } = useLanguage();
   const [selected, setSelected] = useState('');
 
-  const handleContinue = () => {
-    if (selected) {
-      sessionStorage.setItem('personalized_treatment_interest', selected);
+  // Auto-advance on selection
+  const handleSelect = (value: string) => {
+    setSelected(value);
+    sessionStorage.setItem('personalized_treatment_interest', value);
+    setTimeout(() => {
       router.push('/intake/referral-source');
-    }
+    }, 150);
   };
 
   return (
@@ -44,14 +46,14 @@ export default function PersonalizedTreatmentPage() {
         <div className="space-y-8">
           <h1 className="page-title">
             {language === 'es' 
-              ? '¿Te interesaría que tu proveedor considere un plan de tratamiento personalizado para ayudarte a manejar estos efectos secundarios?'
-              : 'Would you be interested in having your provider consider a personalized treatment plan to help you manage these side effects?'}
+              ? <>¿Te interesaría que tu proveedor considere un <span className="text-[#4fa87f]">plan de tratamiento personalizado</span> sin costo adicional para ayudarte a manejar cualquier efecto secundario?</>
+              : <>Would you be interested in having your provider consider a <span className="text-[#4fa87f]">personalized treatment plan</span> at no extra cost to help you manage any side effects?</>}
           </h1>
 
+          {/* Yes/No options - auto-advance on selection */}
           <div className="space-y-3">
-            {/* Yes option */}
             <button
-              onClick={() => setSelected('yes')}
+              onClick={() => handleSelect('yes')}
               className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
                 selected === 'yes'
                   ? 'bg-[#f0feab] border-2 border-[#f0feab]'
@@ -72,9 +74,8 @@ export default function PersonalizedTreatmentPage() {
               </span>
             </button>
 
-            {/* No option */}
             <button
-              onClick={() => setSelected('no')}
+              onClick={() => handleSelect('no')}
               className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
                 selected === 'no'
                   ? 'bg-[#f0feab] border-2 border-[#f0feab]'
@@ -91,32 +92,16 @@ export default function PersonalizedTreatmentPage() {
                 )}
               </div>
               <span className="text-base lg:text-lg">
-                {language === 'es' ? 'No' : 'No'}
+                {language === 'es' ? 'No, estoy bien' : "No, I'm ok"}
               </span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Bottom button */}
+      {/* Copyright footer */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={!selected}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-            selected 
-              ? 'bg-black text-white hover:bg-gray-900' 
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright text */}
-        <p className="text-[9px] lg:text-[11px] text-gray-400 text-center mt-4 leading-tight">
+        <p className="text-[9px] lg:text-[11px] text-gray-400 text-center leading-tight">
           {language === 'es' 
             ? '© 2025 EONPro, LLC. Todos los derechos reservados.\nProceso exclusivo y protegido. Copiar o reproducir\nsin autorización está prohibido.'
             : '© 2025 EONPro, LLC. All rights reserved.\nExclusive and protected process. Copying or reproduction\nwithout authorization is prohibited.'}

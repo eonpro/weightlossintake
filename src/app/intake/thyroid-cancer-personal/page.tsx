@@ -13,11 +13,13 @@ export default function ThyroidCancerPersonalPage() {
   const { language } = useLanguage();
   const [selected, setSelected] = useState('');
 
-  const handleContinue = () => {
-    if (selected) {
-      sessionStorage.setItem('personal_thyroid_cancer', selected);
+  // Auto-advance on selection
+  const handleSelect = (value: string) => {
+    setSelected(value);
+    sessionStorage.setItem('personal_thyroid_cancer', value);
+    setTimeout(() => {
       router.push('/intake/men-personal');
-    }
+    }, 150);
   };
 
   return (
@@ -48,10 +50,10 @@ export default function ThyroidCancerPersonalPage() {
               : 'Do you have a personal history of medullary thyroid cancer?'}
           </h1>
           
-          {/* Yes/No options */}
+          {/* Yes/No options - auto-advance on selection */}
           <div className="space-y-3">
             <button
-              onClick={() => setSelected('yes')}
+              onClick={() => handleSelect('yes')}
               className={`w-full text-left p-4 rounded-2xl border transition-all ${
                 selected === 'yes'
                   ? 'border-[#f0feab] bg-[#f0feab]'
@@ -77,7 +79,7 @@ export default function ThyroidCancerPersonalPage() {
             </button>
             
             <button
-              onClick={() => setSelected('no')}
+              onClick={() => handleSelect('no')}
               className={`w-full text-left p-4 rounded-2xl border transition-all ${
                 selected === 'no'
                   ? 'border-[#f0feab] bg-[#f0feab]'
@@ -105,25 +107,9 @@ export default function ThyroidCancerPersonalPage() {
         </div>
       </div>
       
-      {/* Continue button */}
+      {/* Copyright footer */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={!selected}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-colors ${
-            selected
-              ? 'bg-black text-white hover:bg-gray-800' 
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-          }`}
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright footer */}
-        <div className="mt-6 text-center">
+        <div className="text-center">
           <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
             {language === 'es' ? (
               <>
