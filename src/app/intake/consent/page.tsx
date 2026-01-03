@@ -89,16 +89,12 @@ export default function ConsentPage() {
           </div>
 
           {/* Consent Section */}
-          <div className="border border-white/30 bg-white/10 rounded-2xl p-4 space-y-3">
+          <div className="border border-gray-200 bg-gray-50 rounded-2xl p-4 space-y-3">
             <label className="flex items-start space-x-3 cursor-pointer">
               <div className="mt-0.5 flex-shrink-0">
                 <div 
-                  className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 ${
-                    agreed ? 'bg-white' : 'bg-transparent'
-                  }`}
-                  style={{ 
-                    border: agreed ? '1.5px solid #413d3d' : '1.5px solid #413d3d'
-                  }}
+                  className="w-5 h-5 rounded flex items-center justify-center flex-shrink-0 bg-white"
+                  style={{ border: '1.5px solid #413d3d' }}
                 >
                   {agreed && (
                     <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,16 +109,16 @@ export default function ConsentPage() {
                 onChange={(e) => setAgreed(e.target.checked)}
                 className="sr-only"
               />
-              <div className="text-[9px] md:text-[12.5px] text-white/80">
+              <div className="text-[9px] md:text-[12.5px] text-[#413d3d]/80">
                 {t('consent.agreement.start')}
-                <a href="#" className="text-[#f0feab] underline">{t('consent.agreement.terms')}</a>
+                <a href="#" className="text-[#6b8e23] underline font-medium">{t('consent.agreement.terms')}</a>
                 {t('consent.agreement.and')}
-                <a href="#" className="text-[#f0feab] underline">{t('consent.agreement.privacy')}</a>, 
-                <a href="#" className="text-[#f0feab] underline">{t('consent.agreement.telehealth')}</a> and{' '}
-                <a href="#" className="text-[#f0feab] underline">{t('consent.agreement.cancellation')}</a>
+                <a href="#" className="text-[#6b8e23] underline font-medium">{t('consent.agreement.privacy')}</a>, 
+                <a href="#" className="text-[#6b8e23] underline font-medium">{t('consent.agreement.telehealth')}</a> and{' '}
+                <a href="#" className="text-[#6b8e23] underline font-medium">{t('consent.agreement.cancellation')}</a>
                 {t('consent.agreement.florida')}
-                <a href="#" className="text-[#f0feab] underline">{t('consent.agreement.florida.bill')}</a> and the{' '}
-                <a href="#" className="text-[#f0feab] underline">{t('consent.agreement.florida.consent')}</a>.
+                <a href="#" className="text-[#6b8e23] underline font-medium">{t('consent.agreement.florida.bill')}</a> and the{' '}
+                <a href="#" className="text-[#6b8e23] underline font-medium">{t('consent.agreement.florida.consent')}</a>.
               </div>
             </label>
           </div>

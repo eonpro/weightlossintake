@@ -11,9 +11,10 @@ export default function LanguageToggle() {
         onClick={() => setLanguage('en')}
         className={`flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full transition-all ${
           language === 'en' 
-            ? 'bg-black text-white' 
+            ? 'bg-[#413d3d]' 
             : 'text-gray-600 hover:text-gray-900'
         }`}
+        style={language === 'en' ? { color: '#ffffff' } : undefined}
       >
         {/* US Flag SVG */}
         <svg width="14" height="9" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -32,9 +33,10 @@ export default function LanguageToggle() {
         onClick={() => setLanguage('es')}
         className={`flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full transition-all ${
           language === 'es' 
-            ? 'bg-black text-white' 
+            ? 'bg-[#413d3d]' 
             : 'text-gray-600 hover:text-gray-900'
         }`}
+        style={language === 'es' ? { color: '#ffffff' } : undefined}
       >
         {/* Spain Flag SVG */}
         <svg width="14" height="9" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
