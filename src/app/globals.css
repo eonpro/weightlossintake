@@ -76,9 +76,22 @@ h1, h2, h3, h4, h5, h6, p, span, label, a, div, li, td, th {
   color: inherit;
 }
 
-/* Override Tailwind text classes to #413d3d */
-.text-gray-400, .text-gray-500, .text-gray-600, .text-gray-700, .text-black, .text-white {
+/* Override Tailwind text classes to #413d3d - but NOT inside buttons */
+.text-gray-400, .text-gray-500, .text-gray-600, .text-gray-700, .text-black {
   color: #413d3d !important;
+}
+
+/* text-white should stay white inside buttons */
+.text-white:not(button *):not(.continue-button *):not([class*="bg-black"] *) {
+  color: #413d3d !important;
+}
+
+/* Force white text inside buttons */
+button.continue-button,
+button.continue-button *,
+button[class*="bg-black"],
+button[class*="bg-black"] * {
+  color: #ffffff !important;
 }
 
 /* Lighter text for subtitles */
