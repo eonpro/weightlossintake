@@ -21,7 +21,8 @@ export default function MedicationsPage() {
       if (option === 'yes') {
         router.push('/intake/medications-selection');
       } else {
-        router.push('/intake/allergies');
+        // Skip allergies page and go directly to kidney conditions
+        router.push('/intake/kidney-conditions');
       }
     }, 300);
   };
