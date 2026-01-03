@@ -98,18 +98,35 @@ export default function ReviewPage() {
               await submitCheckpoint('qualification-complete', qualificationData, 'qualified');
               
               // Submit complete intake data to Airtable
-              const intakeData = collectIntakeData();
-              console.log('Submitting intake data:', intakeData);
+              try {
+                const intakeData = collectIntakeData();
+                console.log('=== INTAKE SUBMISSION DEBUG ===');
+                console.log('Session ID:', intakeData.sessionId);
+                console.log('Personal Info:', intakeData.personalInfo);
+                console.log('Medical Profile:', intakeData.medicalProfile);
+                console.log('Consents:', intakeData.consents);
 
-              const submissionResult = await submitIntake(intakeData);
-              console.log('Submission result:', submissionResult);
+                const submissionResult = await submitIntake(intakeData);
+                console.log('=== SUBMISSION RESULT ===');
+                console.log('Success:', submissionResult.success);
+                console.log('Intake ID:', submissionResult.intakeId);
+                console.log('Error:', submissionResult.error);
 
-              if (submissionResult.success && submissionResult.intakeId) {
-                // Store intake ID for reference (qualified page will use this)
-                sessionStorage.setItem('submitted_intake_id', submissionResult.intakeId);
-                console.log('Saved intake ID:', submissionResult.intakeId);
-              } else {
-                console.error('Submission failed:', submissionResult.error);
+                if (submissionResult.success && submissionResult.intakeId) {
+                  // Store intake ID for reference (qualified page will use this)
+                  sessionStorage.setItem('submitted_intake_id', submissionResult.intakeId);
+                  sessionStorage.setItem('submission_status', 'success');
+                  console.log('✓ Saved intake ID:', submissionResult.intakeId);
+                } else {
+                  console.error('✗ Submission failed:', submissionResult.error);
+                  sessionStorage.setItem('submission_status', 'failed');
+                  sessionStorage.setItem('submission_error', submissionResult.error || 'Unknown error');
+                  // Still continue to qualified page - data is stored locally
+                }
+              } catch (submissionError) {
+                console.error('✗ Submission exception:', submissionError);
+                sessionStorage.setItem('submission_status', 'error');
+                sessionStorage.setItem('submission_error', String(submissionError));
               }
               
               // Navigate to qualified page with celebration

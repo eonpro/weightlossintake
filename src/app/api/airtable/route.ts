@@ -5,6 +5,82 @@ const AIRTABLE_PAT = process.env.AIRTABLE_PAT;
 const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 const AIRTABLE_TABLE_NAME = process.env.AIRTABLE_TABLE_NAME || 'Intake Submissions';
 
+// Known safe field names that exist in Airtable
+// Add fields here as you create them in Airtable
+const KNOWN_AIRTABLE_FIELDS = new Set([
+  'Session ID',
+  'First Name',
+  'Last Name',
+  'Email',
+  'Phone',
+  'Date of Birth',
+  'Sex',
+  'Blood Pressure',
+  'Pregnancy/Breastfeeding',
+  'State',
+  'Address',
+  'Current Weight (lbs)',
+  'Ideal Weight (lbs)',
+  'Height',
+  'BMI',
+  'Goals',
+  'Activity Level',
+  'Chronic Conditions',
+  'Digestive Conditions',
+  'Medications',
+  'Allergies',
+  'Mental Health Conditions',
+  'Surgery History',
+  'Surgery Details',
+  'Family Conditions',
+  'Kidney Conditions',
+  'Medical Conditions',
+  'Personal Diabetes T2',
+  'Personal Gastroparesis',
+  'Personal Pancreatitis',
+  'Personal Thyroid Cancer',
+  'Personal MEN',
+  'Has Mental Health',
+  'Has Chronic Conditions',
+  'GLP-1 History',
+  'GLP-1 Type',
+  'Side Effects',
+  'Medication Preference',
+  'Semaglutide Dosage',
+  'Semaglutide Side Effects',
+  'Semaglutide Success',
+  'Tirzepatide Dosage',
+  'Tirzepatide Side Effects',
+  'Tirzepatide Success',
+  'Dosage Satisfaction',
+  'Dosage Interest',
+  'Alcohol Consumption',
+  'Recreational Drugs',
+  'Weight Loss History',
+  'Weight Loss Support',
+  'Health Improvements',
+  'Referral Sources',
+  'Referrer Name',
+  'Referrer Type',
+  'Qualified',
+  'Taking Medications',
+  'Personalized Treatment Interest',
+  'Submitted At',
+  'Language',
+  'Privacy Policy Accepted',
+  'Privacy Policy Accepted At',
+  'Terms of Use Accepted',
+  'Terms of Use Accepted At',
+  'Telehealth Consent Accepted',
+  'Telehealth Consent Accepted At',
+  'Cancellation Policy Accepted',
+  'Cancellation Policy Accepted At',
+  'Florida Bill of Rights Accepted',
+  'Florida Bill of Rights Accepted At',
+  'Florida Consent Accepted',
+  'Florida Consent Accepted At',
+]);
+
 interface IntakeRecord {
   sessionId: string;
   // Personal Info
@@ -189,41 +265,90 @@ export async function POST(request: NextRequest) {
       'Florida Consent Accepted At': data.floridaConsentAcceptedAt,
     };
 
-    // Filter out undefined/null/empty values to prevent Airtable 422 errors
+    // Filter out undefined/null/empty values AND unknown field names to prevent Airtable 422 errors
     const fields: Record<string, unknown> = {};
+    const skippedFields: string[] = [];
+    
     for (const [key, value] of Object.entries(allFields)) {
-      if (value !== undefined && value !== null && value !== '') {
+      // Skip empty values
+      if (value === undefined || value === null || value === '') {
+        continue;
+      }
+      
+      // Only include fields that are known to exist in Airtable
+      // This prevents 422 errors for missing columns
+      if (KNOWN_AIRTABLE_FIELDS.has(key)) {
         fields[key] = value;
+      } else {
+        skippedFields.push(key);
       }
     }
 
     console.log('Sending fields to Airtable:', Object.keys(fields));
+    if (skippedFields.length > 0) {
+      console.log('Skipped unknown fields:', skippedFields);
+    }
 
-    // Send to Airtable using Personal Access Token
-    const response = await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${AIRTABLE_PAT}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ fields }),
+    // Send to Airtable using Personal Access Token with retry logic
+    let lastError: unknown = null;
+    let response: Response | null = null;
+    
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        response = await fetch(
+          `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${AIRTABLE_PAT}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ fields }),
+          }
+        );
+        
+        if (response.ok) {
+          break; // Success, exit retry loop
+        }
+        
+        // If it's a 422 (validation error), don't retry - it will fail again
+        if (response.status === 422) {
+          break;
+        }
+        
+        console.log(`Airtable attempt ${attempt} failed with status ${response.status}, retrying...`);
+        lastError = `HTTP ${response.status}`;
+        
+      } catch (fetchError) {
+        console.log(`Airtable attempt ${attempt} network error:`, fetchError);
+        lastError = fetchError;
       }
-    );
+      
+      // Wait before retry (exponential backoff)
+      if (attempt < 3) {
+        await new Promise(resolve => setTimeout(resolve, attempt * 1000));
+      }
+    }
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Airtable error:', JSON.stringify(errorData, null, 2));
+    if (!response || !response.ok) {
+      let errorData;
+      try {
+        errorData = response ? await response.json() : { error: 'Network error' };
+      } catch {
+        errorData = { error: String(lastError) };
+      }
+      
+      console.error('Airtable error after retries:', JSON.stringify(errorData, null, 2));
       console.error('Fields sent:', Object.keys(fields));
 
       // Return detailed error for debugging
       return NextResponse.json({
         success: false,
-        error: `Airtable API error: ${response.status}`,
+        error: `Airtable API error: ${response?.status || 'network error'}`,
         details: errorData,
-        fieldsSent: Object.keys(fields)
-      }, { status: response.status, headers: corsHeaders });
+        fieldsSent: Object.keys(fields),
+        skippedFields: skippedFields.length > 0 ? skippedFields : undefined
+      }, { status: response?.status || 500, headers: corsHeaders });
     }
 
     const result = await response.json();
@@ -232,7 +357,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       recordId: result.id,
-      message: 'Successfully saved to Airtable'
+      message: 'Successfully saved to Airtable',
+      fieldsSaved: Object.keys(fields).length
     }, { headers: corsHeaders });
 
   } catch (error) {
