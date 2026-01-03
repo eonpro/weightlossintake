@@ -55,10 +55,10 @@ export default function MedicationPreferencePage() {
               }`}
             >
               <div className="flex items-center">
-                <div className={`w-5 h-5 mr-3 rounded flex items-center justify-center flex-shrink-0 border ${
+                <div className={`w-5 h-5 mr-3 rounded flex items-center justify-center flex-shrink-0 border-2 ${
                   selected === 'recommendation'
-                    ? 'bg-white/30 border-white/60'
-                    : 'border-white/40'
+                    ? 'bg-[#333] border-[#333]'
+                    : 'border-white/60 bg-transparent'
                 }`}>
                   {selected === 'recommendation' && (
                     <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -66,7 +66,7 @@ export default function MedicationPreferencePage() {
                     </svg>
                   )}
                 </div>
-                <span className="text-[16px] lg:text-lg font-medium leading-tight text-white">
+                <span className="text-[16px] lg:text-lg font-medium leading-tight">
                   {t('medication.option1')}
                 </span>
               </div>
@@ -80,10 +80,10 @@ export default function MedicationPreferencePage() {
               }`}
             >
               <div className="flex items-center">
-                <div className={`w-5 h-5 mr-3 rounded flex items-center justify-center flex-shrink-0 border ${
+                <div className={`w-5 h-5 mr-3 rounded flex items-center justify-center flex-shrink-0 border-2 ${
                   selected === 'have_in_mind'
-                    ? 'bg-white/30 border-white/60'
-                    : 'border-white/40'
+                    ? 'bg-[#333] border-[#333]'
+                    : 'border-white/60 bg-transparent'
                 }`}>
                   {selected === 'have_in_mind' && (
                     <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,7 +91,7 @@ export default function MedicationPreferencePage() {
                     </svg>
                   )}
                 </div>
-                <span className="text-[16px] lg:text-lg font-medium leading-tight text-white">
+                <span className="text-[16px] lg:text-lg font-medium leading-tight">
                   {t('medication.option2')}
                 </span>
               </div>
