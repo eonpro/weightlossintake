@@ -22,9 +22,9 @@ export default function IntakePageLayout({
       {/* Progress bar */}
       {progressBar}
       
-      {/* Back button area - extra top padding for mobile */}
+      {/* Back button area - aligned with content max-width */}
       {backButton && (
-        <div className="px-6 lg:px-8 pt-8 lg:pt-6">
+        <div className="px-6 lg:px-8 pt-8 lg:pt-6 max-w-md lg:max-w-2xl mx-auto w-full">
           {backButton}
         </div>
       )}

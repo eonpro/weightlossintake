@@ -229,16 +229,16 @@ export default function ContactInfoPage() {
       button={continueButton}
       copyright={copyrightText}
     >
-      <div className="max-w-md lg:max-w-2xl mx-auto w-full">
-        {/* Logo */}
-        <EonmedsLogo />
+      {/* Logo - outside max-w wrapper to align with back button */}
+      <EonmedsLogo />
       
-        <div className="space-y-6 mt-6">
-          <div className="space-y-4">
+      <div className="max-w-md lg:max-w-2xl mx-auto w-full">
+        <div className="space-y-6 mt-4">
+          <div className="space-y-3">
             <h1 className="page-title">
               {language === 'es' ? '¿Cómo podemos contactarte?' : 'How can we contact you?'}
             </h1>
-            <p className="page-subtitle">
+            <p className="page-subtitle text-sm">
               {language === 'es' 
                 ? 'Usamos esta información para mantenerte informado sobre tu tratamiento, enviarte actualizaciones importantes y ayudarte a mantenerte conectado con tu proveedor.'
                 : 'We use this information to keep you informed about your treatment, send you important updates, and help you stay connected with your provider.'}
