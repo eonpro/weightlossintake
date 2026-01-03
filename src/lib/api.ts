@@ -202,13 +202,13 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
       lastName: intakeData.personalInfo?.lastName,
       email: intakeData.personalInfo?.email,
       phone: intakeData.personalInfo?.phone,
-      dob: typeof intakeData.personalInfo?.dob === 'object' 
+      dob: (intakeData.personalInfo?.dob && typeof intakeData.personalInfo.dob === 'object')
         ? JSON.stringify(intakeData.personalInfo.dob)
-        : intakeData.personalInfo?.dob,
+        : intakeData.personalInfo?.dob || undefined,
       state: intakeData.address?.state,
-      address: typeof intakeData.address === 'object'
+      address: (intakeData.address && typeof intakeData.address === 'object')
         ? JSON.stringify(intakeData.address)
-        : intakeData.address,
+        : intakeData.address || undefined,
       currentWeight: intakeData.medicalProfile?.weight?.currentWeight,
       idealWeight: intakeData.medicalProfile?.weight?.idealWeight,
       heightFeet: intakeData.medicalProfile?.weight?.heightFeet,
@@ -245,8 +245,8 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
       medicationPreference: toEnglish(intakeData.glp1Profile?.medicationPreference),
       qualified: intakeData.qualificationStatus?.qualified,
       submittedAt: intakeData.qualificationStatus?.completedAt || new Date().toISOString(),
-      // Keep track of original flow language for reference
-      flowLanguage: sessionStorage.getItem('preferredLanguage') || 'en',
+      // Keep track of original flow language for reference (stored in localStorage by LanguageContext)
+      flowLanguage: localStorage.getItem('preferredLanguage') || 'en',
     };
 
     // Send to Airtable API route
