@@ -113,101 +113,91 @@ export async function POST(request: NextRequest) {
       }, { headers: corsHeaders });
     }
 
-    // Prepare fields for Airtable - ALL 58 FIELDS
-    const fields: Record<string, unknown> = {
-      // Personal Info (8 fields)
+    // Build fields object - only include non-empty values
+    // This prevents 422 errors when Airtable table doesn't have all columns
+    const allFields: Record<string, unknown> = {
       'Session ID': data.sessionId,
-      'First Name': data.firstName || '',
-      'Last Name': data.lastName || '',
-      'Email': data.email || '',
-      'Phone': data.phone || '',
-      'Date of Birth': data.dob || '',
-      'Sex': data.sex || '',
-      'Blood Pressure': data.bloodPressure || '',
-      'Pregnancy/Breastfeeding': data.pregnancyBreastfeeding || '',
-
-      // Address (2 fields)
-      'State': data.state || '',
-      'Address': data.address || '',
-
-      // Weight & BMI (4 fields)
-      'Current Weight (lbs)': data.currentWeight || 0,
-      'Ideal Weight (lbs)': data.idealWeight || 0,
-      'Height': data.height || '',
-      'BMI': data.bmi || 0,
-
-      // Goals & Activity (2 fields)
-      'Goals': data.goals || '',
-      'Activity Level': data.activityLevel || '',
-
-      // Medical Conditions (5 fields)
-      'Chronic Conditions': data.chronicConditions || '',
-      'Digestive Conditions': data.digestiveConditions || '',
-      'Medications': data.medications || '',
-      'Allergies': data.allergies || '',
-      'Mental Health Conditions': data.mentalHealthConditions || '',
-
-      // Additional Medical History (12 fields)
-      'Surgery History': data.surgeryHistory || '',
-      'Surgery Details': data.surgeryDetails || '',
-      'Family Conditions': data.familyConditions || '',
-      'Kidney Conditions': data.kidneyConditions || '',
-      'Medical Conditions': data.medicalConditions || '',
-      'Personal Diabetes T2': data.personalDiabetes || '',
-      'Personal Gastroparesis': data.personalGastroparesis || '',
-      'Personal Pancreatitis': data.personalPancreatitis || '',
-      'Personal Thyroid Cancer': data.personalThyroidCancer || '',
-      'Personal MEN': data.personalMen || '',
-      'Has Mental Health': data.hasMentalHealth || '',
-      'Has Chronic Conditions': data.hasChronicConditions || '',
-
-      // GLP-1 Profile (12 fields)
-      'GLP-1 History': data.glp1History || '',
-      'GLP-1 Type': data.glp1Type || '',
-      'Side Effects': data.sideEffects || '',
-      'Medication Preference': data.medicationPreference || '',
-      'Semaglutide Dosage': data.semaglutideDosage || '',
-      'Semaglutide Side Effects': data.semaglutideSideEffects || '',
-      'Semaglutide Success': data.semaglutideSuccess || '',
-      'Tirzepatide Dosage': data.tirzepatideDosage || '',
-      'Tirzepatide Side Effects': data.tirzepatideSideEffects || '',
-      'Tirzepatide Success': data.tirzepatideSuccess || '',
-      'Dosage Satisfaction': data.dosageSatisfaction || '',
-      'Dosage Interest': data.dosageInterest || '',
-
-      // Lifestyle (5 fields)
-      'Alcohol Consumption': data.alcoholConsumption || '',
-      'Recreational Drugs': data.recreationalDrugs || '',
-      'Weight Loss History': data.weightLossHistory || '',
-      'Weight Loss Support': data.weightLossSupport || '',
-      'Health Improvements': data.healthImprovements || '',
-
-      // Referral (3 fields)
-      'Referral Sources': data.referralSources || '',
-      'Referrer Name': data.referrerName || '',
-      'Referrer Type': data.referrerType || '',
-
-      // Qualification Status (5 fields)
-      'Qualified': data.qualified ?? false,
-      'Taking Medications': data.takingMedications || '',
-      'Personalized Treatment Interest': data.personalizedTreatmentInterest || '',
+      'First Name': data.firstName,
+      'Last Name': data.lastName,
+      'Email': data.email,
+      'Phone': data.phone,
+      'Date of Birth': data.dob,
+      'Sex': data.sex,
+      'Blood Pressure': data.bloodPressure,
+      'Pregnancy/Breastfeeding': data.pregnancyBreastfeeding,
+      'State': data.state,
+      'Address': data.address,
+      'Current Weight (lbs)': data.currentWeight,
+      'Ideal Weight (lbs)': data.idealWeight,
+      'Height': data.height,
+      'BMI': data.bmi,
+      'Goals': data.goals,
+      'Activity Level': data.activityLevel,
+      'Chronic Conditions': data.chronicConditions,
+      'Digestive Conditions': data.digestiveConditions,
+      'Medications': data.medications,
+      'Allergies': data.allergies,
+      'Mental Health Conditions': data.mentalHealthConditions,
+      'Surgery History': data.surgeryHistory,
+      'Surgery Details': data.surgeryDetails,
+      'Family Conditions': data.familyConditions,
+      'Kidney Conditions': data.kidneyConditions,
+      'Medical Conditions': data.medicalConditions,
+      'Personal Diabetes T2': data.personalDiabetes,
+      'Personal Gastroparesis': data.personalGastroparesis,
+      'Personal Pancreatitis': data.personalPancreatitis,
+      'Personal Thyroid Cancer': data.personalThyroidCancer,
+      'Personal MEN': data.personalMen,
+      'Has Mental Health': data.hasMentalHealth,
+      'Has Chronic Conditions': data.hasChronicConditions,
+      'GLP-1 History': data.glp1History,
+      'GLP-1 Type': data.glp1Type,
+      'Side Effects': data.sideEffects,
+      'Medication Preference': data.medicationPreference,
+      'Semaglutide Dosage': data.semaglutideDosage,
+      'Semaglutide Side Effects': data.semaglutideSideEffects,
+      'Semaglutide Success': data.semaglutideSuccess,
+      'Tirzepatide Dosage': data.tirzepatideDosage,
+      'Tirzepatide Side Effects': data.tirzepatideSideEffects,
+      'Tirzepatide Success': data.tirzepatideSuccess,
+      'Dosage Satisfaction': data.dosageSatisfaction,
+      'Dosage Interest': data.dosageInterest,
+      'Alcohol Consumption': data.alcoholConsumption,
+      'Recreational Drugs': data.recreationalDrugs,
+      'Weight Loss History': data.weightLossHistory,
+      'Weight Loss Support': data.weightLossSupport,
+      'Health Improvements': data.healthImprovements,
+      'Referral Sources': data.referralSources,
+      'Referrer Name': data.referrerName,
+      'Referrer Type': data.referrerType,
+      'Qualified': data.qualified,
+      'Taking Medications': data.takingMedications,
+      'Personalized Treatment Interest': data.personalizedTreatmentInterest,
       'Submitted At': data.submittedAt || new Date().toISOString(),
-      'Language': data.flowLanguage || 'en',
-
-      // Consent Tracking (12 fields)
-      'Privacy Policy Accepted': data.privacyPolicyAccepted ?? false,
-      'Privacy Policy Accepted At': data.privacyPolicyAcceptedAt || '',
-      'Terms of Use Accepted': data.termsOfUseAccepted ?? false,
-      'Terms of Use Accepted At': data.termsOfUseAcceptedAt || '',
-      'Telehealth Consent Accepted': data.telehealthConsentAccepted ?? false,
-      'Telehealth Consent Accepted At': data.telehealthConsentAcceptedAt || '',
-      'Cancellation Policy Accepted': data.cancellationPolicyAccepted ?? false,
-      'Cancellation Policy Accepted At': data.cancellationPolicyAcceptedAt || '',
-      'Florida Bill of Rights Accepted': data.floridaBillOfRightsAccepted ?? false,
-      'Florida Bill of Rights Accepted At': data.floridaBillOfRightsAcceptedAt || '',
-      'Florida Consent Accepted': data.floridaConsentAccepted ?? false,
-      'Florida Consent Accepted At': data.floridaConsentAcceptedAt || '',
+      'Language': data.flowLanguage,
+      'Privacy Policy Accepted': data.privacyPolicyAccepted,
+      'Privacy Policy Accepted At': data.privacyPolicyAcceptedAt,
+      'Terms of Use Accepted': data.termsOfUseAccepted,
+      'Terms of Use Accepted At': data.termsOfUseAcceptedAt,
+      'Telehealth Consent Accepted': data.telehealthConsentAccepted,
+      'Telehealth Consent Accepted At': data.telehealthConsentAcceptedAt,
+      'Cancellation Policy Accepted': data.cancellationPolicyAccepted,
+      'Cancellation Policy Accepted At': data.cancellationPolicyAcceptedAt,
+      'Florida Bill of Rights Accepted': data.floridaBillOfRightsAccepted,
+      'Florida Bill of Rights Accepted At': data.floridaBillOfRightsAcceptedAt,
+      'Florida Consent Accepted': data.floridaConsentAccepted,
+      'Florida Consent Accepted At': data.floridaConsentAcceptedAt,
     };
+
+    // Filter out undefined/null/empty values to prevent Airtable 422 errors
+    const fields: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(allFields)) {
+      if (value !== undefined && value !== null && value !== '') {
+        fields[key] = value;
+      }
+    }
+
+    console.log('Sending fields to Airtable:', Object.keys(fields));
 
     // Send to Airtable using Personal Access Token
     const response = await fetch(
@@ -224,8 +214,16 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('Airtable error:', errorData);
-      throw new Error(`Airtable API error: ${response.status}`);
+      console.error('Airtable error:', JSON.stringify(errorData, null, 2));
+      console.error('Fields sent:', Object.keys(fields));
+
+      // Return detailed error for debugging
+      return NextResponse.json({
+        success: false,
+        error: `Airtable API error: ${response.status}`,
+        details: errorData,
+        fieldsSent: Object.keys(fields)
+      }, { status: response.status, headers: corsHeaders });
     }
 
     const result = await response.json();
