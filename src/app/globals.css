@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background-start: #d2c7bb;
+  --background-end: #e9e1d7;
+  --foreground: #ffffff;
+  --input-bg: #e9e1d8;
   
   /* Dynamic viewport height for mobile browsers */
   --vh: 1vh;
@@ -19,17 +21,10 @@
 }
 
 @theme inline {
-  --color-background: var(--background);
+  --color-background: var(--background-start);
   --color-foreground: var(--foreground);
   --font-sans: "sofia-pro", sans-serif;
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 /* Sofia Pro font utility class */
@@ -43,18 +38,18 @@
   width: 1.25rem;
   height: 1.25rem;
   border-radius: 0.25rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid rgba(255, 255, 255, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   margin-right: 0.75rem;
-  background: white;
+  background: transparent;
 }
 
 .checkbox-option.checked {
-  background: white;
-  border-color: #9ca3af;
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.6);
 }
 
 /* Override all border-2 checkboxes to 1px */
@@ -63,16 +58,75 @@ button .border-2.rounded {
 }
 
 body {
-  background: var(--background);
+  background: linear-gradient(to right, var(--background-start), var(--background-end));
   color: var(--foreground);
   font-family: "sofia-pro", sans-serif;
   letter-spacing: -0.025em;
+  min-height: 100vh;
   
   /* Prevent scroll bounce on iOS */
   overscroll-behavior-y: none;
   
   /* Prevent double-tap zoom on mobile */
   touch-action: manipulation;
+}
+
+/* Page title - consistent styling */
+.page-title {
+  font-size: 1.875rem; /* 30px */
+  font-weight: 360;
+  color: white;
+  line-height: 1.2;
+}
+
+@media (min-width: 1024px) {
+  .page-title {
+    font-size: 2.25rem; /* 36px */
+  }
+}
+
+/* Page subtitle */
+.page-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
+}
+
+/* Input fields styling */
+.intake-input {
+  background-color: var(--input-bg) !important;
+  border: none !important;
+  color: white !important;
+  border-radius: 9999px;
+  padding: 1rem 1.5rem;
+}
+
+.intake-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Option buttons styling */
+.option-button {
+  background-color: var(--input-bg);
+  border: none;
+  color: white;
+  border-radius: 9999px;
+  padding: 1rem 1.5rem;
+  transition: all 0.2s;
+}
+
+.option-button.selected {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.option-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Copyright text */
+.copyright-text {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.4;
 }
 
 /* Remove all underlines from text elements */
@@ -223,7 +277,7 @@ button, .button-like {
 .sticky-bottom-button {
   position: sticky;
   bottom: 0;
-  background: white;
+  background: transparent;
   padding: 16px 50px 24px 50px;
   margin-top: auto;
   z-index: 10;
@@ -236,7 +290,7 @@ button, .button-like {
   left: 0;
   right: 0;
   height: 40px;
-  background: linear-gradient(to top, white, transparent);
+  background: linear-gradient(to top, var(--background-end), transparent);
   pointer-events: none;
 }
 
@@ -255,7 +309,7 @@ button, .button-like {
 /* Continue button - consistent styling */
 .continue-button {
   width: 100%;
-  background: black;
+  background: var(--input-bg);
   color: white;
   padding: 16px 32px;
   border-radius: 9999px;
@@ -265,16 +319,17 @@ button, .button-like {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
+  border: none;
 }
 
 .continue-button:hover {
-  background: #1f1f1f;
+  background: rgba(233, 225, 216, 0.8);
 }
 
 .continue-button:disabled {
-  background: #d1d5db;
-  color: #6b7280;
+  background: rgba(233, 225, 216, 0.5);
+  color: rgba(255, 255, 255, 0.5);
   cursor: not-allowed;
 }
 
