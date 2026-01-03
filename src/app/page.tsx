@@ -73,7 +73,7 @@ export default function Home() {
       <div className="mb-4">
         <p className="text-[11px] lg:text-[13px] leading-tight" style={{ fontWeight: 450, color: 'rgba(65, 61, 61, 0.6)' }}>
           {t('landing.disclaimer1')}
-          <a href="#" className="underline" style={{ fontSize: '12.5px', color: 'rgba(65, 61, 61, 0.6)' }}>{t('landing.disclaimer.privacy')}</a>
+          <a href="#" className="underline" style={{ color: 'rgba(65, 61, 61, 0.6)' }}>{t('landing.disclaimer.privacy')}</a>
           {t('landing.disclaimer1.end')}
         </p>
       </div>
