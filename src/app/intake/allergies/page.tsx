@@ -113,16 +113,16 @@ export default function AllergiesPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Progress bar */}
-      <div className="w-full h-1 bg-gray-100">
-        <div className="h-full w-[88%] bg-[#f0feab] transition-all duration-300"></div>
+      <div className="w-full h-1 bg-white/20">
+        <div className="h-full w-[88%] bg-[#b8e64a] transition-all duration-300"></div>
       </div>
       
       {/* Back button */}
       <div className="px-6 lg:px-8 pt-6">
-        <Link href="/intake/medications" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <Link href="/intake/medications" className="inline-block p-2 -ml-2 hover:bg-white/10 rounded-lg">
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </Link>
@@ -135,14 +135,14 @@ export default function AllergiesPage() {
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-6">
           {/* Title */}
-          <h1 className="text-3xl font-medium leading-tight">
+          <h1 className="page-title">
             {language === 'es' 
               ? '¿Eres alérgico a algún medicamento o suplemento?'
               : 'Are you allergic to any medications or supplements?'}
           </h1>
           
           {/* Description */}
-          <p className="text-gray-500 text-base">
+          <p className="page-subtitle">
             {language === 'es'
               ? 'Incluya todos los medicamentos recetados, medicamentos de venta libre, vitaminas y suplementos a los que sea alérgico.'
               : 'Include all prescription medications, over-the-counter medications, vitamins, and supplements you are allergic to.'}
@@ -158,17 +158,17 @@ export default function AllergiesPage() {
               placeholder={language === 'es' 
                 ? 'Buscar medicamentos o suplementos...'
                 : 'Search medications or supplements...'}
-              className="w-full p-4 text-base lg:text-lg border border-gray-200 rounded-2xl focus:outline-none focus:border-gray-400"
+              className="input-field w-full"
             />
             
             {/* Suggestions dropdown */}
             {showSuggestions && searchValue && filteredSuggestions.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-2xl shadow-lg z-10">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-2xl shadow-lg z-10">
                 {filteredSuggestions.map((suggestion, index) => (
                   <button
                     key={index}
                     onClick={() => handleAddItem(suggestion)}
-                    className="w-full text-left p-3 hover:bg-gray-50 first:rounded-t-2xl last:rounded-b-2xl"
+                    className="w-full text-left p-3 text-white hover:bg-white/10 first:rounded-t-2xl last:rounded-b-2xl"
                   >
                     {suggestion}
                   </button>
@@ -180,19 +180,19 @@ export default function AllergiesPage() {
           {/* Selected items */}
           {selectedItems.length > 0 && (
             <div className="space-y-2">
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-white/60">
                 {language === 'es' ? 'Alergias seleccionadas:' : 'Selected allergies:'}
               </p>
               <div className="flex flex-wrap gap-2">
                 {selectedItems.map((item, index) => (
                   <div
                     key={index}
-                    className="bg-gray-100 px-3 py-2 rounded-full flex items-center gap-2"
+                    className="bg-white/20 px-3 py-2 rounded-full flex items-center gap-2"
                   >
-                    <span className="text-sm">{item}</span>
+                    <span className="text-sm text-white">{item}</span>
                     <button
                       onClick={() => handleRemoveItem(item)}
-                      className="text-gray-500 hover:text-gray-700"
+                      className="text-white/60 hover:text-white"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -213,25 +213,23 @@ export default function AllergiesPage() {
                     setSelectedItems([]); // Clear selected items when choosing "No allergies"
                   }
                 }}
-                className={`w-full text-left p-4 rounded-2xl border transition-all ${
-                  noAllergiesSelected
-                    ? 'border-[#f0feab] bg-[#f0feab]'
-                    : 'border-gray-200 hover:border-gray-300'
+                className={`option-button w-full text-left p-4 rounded-full transition-all ${
+                  noAllergiesSelected ? 'selected' : ''
                 }`}
               >
                 <div className="flex items-center">
-                  <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center flex-shrink-0 ${
+                  <div className={`w-5 h-5 rounded mr-3 flex items-center justify-center flex-shrink-0 border ${
                     noAllergiesSelected
-                      ? 'border-[#f0feab] bg-[#f0feab]'
-                      : 'border-gray-300'
+                      ? 'bg-white/30 border-white/60'
+                      : 'border-white/40'
                   }`}>
                     {noAllergiesSelected && (
-                      <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                       </svg>
                     )}
                   </div>
-                  <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                  <span className="text-[16px] lg:text-lg font-medium leading-tight text-white">
                     {language === 'es' 
                       ? 'No tengo alergias a medicamentos o suplementos'
                       : 'I have no allergies to medications or supplements'}
@@ -242,11 +240,11 @@ export default function AllergiesPage() {
         </div>
       </div>
       
-      {/* Continue button */}
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
+      {/* Sticky bottom button */}
+      <div className="sticky-bottom-button max-w-md lg:max-w-2xl mx-auto w-full">
         <button 
           onClick={handleContinue}
-          className="w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all bg-black text-white hover:bg-gray-800"
+          className="continue-button"
         >
           <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -256,7 +254,7 @@ export default function AllergiesPage() {
         
         {/* Copyright footer */}
         <div className="mt-6 text-center">
-          <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
+          <p className="copyright-text">
             {language === 'es' ? (
               <>
                 © 2025 EONPro, LLC. Todos los derechos reservados.<br/>

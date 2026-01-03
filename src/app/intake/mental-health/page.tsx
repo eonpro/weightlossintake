@@ -25,16 +25,16 @@ export default function MentalHealthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Progress bar */}
-      <div className="w-full h-1 bg-gray-100">
-        <div className="h-full w-[70%] bg-[#f0feab] transition-all duration-300"></div>
+      <div className="w-full h-1 bg-white/20">
+        <div className="h-full w-[70%] bg-[#b8e64a] transition-all duration-300"></div>
       </div>
       
       {/* Back button */}
       <div className="px-6 lg:px-8 pt-6">
-        <Link href="/intake/activity-level" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <Link href="/intake/activity-level" className="inline-block p-2 -ml-2 hover:bg-white/10 rounded-lg">
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </Link>
@@ -47,14 +47,14 @@ export default function MentalHealthPage() {
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           {/* Title */}
-          <h1 className="text-3xl font-medium leading-tight">
+          <h1 className="page-title">
             {language === 'es' 
               ? '¿Has sido diagnosticado con alguna condición de salud mental?'
               : 'Have you been diagnosed with any mental health conditions?'}
           </h1>
           
           {/* Description */}
-          <p className="text-gray-500 text-base">
+          <p className="page-subtitle">
             {language === 'es'
               ? 'Preguntamos esto para que tu proveedor tenga una visión completa de tu historial médico y así pueda determinar el tratamiento más adecuado para ti. Por favor, asegúrate de informar cualquier condición por la que estés tomando medicinas.'
               : 'We ask this so your provider has a complete picture of your medical history and can determine the most appropriate treatment for you. Please be sure to report any conditions for which you are taking medication.'}
@@ -64,25 +64,23 @@ export default function MentalHealthPage() {
           <div className="space-y-3">
             <button
               onClick={() => setSelected('yes')}
-              className={`w-full text-left p-4 rounded-2xl border transition-all ${
-                selected === 'yes'
-                  ? 'border-[#f0feab] bg-[#f0feab]'
-                  : 'border-gray-200 hover:border-gray-300'
+              className={`option-button w-full text-left p-4 rounded-full transition-all ${
+                selected === 'yes' ? 'selected' : ''
               }`}
             >
               <div className="flex items-center">
-                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center flex-shrink-0 ${
+                <div className={`w-5 h-5 rounded mr-3 flex items-center justify-center flex-shrink-0 border ${
                   selected === 'yes'
-                    ? 'border-[#f0feab] bg-[#f0feab]'
-                    : 'border-gray-300'
+                    ? 'bg-white/30 border-white/60'
+                    : 'border-white/40'
                 }`}>
                   {selected === 'yes' && (
-                    <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
                   )}
                 </div>
-                <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                <span className="text-[16px] lg:text-lg font-medium leading-tight text-white">
                   {language === 'es' ? 'Sí' : 'Yes'}
                 </span>
               </div>
@@ -90,25 +88,23 @@ export default function MentalHealthPage() {
             
             <button
               onClick={() => setSelected('no')}
-              className={`w-full text-left p-4 rounded-2xl border transition-all ${
-                selected === 'no'
-                  ? 'border-[#f0feab] bg-[#f0feab]'
-                  : 'border-gray-200 hover:border-gray-300'
+              className={`option-button w-full text-left p-4 rounded-full transition-all ${
+                selected === 'no' ? 'selected' : ''
               }`}
             >
               <div className="flex items-center">
-                <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center flex-shrink-0 ${
+                <div className={`w-5 h-5 rounded mr-3 flex items-center justify-center flex-shrink-0 border ${
                   selected === 'no'
-                    ? 'border-[#f0feab] bg-[#f0feab]'
-                    : 'border-gray-300'
+                    ? 'bg-white/30 border-white/60'
+                    : 'border-white/40'
                 }`}>
                   {selected === 'no' && (
-                    <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
                   )}
                 </div>
-                <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                <span className="text-[16px] lg:text-lg font-medium leading-tight text-white">
                   {language === 'es' ? 'No' : 'No'}
                 </span>
               </div>
@@ -117,22 +113,35 @@ export default function MentalHealthPage() {
         </div>
       </div>
       
-      {/* Continue button */}
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
+      {/* Sticky bottom button */}
+      <div className="sticky-bottom-button max-w-md lg:max-w-2xl mx-auto w-full">
         <button 
           onClick={handleContinue}
           disabled={!selected}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-            selected 
-              ? 'bg-black text-white hover:bg-gray-800' 
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-          }`}
+          className="continue-button"
         >
           <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
           </svg>
         </button>
+        
+        {/* Copyright footer */}
+        <div className="mt-6 text-center">
+          <p className="copyright-text">
+            {language === 'es' ? (
+              <>
+                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+              </>
+            ) : (
+              <>
+                © 2025 EONPro, LLC. All rights reserved.<br/>
+                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+              </>
+            )}
+          </p>
+        </div>
       </div>
     </div>
   );
