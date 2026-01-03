@@ -7,8 +7,9 @@
   /* Dynamic viewport height for mobile browsers */
   --vh: 1vh;
   
-  /* Mobile margin */
-  --mobile-margin: 35px;
+  /* Mobile margin - 50px on small screens, 35px on larger mobile */
+  --mobile-margin: 50px;
+  --mobile-margin-lg: 35px;
   
   /* Safe area insets for devices with notches/home indicators */
   --safe-area-inset-top: env(safe-area-inset-top);
@@ -183,10 +184,17 @@ button, .button-like {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Mobile margin utility - 35px on each side */
+/* Mobile margin utility - 50px on small screens */
 .mobile-margin {
-  padding-left: 35px;
-  padding-right: 35px;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+@media (min-width: 768px) {
+  .mobile-margin {
+    padding-left: 35px;
+    padding-right: 35px;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -196,8 +204,15 @@ button, .button-like {
   }
 }
 
-/* Override default px-6 on mobile to use 35px */
-@media (max-width: 1023px) {
+/* Override default px-6 on mobile to use 50px on small screens */
+@media (max-width: 767px) {
+  .px-6 {
+    padding-left: 50px !important;
+    padding-right: 50px !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
   .px-6 {
     padding-left: 35px !important;
     padding-right: 35px !important;
@@ -211,7 +226,7 @@ button, .button-like {
   left: 0;
   right: 0;
   background: white;
-  padding: 16px 35px 24px 35px;
+  padding: 16px 50px 24px 50px;
   margin-top: auto;
   z-index: 10;
 }
@@ -227,10 +242,42 @@ button, .button-like {
   pointer-events: none;
 }
 
+@media (min-width: 768px) {
+  .sticky-bottom-button {
+    padding: 16px 35px 24px 35px;
+  }
+}
+
 @media (min-width: 1024px) {
   .sticky-bottom-button {
     padding: 16px 32px 32px 32px;
   }
+}
+
+/* Continue button - consistent styling */
+.continue-button {
+  width: 100%;
+  background: black;
+  color: white;
+  padding: 16px 32px;
+  border-radius: 9999px;
+  font-size: 18px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: background-color 0.2s;
+}
+
+.continue-button:hover {
+  background: #1f1f1f;
+}
+
+.continue-button:disabled {
+  background: #d1d5db;
+  color: #6b7280;
+  cursor: not-allowed;
 }
 
 /* Smooth scrolling for better mobile experience */
