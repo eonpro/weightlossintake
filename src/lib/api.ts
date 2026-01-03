@@ -217,31 +217,31 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
       // Convert goals to English
       goals: Array.isArray(intakeData.medicalProfile?.goals) 
         ? arrayToEnglish(intakeData.medicalProfile.goals).join(', ')
-        : toEnglish(intakeData.medicalProfile?.goals as string),
+        : toEnglish(intakeData.medicalProfile?.goals as string | undefined),
       // Convert activity level to English
       activityLevel: toEnglish(intakeData.medicalProfile?.activityLevel),
       // Convert medical conditions to English
       chronicConditions: Array.isArray(intakeData.medicalHistory?.chronicConditions)
         ? arrayToEnglish(intakeData.medicalHistory.chronicConditions).join(', ')
-        : toEnglish(intakeData.medicalHistory?.chronicConditions as string),
+        : toEnglish(intakeData.medicalHistory?.chronicConditions as string | undefined),
       digestiveConditions: Array.isArray(intakeData.medicalHistory?.digestiveConditions)
         ? arrayToEnglish(intakeData.medicalHistory.digestiveConditions).join(', ')
-        : toEnglish(intakeData.medicalHistory?.digestiveConditions as string),
+        : toEnglish(intakeData.medicalHistory?.digestiveConditions as string | undefined),
       medications: Array.isArray(intakeData.medicalHistory?.medications)
         ? arrayToEnglish(intakeData.medicalHistory.medications).join(', ')
-        : toEnglish(intakeData.medicalHistory?.medications as string),
+        : toEnglish(intakeData.medicalHistory?.medications as string | undefined),
       allergies: Array.isArray(intakeData.medicalHistory?.allergies)
         ? arrayToEnglish(intakeData.medicalHistory.allergies).join(', ')
-        : toEnglish(intakeData.medicalHistory?.allergies as string),
+        : toEnglish(intakeData.medicalHistory?.allergies as string | undefined),
       mentalHealthConditions: Array.isArray(intakeData.medicalHistory?.mentalHealthConditions)
         ? arrayToEnglish(intakeData.medicalHistory.mentalHealthConditions).join(', ')
-        : toEnglish(intakeData.medicalHistory?.mentalHealthConditions as string),
+        : toEnglish(intakeData.medicalHistory?.mentalHealthConditions as string | undefined),
       // Convert GLP-1 related fields to English
       glp1History: toEnglish(intakeData.glp1Profile?.history),
       glp1Type: toEnglish(intakeData.glp1Profile?.type),
       sideEffects: Array.isArray(intakeData.glp1Profile?.sideEffects)
         ? arrayToEnglish(intakeData.glp1Profile.sideEffects).join(', ')
-        : toEnglish(intakeData.glp1Profile?.sideEffects as string),
+        : toEnglish(intakeData.glp1Profile?.sideEffects as string | undefined),
       medicationPreference: toEnglish(intakeData.glp1Profile?.medicationPreference),
       qualified: intakeData.qualificationStatus?.qualified,
       submittedAt: intakeData.qualificationStatus?.completedAt || new Date().toISOString(),
