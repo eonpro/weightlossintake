@@ -280,11 +280,10 @@ export default function ContactInfoPage() {
       button={continueButton}
       copyright={copyrightText}
     >
-      {/* Logo - outside max-w wrapper to align with back button */}
-      <EonmedsLogo />
-      
       <div className="max-w-md lg:max-w-2xl mx-auto w-full">
-        <div className="space-y-6 mt-4">
+        {/* Logo - inside max-w wrapper for proper alignment */}
+        <EonmedsLogo inline={true} />
+        <div className="space-y-6">
           <div className="space-y-3">
             <h1 className="page-title">
               {language === 'es' ? '¿Cómo podemos contactarte?' : 'How can we contact you?'}

@@ -77,7 +77,7 @@ export default function ObesityStatsPage() {
       <EonmedsLogo compact={true} />
 
       {/* Image and Reference - matching support-info page structure */}
-      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-48 max-w-md lg:max-w-lg mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-lg mx-auto w-full">
         <div className={`relative w-full transition-all duration-1000 ease-out transform ${
           showContainer ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-95'
         }`}>
@@ -109,28 +109,23 @@ export default function ObesityStatsPage() {
                 : 'Source: Trust for America\'s Health'}
             </a>
           </div>
-        </div>
-      </div>
 
-      {/* Bottom section with copyright */}
-      <div className="fixed bottom-0 left-0 right-0 w-full z-50 px-6 pb-6 pt-8" style={{ background: 'linear-gradient(to top, #ffffff 0%, #ffffff 50%, transparent 100%)' }}>
-        <div className="max-w-md lg:max-w-lg mx-auto">
-            {/* Copyright footer */}
-            <div className="text-center">
-              <p className="copyright-text">
-                {isSpanish ? (
-                  <>
-                    © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
-                    Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
-                  </>
-                ) : (
-                  <>
-                    © 2025 EONPro, LLC. All rights reserved.<br/>
-                    Exclusive and protected process. Copying or reproduction without authorization is prohibited.
-                  </>
-                )}
-              </p>
-            </div>
+          {/* Copyright footer - positioned below image and link */}
+          <div className="mt-6 text-center">
+            <p className="copyright-text">
+              {isSpanish ? (
+                <>
+                  © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                  Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+                </>
+              ) : (
+                <>
+                  © 2025 EONPro, LLC. All rights reserved.<br/>
+                  Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+                </>
+              )}
+            </p>
+          </div>
         </div>
       </div>
     </div>
