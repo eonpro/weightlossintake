@@ -20,11 +20,10 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Type',
   'Taking Medications',
   'Personalized Treatment Interest',
-  // Medical data fields (text type)
+  // Medical data fields (text type) - add more as you create them in Airtable
   'Goals',
   'Activity Level',
   'Current Weight',
-  'Ideal Weight',
   'Height',
   'BMI',
   'Date of Birth',
