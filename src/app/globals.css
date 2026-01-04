@@ -384,25 +384,36 @@ button, .button-like {
   right: 0;
   width: 100%;
   z-index: 50;
-  padding: 16px 24px;
-  padding-top: 48px;
-  padding-bottom: env(safe-area-inset-bottom, 16px);
-  background: linear-gradient(to top, #ffffff 0%, #ffffff 60%, transparent 100%);
+  padding: 16px 50px;
+  padding-top: 32px;
+  padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 16px);
+  background: linear-gradient(to top, #ffffff 0%, #ffffff 70%, transparent 100%);
 }
 
 @media (min-width: 768px) {
   .sticky-bottom-button {
     padding: 16px 35px;
-    padding-top: 48px;
-    padding-bottom: env(safe-area-inset-bottom, 16px);
+    padding-top: 32px;
+    padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 16px);
   }
 }
 
 @media (min-width: 1024px) {
   .sticky-bottom-button {
     padding: 16px 32px;
-    padding-top: 48px;
-    padding-bottom: env(safe-area-inset-bottom, 16px);
+    padding-top: 32px;
+    padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 16px);
+  }
+}
+
+/* Content wrapper when sticky button is used - ensures scrolling works on mobile */
+.has-sticky-button {
+  padding-bottom: 200px !important;
+}
+
+@media (max-width: 767px) {
+  .has-sticky-button {
+    padding-bottom: 220px !important;
   }
 }
 

@@ -146,7 +146,7 @@ export default function DOBPage() {
       {/* EONMeds Logo */}
       <EonmedsLogo />
       
-      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 max-w-md lg:max-w-2xl mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-48 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <div className="space-y-4">
             <h1 className="page-title">{t('dob.title')}</h1>
