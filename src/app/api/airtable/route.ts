@@ -24,7 +24,7 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Blood Pressure',
   'Pregnancy/Breastfeeding',
   'Address',
-  'Current Weight',
+  'Current Weight (lbs)',
   'Height',
   'BMI',
   'Goals',
@@ -103,7 +103,7 @@ const CHECKBOX_FIELDS = new Set([
 
 // Fields that are number type in Airtable (need numeric values)
 const NUMBER_FIELDS = new Set([
-  'Current Weight',
+  'Current Weight (lbs)',
   'BMI',
 ]);
 
@@ -250,7 +250,7 @@ export async function POST(request: NextRequest) {
       'Blood Pressure': toString(data.bloodPressure),
       'Pregnancy/Breastfeeding': toString(data.pregnancyBreastfeeding),
       'Address': toString(data.address),
-      'Current Weight': toString(data.currentWeight),
+      'Current Weight (lbs)': toString(data.currentWeight),
       'Height': toString(data.height),
       'BMI': toString(data.bmi),
       'Goals': toString(data.goals),
