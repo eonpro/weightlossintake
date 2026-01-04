@@ -164,19 +164,9 @@ export default function TestimonialsPage() {
       </div>
       
       <div className="px-6 lg:px-8 pb-6 max-w-md lg:max-w-lg mx-auto w-full">
-        <button 
-          onClick={() => router.push('/intake/medical-history-overview')}
-          className="continue-button"
-        >
-          <span className="text-white">{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
         {/* Disclaimer */}
         <p className="copyright-text text-center mt-4">
-          {language === 'es' 
+          {language === 'es'
             ? 'Los medicamentos son solo una parte del programa de pérdida de peso de EONMeds, que también incluye una dieta baja en calorías'
             : 'Medications are just one part of the EONMeds weight loss program, which also includes a low-calorie diet'}
         </p>

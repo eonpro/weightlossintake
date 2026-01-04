@@ -112,26 +112,11 @@ export default function ObesityStatsPage() {
         </div>
       </div>
 
-      {/* Sticky bottom button with gradient fade */}
-      <div className="fixed bottom-0 left-0 right-0 w-full z-50 px-6 pb-6 pt-12" style={{ background: 'linear-gradient(to top, #ffffff 0%, #ffffff 50%, transparent 100%)' }}>
+      {/* Bottom section with copyright */}
+      <div className="fixed bottom-0 left-0 right-0 w-full z-50 px-6 pb-6 pt-8" style={{ background: 'linear-gradient(to top, #ffffff 0%, #ffffff 50%, transparent 100%)' }}>
         <div className="max-w-md lg:max-w-lg mx-auto">
-            {/* Auto-advance indicator */}
-            <p className="text-center text-gray-400 text-sm mb-3 animate-pulse">
-              {isSpanish ? 'Siguiente en breve...' : 'Next soon...'}
-            </p>
-
-            <button
-              onClick={handleNext}
-              className="continue-button"
-            >
-              <span className="text-white">{isSpanish ? 'Continuar' : 'Continue'}</span>
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-              </svg>
-            </button>
-
             {/* Copyright footer */}
-            <div className="mt-4 text-center">
+            <div className="text-center">
               <p className="copyright-text">
                 {isSpanish ? (
                   <>

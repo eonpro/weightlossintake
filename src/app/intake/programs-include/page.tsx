@@ -130,22 +130,11 @@ export default function ProgramsIncludePage() {
         </div>
       </div>
       
-      {/* Continue button */}
+      {/* Copyright text */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
-        {/* Auto-advance indicator */}
-        <p className="text-center text-gray-400 text-sm mb-3 animate-pulse">
-          {language === 'es' ? 'Siguiente en breve...' : 'Next soon...'}
+        <p className="copyright-text text-center">
+          © 2025 EONPro, LLC. All rights reserved.
         </p>
-
-        <button
-          onClick={handleContinue}
-          className="continue-button"
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
       </div>
     </div>
   );

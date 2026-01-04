@@ -123,23 +123,8 @@ export default function ResearchDonePage() {
         </div>
       </div>
       
-      {/* Bottom button */}
+      {/* Bottom section */}
       <div className="px-6 lg:px-8 pb-6 lg:pb-8 max-w-md lg:max-w-lg mx-auto w-full">
-        {/* Auto-advance indicator */}
-        <p className="text-center text-gray-400 text-sm mb-3 animate-pulse">
-          {language === 'es' ? 'Siguiente en breve...' : 'Next soon...'}
-        </p>
-
-        <button
-          onClick={handleNext}
-          className="continue-button"
-        >
-          <span className="text-white">{language === 'es' ? 'Siguiente' : 'Next'}</span>
-          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-
         {/* Copyright text */}
         <CopyrightText className="mt-4" />
       </div>

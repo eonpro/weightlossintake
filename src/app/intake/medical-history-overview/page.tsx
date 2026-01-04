@@ -111,19 +111,6 @@ export default function MedicalHistoryOverviewPage() {
 
       {/* Bottom section */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
-        {/* Auto-advance indicator */}
-        <p className="text-center text-gray-400 text-sm mb-3 animate-pulse">
-          {t('medical.overview.continue') === 'Continuar' ? 'Siguiente en breve...' : 'Next soon...'}
-        </p>
-
-        {/* Continue button */}
-        <button
-          onClick={handleContinue}
-          className="continue-button"
-        >
-          <span className="text-white">{t('medical.overview.continue')}</span>
-        </button>
-
         {/* Copyright text */}
         <p className="copyright-text text-center mt-4">
           {t('medical.overview.copyright.line1')}<br/>
