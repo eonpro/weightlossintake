@@ -308,7 +308,7 @@ export default function ChronicConditionsDetailPage() {
         
         {/* Copyright footer */}
         <div className="mt-6 text-center">
-          <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
+          <p className="copyright-text">
             {language === 'es' ? (
               <>
                 © 2025 EONPro, LLC. Todos los derechos reservados.<br/>

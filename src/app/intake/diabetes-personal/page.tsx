@@ -110,7 +110,7 @@ export default function DiabetesPersonalPage() {
       {/* Copyright footer */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="text-center">
-          <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
+          <p className="copyright-text">
             {language === 'es' ? (
               <>
                 © 2025 EONPro, LLC. Todos los derechos reservados.<br/>

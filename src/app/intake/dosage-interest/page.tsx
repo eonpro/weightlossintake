@@ -107,7 +107,7 @@ export default function DosageInterestPage() {
         </button>
         
         {/* Copyright text */}
-        <p className="text-[9px] lg:text-[11px] text-gray-400 text-center mt-4 leading-tight">
+        <p className="copyright-text text-center mt-4">
           {isSpanish ? (
             <>© 2025 EONPro, LLC. Todos los derechos reservados.<br/>
             Proceso exclusivo y protegido. Copiar o reproducir<br/>

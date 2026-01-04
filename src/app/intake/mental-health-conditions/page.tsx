@@ -33,7 +33,12 @@ export default function MentalHealthConditionsPage() {
 
   const toggleCondition = (value: string) => {
     if (value === 'none') {
+      // Auto-advance when selecting "none"
       setSelected(['none']);
+      sessionStorage.setItem('mental_health_conditions', JSON.stringify(['none']));
+      setTimeout(() => {
+        router.push('/intake/programs-include');
+      }, 150);
     } else {
       if (selected.includes('none')) {
         setSelected([value]);
