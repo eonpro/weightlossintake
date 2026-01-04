@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import Image from 'next/image';
-import EonmedsLogo from '@/components/EonmedsLogo';
+import CopyrightText from '@/components/CopyrightText';
 
 export default function TestimonialsPage() {
   const router = useRouter();
@@ -14,7 +14,6 @@ export default function TestimonialsPage() {
   const { language } = useLanguage();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const hasNavigated = useRef(false);
 
   // Language-specific testimonial images
   const testimonialImages = language === 'es' ? [
@@ -38,138 +37,117 @@ export default function TestimonialsPage() {
     setCurrentSlide(0);
   }, [language]);
 
-  // Auto-scroll functionality - faster (1.5 seconds per slide)
+  // Auto-scroll functionality - 2 seconds per slide
   useEffect(() => {
     if (!isPaused) {
       const interval = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % testimonialImages.length);
-      }, 1500); // Change slide every 1.5 seconds (faster)
+      }, 2000);
 
       return () => clearInterval(interval);
     }
   }, [currentSlide, isPaused, testimonialImages.length]);
 
-  // Auto-advance to next page after 3 seconds
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!hasNavigated.current) {
-        hasNavigated.current = true;
-        router.push('/intake/medical-history-overview');
-      }
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [router]);
+  const handleContinue = () => {
+    router.push('/intake/medical-history-overview');
+  };
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Progress bar */}
-      <div className="w-full h-1 bg-white/20">
-        <div className="h-full w-5/6 bg-[#f0feab] transition-all duration-300"></div>
+      <div className="w-full h-1 bg-gray-100">
+        <div className="h-full w-[70%] bg-[#f0feab] transition-all duration-300"></div>
       </div>
       
-      <div className="px-6 lg:px-8 pt-8 lg:pt-6">
-        <Link href="/intake/bmi-result" className="inline-block p-2 -ml-2 hover:bg-white/10 rounded-lg">
-          <svg className="w-6 h-6 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      {/* Back button */}
+      <div className="px-6 lg:px-8 pt-6 lg:pt-4">
+        <Link href="/intake/bmi-result" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
+          <svg className="w-5 h-5 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </Link>
       </div>
       
-      {/* EONMeds Logo */}
-      <EonmedsLogo compact={true} />
-      
-      <div className="flex-1 flex flex-col px-6 lg:px-8 py-6 pb-40 max-w-md lg:max-w-lg mx-auto w-full">
-        {/* Header with Icon */}
-        <div className="space-y-4 mb-6">
+      {/* Main content - no logo */}
+      <div className="flex-1 flex flex-col px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
+        {/* Header with Blue Verified Badge Icon */}
+        <div className="space-y-3 mb-6">
           <div className="flex justify-start">
             <img 
               src="https://static.wixstatic.com/shapes/c49a9b_d96c5f8c37844a39bfa47b0503e6167a.svg"
-              alt="Check"
-              className="w-14 h-14"
+              alt="Verified"
+              className="w-12 h-12"
             />
           </div>
-          <h1 className="text-2xl font-semibold leading-tight text-left">
+          <h1 className="text-[26px] lg:text-[30px] font-semibold leading-tight text-[#413d3d]">
             {language === 'es' 
               ? 'Únete a los miles de transformaciones que hemos ayudado a lograr.'
               : 'Join the thousands of transformations we\'ve helped achieve.'}
           </h1>
-          <p className="page-subtitle text-left">
+          <p className="text-[15px] text-[#413d3d]/60 leading-relaxed">
             {language === 'es'
               ? 'Cada uno de estos casos presenta pacientes reales que transformaron sus vidas.'
               : 'Each of these cases features real patients who transformed their lives.'}
           </p>
         </div>
 
-        {/* Image Carousel */}
+        {/* Single Card Carousel - Centered */}
         <div 
-          className="relative overflow-hidden"
+          className="relative flex-1 flex flex-col items-center justify-center"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          <div 
-            className="flex gap-3 transition-transform duration-500 ease-out"
-            style={{
-              transform: `translateX(-${currentSlide * 200}px)`
-            }}
-          >
-            {testimonialImages.map((image, index) => (
-              <div key={index} className="flex-shrink-0">
-                <Image
-                  src={image}
-                  alt={`Testimonial ${index + 1}`}
-                  width={230}
-                  height={345}
-                  className="w-[230px] h-auto rounded-2xl"
-                  style={{
-                    objectFit: 'contain'
-                  }}
-                  priority={index === 0}
-                />
-              </div>
-            ))}
-            {/* Duplicate first images for infinite loop effect */}
-            {testimonialImages.slice(0, 2).map((image, index) => (
-              <div key={`dup-${index}`} className="flex-shrink-0">
-                <Image
-                  src={image}
-                  alt={`Testimonial duplicate ${index + 1}`}
-                  width={230}
-                  height={345}
-                  className="w-[230px] h-auto rounded-2xl"
-                  style={{
-                    objectFit: 'contain'
-                  }}
-                />
-              </div>
+          <div className="w-full max-w-[280px] mx-auto">
+            <Image
+              src={testimonialImages[currentSlide]}
+              alt={`Testimonial ${currentSlide + 1}`}
+              width={280}
+              height={420}
+              className="w-full h-auto rounded-2xl"
+              style={{ objectFit: 'contain' }}
+              priority
+            />
+          </div>
+
+          {/* Carousel Dots */}
+          <div className="flex justify-center space-x-1.5 mt-4">
+            {testimonialImages.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setCurrentSlide(index);
+                  setIsPaused(false);
+                }}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  currentSlide === index ? 'bg-gray-400' : 'bg-gray-300'
+                }`}
+              />
             ))}
           </div>
         </div>
-
-        {/* Carousel Dots */}
-        <div className="flex justify-center space-x-1.5 py-6">
-          {testimonialImages.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                setCurrentSlide(index);
-                setIsPaused(false);
-              }}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                currentSlide === index ? 'bg-gray-800 w-6' : 'bg-gray-300 w-2 hover:bg-gray-400'
-              }`}
-            />
-          ))}
-        </div>
       </div>
       
+      {/* Bottom section - Continue button and disclaimer */}
       <div className="px-6 lg:px-8 pb-6 max-w-md lg:max-w-lg mx-auto w-full">
+        {/* Continue Button */}
+        <button
+          onClick={handleContinue}
+          className="w-full py-4 px-6 bg-[#413d3d] text-white rounded-2xl text-lg font-medium flex items-center justify-between hover:bg-[#2a2727] transition-colors"
+        >
+          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+          </svg>
+        </button>
+
         {/* Disclaimer */}
-        <p className="copyright-text text-center mt-4">
+        <p className="text-[11px] text-[#413d3d]/50 text-center mt-4 leading-relaxed">
           {language === 'es'
-            ? 'Los medicamentos son solo una parte del programa de pérdida de peso de EONMeds, que también incluye una dieta baja en calorías'
-            : 'Medications are just one part of the EONMeds weight loss program, which also includes a low-calorie diet'}
+            ? 'Los medicamentos son solo una parte del programa de pérdida de peso de EONMeds, que también incluye una dieta baja en calorías y mayor actividad física. Los clientes no fueron compensados por compartir sus opiniones. Los resultados provienen de personas que compraron varios productos, incluidos tratamientos con receta. Estos resultados no han sido verificados de forma independiente y los resultados individuales pueden variar.'
+            : 'Medications are just one part of the EONMeds weight loss program, which also includes a low-calorie diet and increased physical activity. Clients were not compensated for sharing their opinions. The results come from individuals who purchased various products, including prescription treatments. These results have not been independently verified, and individual results may vary.'}
         </p>
+
+        <CopyrightText className="mt-4" />
       </div>
     </div>
   );
