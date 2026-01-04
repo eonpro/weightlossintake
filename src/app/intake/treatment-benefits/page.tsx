@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -13,14 +13,30 @@ export default function TreatmentBenefitsPage() {
   const { t } = useTranslation();
   const { language } = useLanguage();
   const [showContainer, setShowContainer] = useState(false);
+  const hasNavigated = useRef(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowContainer(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
+  // Auto-advance after 2.5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!hasNavigated.current) {
+        hasNavigated.current = true;
+        router.push('/intake/glp1-history');
+      }
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [router]);
+
   const handleContinue = () => {
-    router.push('/intake/glp1-history');
+    if (!hasNavigated.current) {
+      hasNavigated.current = true;
+      router.push('/intake/glp1-history');
+    }
   };
 
   const benefits = [
@@ -129,9 +145,14 @@ export default function TreatmentBenefitsPage() {
         </div>
       </div>
 
-      {/* Bottom button */}
+      {/* Bottom section */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
+        {/* Auto-advance indicator */}
+        <p className="text-center text-gray-400 text-sm mb-3 animate-pulse">
+          {language === 'es' ? 'Siguiente en breve...' : 'Next soon...'}
+        </p>
+
+        <button
           onClick={handleContinue}
           className="w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all bg-black text-white hover:bg-gray-900"
         >
@@ -140,7 +161,7 @@ export default function TreatmentBenefitsPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
           </svg>
         </button>
-        
+
         {/* Copyright text */}
         <CopyrightText className="mt-4" />
       </div>

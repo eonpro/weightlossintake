@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -10,9 +10,25 @@ import EonmedsLogo from '@/components/EonmedsLogo';
 export default function MedicalHistoryOverviewPage() {
   const router = useRouter();
   const { t } = useTranslation();
+  const hasNavigated = useRef(false);
+
+  // Auto-advance after 2.5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!hasNavigated.current) {
+        hasNavigated.current = true;
+        router.push('/intake/sex-assigned');
+      }
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [router]);
 
   const handleContinue = () => {
-    router.push('/intake/sex-assigned');
+    if (!hasNavigated.current) {
+      hasNavigated.current = true;
+      router.push('/intake/sex-assigned');
+    }
   };
 
   return (
@@ -95,6 +111,11 @@ export default function MedicalHistoryOverviewPage() {
 
       {/* Bottom section */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
+        {/* Auto-advance indicator */}
+        <p className="text-center text-gray-400 text-sm mb-3 animate-pulse">
+          {t('medical.overview.continue') === 'Continuar' ? 'Siguiente en breve...' : 'Next soon...'}
+        </p>
+
         {/* Continue button */}
         <button
           onClick={handleContinue}
@@ -102,7 +123,7 @@ export default function MedicalHistoryOverviewPage() {
         >
           <span className="text-white">{t('medical.overview.continue')}</span>
         </button>
-        
+
         {/* Copyright text */}
         <p className="copyright-text text-center mt-4">
           {t('medical.overview.copyright.line1')}<br/>

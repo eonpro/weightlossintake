@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -14,6 +14,7 @@ export default function TestimonialsPage() {
   const { language } = useLanguage();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const hasNavigated = useRef(false);
 
   // Language-specific testimonial images
   const testimonialImages = language === 'es' ? [
@@ -37,16 +38,28 @@ export default function TestimonialsPage() {
     setCurrentSlide(0);
   }, [language]);
 
-  // Auto-scroll functionality
+  // Auto-scroll functionality - faster (1.5 seconds per slide)
   useEffect(() => {
     if (!isPaused) {
       const interval = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % testimonialImages.length);
-      }, 3000); // Change slide every 3 seconds
+      }, 1500); // Change slide every 1.5 seconds (faster)
 
       return () => clearInterval(interval);
     }
   }, [currentSlide, isPaused, testimonialImages.length]);
+
+  // Auto-advance to next page after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!hasNavigated.current) {
+        hasNavigated.current = true;
+        router.push('/intake/medical-history-overview');
+      }
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [router]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">

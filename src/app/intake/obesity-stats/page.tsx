@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -12,6 +12,7 @@ export default function ObesityStatsPage() {
   const { language } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [showContainer, setShowContainer] = useState(false);
+  const hasNavigated = useRef(false);
 
   useEffect(() => {
     setMounted(true);
@@ -19,14 +20,29 @@ export default function ObesityStatsPage() {
     const timer = setTimeout(() => {
       setShowContainer(true);
     }, 300);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
+  // Auto-advance after 2.5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!hasNavigated.current) {
+        hasNavigated.current = true;
+        router.push('/intake/medication-preference');
+      }
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [router]);
+
   const handleNext = () => {
-    router.push('/intake/medication-preference');
+    if (!hasNavigated.current) {
+      hasNavigated.current = true;
+      router.push('/intake/medication-preference');
+    }
   };
-  
+
   // Enable Enter key navigation
   useEnterNavigation(handleNext);
 
@@ -99,7 +115,12 @@ export default function ObesityStatsPage() {
       {/* Sticky bottom button with gradient fade */}
       <div className="fixed bottom-0 left-0 right-0 w-full z-50 px-6 pb-6 pt-12" style={{ background: 'linear-gradient(to top, #ffffff 0%, #ffffff 50%, transparent 100%)' }}>
         <div className="max-w-md lg:max-w-lg mx-auto">
-            <button 
+            {/* Auto-advance indicator */}
+            <p className="text-center text-gray-400 text-sm mb-3 animate-pulse">
+              {isSpanish ? 'Siguiente en breve...' : 'Next soon...'}
+            </p>
+
+            <button
               onClick={handleNext}
               className="continue-button"
             >
@@ -108,7 +129,7 @@ export default function ObesityStatsPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
               </svg>
             </button>
-            
+
             {/* Copyright footer */}
             <div className="mt-4 text-center">
               <p className="copyright-text">

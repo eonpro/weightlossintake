@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -13,14 +13,30 @@ export default function SafetyQualityPage() {
   const { t } = useTranslation();
   const { language } = useLanguage();
   const [showContainer, setShowContainer] = useState(false);
+  const hasNavigated = useRef(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowContainer(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
+  // Auto-advance after 2.5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!hasNavigated.current) {
+        hasNavigated.current = true;
+        router.push('/intake/medical-team');
+      }
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [router]);
+
   const handleContinue = () => {
-    router.push('/intake/medical-team');
+    if (!hasNavigated.current) {
+      hasNavigated.current = true;
+      router.push('/intake/medical-team');
+    }
   };
 
   return (
@@ -76,9 +92,14 @@ export default function SafetyQualityPage() {
         </div>
       </div>
 
-      {/* Bottom button */}
+      {/* Bottom section */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
+        {/* Auto-advance indicator */}
+        <p className="text-center text-gray-400 text-sm mb-3 animate-pulse">
+          {language === 'es' ? 'Siguiente en breve...' : 'Next soon...'}
+        </p>
+
+        <button
           onClick={handleContinue}
           className="continue-button"
         >
@@ -87,7 +108,7 @@ export default function SafetyQualityPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
           </svg>
         </button>
-        
+
         {/* Copyright text */}
         <CopyrightText className="mt-4" />
       </div>

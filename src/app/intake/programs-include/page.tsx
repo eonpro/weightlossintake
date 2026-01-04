@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -8,6 +9,19 @@ import EonmedsLogo from '@/components/EonmedsLogo';
 export default function ProgramsIncludePage() {
   const router = useRouter();
   const { language } = useLanguage();
+  const hasNavigated = useRef(false);
+
+  // Auto-advance after 2.5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!hasNavigated.current) {
+        hasNavigated.current = true;
+        router.push('/intake/chronic-conditions');
+      }
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [router]);
 
   const programs = language === 'es' ? [
     {
@@ -50,7 +64,10 @@ export default function ProgramsIncludePage() {
   ];
 
   const handleContinue = () => {
-    router.push('/intake/chronic-conditions');
+    if (!hasNavigated.current) {
+      hasNavigated.current = true;
+      router.push('/intake/chronic-conditions');
+    }
   };
 
   return (
@@ -115,7 +132,12 @@ export default function ProgramsIncludePage() {
       
       {/* Continue button */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
-        <button 
+        {/* Auto-advance indicator */}
+        <p className="text-center text-gray-400 text-sm mb-3 animate-pulse">
+          {language === 'es' ? 'Siguiente en breve...' : 'Next soon...'}
+        </p>
+
+        <button
           onClick={handleContinue}
           className="continue-button"
         >

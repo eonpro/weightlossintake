@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -16,23 +16,39 @@ export default function ResearchDonePage() {
   const [medicationPreference, setMedicationPreference] = useState<string | null>(null);
   const [showLine1, setShowLine1] = useState(false);
   const [showLine2, setShowLine2] = useState(false);
+  const hasNavigated = useRef(false);
 
   useEffect(() => {
     const preference = sessionStorage.getItem('medication_preference');
     setMedicationPreference(preference);
-    
+
     // Trigger animations with staggered delays
     setTimeout(() => {
       setShowLine1(true);
     }, 300);
-    
+
     setTimeout(() => {
       setShowLine2(true);
     }, 900);
   }, []);
 
+  // Auto-advance after 2.5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!hasNavigated.current) {
+        hasNavigated.current = true;
+        router.push('/intake/consent');
+      }
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [router]);
+
   const handleNext = () => {
-    router.push('/intake/consent');
+    if (!hasNavigated.current) {
+      hasNavigated.current = true;
+      router.push('/intake/consent');
+    }
   };
 
   return (
@@ -109,7 +125,12 @@ export default function ResearchDonePage() {
       
       {/* Bottom button */}
       <div className="px-6 lg:px-8 pb-6 lg:pb-8 max-w-md lg:max-w-lg mx-auto w-full">
-        <button 
+        {/* Auto-advance indicator */}
+        <p className="text-center text-gray-400 text-sm mb-3 animate-pulse">
+          {language === 'es' ? 'Siguiente en breve...' : 'Next soon...'}
+        </p>
+
+        <button
           onClick={handleNext}
           className="continue-button"
         >
@@ -118,7 +139,7 @@ export default function ResearchDonePage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
           </svg>
         </button>
-        
+
         {/* Copyright text */}
         <CopyrightText className="mt-4" />
       </div>

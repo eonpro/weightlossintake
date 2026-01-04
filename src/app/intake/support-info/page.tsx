@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -11,6 +11,7 @@ export default function SupportInfoPage() {
   const router = useRouter();
   const { t } = useTranslation();
   const [showContainer, setShowContainer] = useState(false);
+  const hasNavigated = useRef(false);
 
   useEffect(() => {
     // Trigger container animation after a delay
@@ -20,6 +21,18 @@ export default function SupportInfoPage() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  // Auto-advance after 2.5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!hasNavigated.current) {
+        hasNavigated.current = true;
+        router.push('/intake/address');
+      }
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [router]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -73,8 +86,18 @@ export default function SupportInfoPage() {
       </div>
       
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
-        <button 
-          onClick={() => router.push('/intake/address')}
+        {/* Auto-advance indicator */}
+        <p className="text-center text-gray-400 text-sm mb-3 animate-pulse">
+          {t('support.continue') === 'Continuar' ? 'Siguiente en breve...' : 'Next soon...'}
+        </p>
+
+        <button
+          onClick={() => {
+            if (!hasNavigated.current) {
+              hasNavigated.current = true;
+              router.push('/intake/address');
+            }
+          }}
           className="continue-button"
         >
           <span className="text-white">{t('support.continue')}</span>
@@ -82,7 +105,7 @@ export default function SupportInfoPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
           </svg>
         </button>
-        
+
         {/* Copyright text */}
         <p className="copyright-text text-center mt-4">
           © 2025 EONPro, LLC. All rights reserved.
