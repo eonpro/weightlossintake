@@ -351,13 +351,25 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
       floridaConsentAcceptedAt: intakeData.consents?.floridaConsentAcceptedAt || '',
     };
 
+    // Check if we have an existing record from midpoint submission
+    const existingRecordId = isBrowser ? sessionStorage.getItem('airtable_record_id') : null;
+    
+    // If we have an existing record, update it; otherwise create new
+    const requestData = existingRecordId 
+      ? { ...airtableData, updateRecordId: existingRecordId }
+      : airtableData;
+    
+    console.log(existingRecordId 
+      ? `📝 Updating existing record: ${existingRecordId}` 
+      : '➕ Creating new record');
+
     // Send to Airtable API route
     const response = await fetch('/api/airtable', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(airtableData)
+      body: JSON.stringify(requestData)
     });
 
     const result = await response.json();

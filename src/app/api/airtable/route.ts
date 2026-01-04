@@ -106,6 +106,8 @@ const NUMBER_FIELDS = new Set([
 
 interface IntakeRecord {
   sessionId: string;
+  // For updating existing records (midpoint → final)
+  updateRecordId?: string;
   // Personal Info
   firstName?: string;
   lastName?: string;
@@ -204,13 +206,16 @@ export async function POST(request: NextRequest) {
   try {
     const data: IntakeRecord = await request.json();
     
+    const isUpdate = !!data.updateRecordId;
     console.log('Received intake submission:', { 
       sessionId: data.sessionId, 
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
       state: data.state,
-      qualified: data.qualified
+      qualified: data.qualified,
+      isUpdate,
+      updateRecordId: data.updateRecordId || 'N/A'
     });
     // Check for required environment variables
     if (!AIRTABLE_PAT || !AIRTABLE_BASE_ID) {
@@ -346,23 +351,29 @@ export async function POST(request: NextRequest) {
       console.log('Skipped unknown fields:', skippedFields);
     }
 
+    // Determine if this is a CREATE or UPDATE operation
+    const airtableUrl = isUpdate && data.updateRecordId
+      ? `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}/${data.updateRecordId}`
+      : `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}`;
+    
+    const httpMethod = isUpdate ? 'PATCH' : 'POST';
+    
+    console.log(`${isUpdate ? '📝 UPDATING' : '➕ CREATING'} Airtable record...`);
+
     // Send to Airtable using Personal Access Token with retry logic
     let lastError: unknown = null;
     let response: Response | null = null;
     
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        response = await fetch(
-          `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}`,
-          {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${AIRTABLE_PAT}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ fields }),
-          }
-        );
+        response = await fetch(airtableUrl, {
+          method: httpMethod,
+          headers: {
+            'Authorization': `Bearer ${AIRTABLE_PAT}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ fields }),
+        });
         
         if (response.ok) {
           break; // Success, exit retry loop

@@ -135,33 +135,95 @@ export default function ContactInfoPage() {
       
       console.log('Data saved to sessionStorage');
       
-      // Save checkpoint data locally (no API call for now)
+      // Collect all data available at this midpoint
       const nameData = sessionStorage.getItem('intake_name');
       const stateData = sessionStorage.getItem('intake_state');
       const dobData = sessionStorage.getItem('intake_dob');
+      const addressData = sessionStorage.getItem('intake_address');
+      const currentWeight = sessionStorage.getItem('intake_current_weight');
+      const idealWeight = sessionStorage.getItem('intake_ideal_weight');
+      const heightData = sessionStorage.getItem('intake_height');
+      const goalsData = sessionStorage.getItem('intake_goals');
+      const activityData = sessionStorage.getItem('intake_activity_level');
+      const sexAssigned = sessionStorage.getItem('sex_assigned');
       
-      const checkpointData = {
-        checkpointName: 'personal-info',
-        timestamp: new Date().toISOString(),
-        data: {
-          personalInfo: {
-            ...(nameData ? JSON.parse(nameData) : {}),
-            email,
-            phone: formattedPhone,
-            dob: dobData ? JSON.parse(dobData) : null,
-            state: stateData ? JSON.parse(stateData) : null
-          }
-        },
-        sessionId: sessionStorage.getItem('intake_session_id') || `session-${Date.now()}`,
-        status: 'partial'
+      // Parse data
+      const parsedName = nameData ? JSON.parse(nameData) : {};
+      const parsedState = stateData ? JSON.parse(stateData) : {};
+      const parsedAddress = addressData ? JSON.parse(addressData) : {};
+      const parsedHeight = heightData ? JSON.parse(heightData) : {};
+      const parsedGoals = goalsData ? JSON.parse(goalsData) : [];
+      const parsedDob = dobData ? JSON.parse(dobData) : {};
+      
+      // Calculate BMI
+      const weightLbs = currentWeight ? parseInt(currentWeight) : null;
+      const heightInches = parsedHeight.feet && parsedHeight.inches 
+        ? (parsedHeight.feet * 12) + parsedHeight.inches 
+        : null;
+      const bmi = weightLbs && heightInches 
+        ? Math.round(((weightLbs / (heightInches * heightInches)) * 703) * 10) / 10 
+        : null;
+      
+      // Format height string
+      const heightString = parsedHeight.feet 
+        ? `${parsedHeight.feet}'${parsedHeight.inches || 0}"` 
+        : '';
+      
+      // Format DOB
+      const dobString = parsedDob.month && parsedDob.day && parsedDob.year
+        ? `${parsedDob.month} ${parsedDob.day}, ${parsedDob.year}`
+        : '';
+      
+      // Get or create session ID
+      let sessionId = sessionStorage.getItem('intake_session_id');
+      if (!sessionId) {
+        sessionId = `EON-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        sessionStorage.setItem('intake_session_id', sessionId);
+      }
+      
+      // Build midpoint checkpoint data for Airtable
+      const midpointData = {
+        sessionId,
+        firstName: parsedName.firstName || '',
+        lastName: parsedName.lastName || '',
+        email,
+        phone: formattedPhone,
+        dob: dobString,
+        sex: sexAssigned || '',
+        state: parsedState.state || parsedAddress.state || '',
+        address: parsedAddress.fullAddress || '',
+        currentWeight: weightLbs,
+        idealWeight: idealWeight ? parseInt(idealWeight) : null,
+        height: heightString,
+        bmi,
+        goals: Array.isArray(parsedGoals) ? parsedGoals.join(', ') : '',
+        activityLevel: activityData || '',
+        qualified: false, // Not yet qualified at midpoint
+        flowLanguage: localStorage.getItem('preferredLanguage') || 'en',
       };
       
-      // Save checkpoint locally
-      const existingCheckpoints = JSON.parse(
-        sessionStorage.getItem('intake_checkpoints') || '[]'
-      );
-      existingCheckpoints.push(checkpointData);
-      sessionStorage.setItem('intake_checkpoints', JSON.stringify(existingCheckpoints));
+      console.log('📍 MIDPOINT CHECKPOINT - Submitting to Airtable:', midpointData);
+      
+      // Submit midpoint data to Airtable (fire and forget - don't block navigation)
+      fetch('/api/airtable', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(midpointData),
+      })
+        .then(res => res.json())
+        .then(result => {
+          if (result.success && result.recordId) {
+            console.log('✅ Midpoint saved to Airtable! Record ID:', result.recordId);
+            // Store the record ID for later update
+            sessionStorage.setItem('airtable_record_id', result.recordId);
+            sessionStorage.setItem('midpoint_submitted', 'true');
+          } else {
+            console.error('❌ Midpoint save failed:', result.error);
+          }
+        })
+        .catch(err => {
+          console.error('❌ Midpoint submission error:', err);
+        });
       
       // Mark checkpoint as completed
       const completedCheckpoints = JSON.parse(
@@ -172,10 +234,9 @@ export default function ContactInfoPage() {
         sessionStorage.setItem('completed_checkpoints', JSON.stringify(completedCheckpoints));
       }
       
-      console.log('Checkpoint saved locally');
       console.log('Navigating to /intake/support-info...');
       
-      // Navigate to next page
+      // Navigate to next page immediately (don't wait for Airtable)
       router.push('/intake/support-info');
     } catch (error) {
       console.error('Error during submission:', error);
