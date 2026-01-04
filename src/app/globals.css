@@ -532,6 +532,16 @@ html, body {
   padding-top: max(env(safe-area-inset-top), 12px);
 }
 
+/* Inline highlight that doesn't overlap other lines */
+.inline-highlight {
+  background-color: #f2fdb4;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: 0;
+  margin: 0;
+  line-height: inherit;
+}
+
 /* Page fade-in animation for smooth transitions */
 @keyframes fadeIn {
   from {
