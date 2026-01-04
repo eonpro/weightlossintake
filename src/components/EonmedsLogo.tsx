@@ -13,7 +13,7 @@ export default function EonmedsLogo({ compact = false, showLottie = true, inline
   const maxWidthClass = compact ? 'max-w-md lg:max-w-lg' : 'max-w-md lg:max-w-2xl';
 
   const logoContent = (
-    <div className="flex items-center justify-center space-x-2">
+    <div className="flex items-center justify-between">
       <img
         src="https://static.wixstatic.com/shapes/c49a9b_a0bd04a723284392ac265f9e53628dd6.svg"
         alt="EONMeds"
