@@ -163,6 +163,7 @@ export interface CheckoutParams {
   phone?: string;
   dob?: string;
   intakeId?: string;
+  lang?: 'en' | 'es'; // Explicit language override
 }
 
 function enc(v: string | undefined | null): string {
@@ -174,8 +175,9 @@ export function buildCheckoutUrl(params: CheckoutParams): string {
 
   const queryParams = new URLSearchParams();
 
-  // Language
-  queryParams.set('lang', identity.lang || 'es');
+  // Language - use explicit param if provided, otherwise fall back to stored identity
+  const lang = params.lang || identity.lang || 'es';
+  queryParams.set('lang', lang);
 
   // User data
   if (params.firstName) queryParams.set('firstName', params.firstName);

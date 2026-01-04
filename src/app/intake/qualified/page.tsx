@@ -104,7 +104,7 @@ export default function QualifiedPage() {
     // Get the intake ID if available
     const intakeId = sessionStorage.getItem('submitted_intake_id') || undefined;
 
-    // Redirect to checkout with all tracking params
+    // Redirect to checkout with all tracking params including current language
     redirectToCheckout({
       firstName,
       lastName,
@@ -112,6 +112,7 @@ export default function QualifiedPage() {
       phone,
       dob,
       intakeId,
+      lang: language, // Pass the current language from context
     });
   };
 
