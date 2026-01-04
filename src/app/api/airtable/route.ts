@@ -9,7 +9,7 @@ const AIRTABLE_TABLE_NAME = process.env.AIRTABLE_TABLE_NAME || 'Intake Submissio
 // IMPORTANT: Only include fields that are actually created in your Airtable table
 // Check your Airtable table columns and add matching field names here
 const KNOWN_AIRTABLE_FIELDS = new Set([
-  // Core identification fields (text type)
+  // Core identification fields
   'Session ID',
   'First Name',
   'Last Name',
@@ -18,17 +18,18 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'State',
   'Language',
   'Type',
-  'Taking Medications',
-  'Personalized Treatment Interest',
-  // Medical data fields (text type) - add more as you create them in Airtable
-  'Goals',
-  'Activity Level',
-  'Current Weight',
-  'Height',
-  'BMI',
+  // Medical data fields
   'Date of Birth',
   'Sex',
+  'Blood Pressure',
+  'Pregnancy/Breastfeeding',
   'Address',
+  'Current Weight',
+  'Ideal Weight',
+  'Height',
+  'BMI',
+  'Goals',
+  'Activity Level',
   // Medical history
   'Chronic Conditions',
   'Digestive Conditions',
@@ -40,6 +41,14 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Family Conditions',
   'Kidney Conditions',
   'Medical Conditions',
+  // Personal medical history
+  'Personal Diabetes',
+  'Personal Gastroparesis',
+  'Personal Pancreatitis',
+  'Personal Thyroid Cancer',
+  'Personal MEN',
+  'Has Mental Health',
+  'Has Chronic Conditions',
   // GLP-1 data
   'GLP-1 History',
   'GLP-1 Type',
@@ -51,16 +60,35 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Tirzepatide Dosage',
   'Tirzepatide Side Effects',
   'Tirzepatide Success',
+  'Dosage Satisfaction',
+  'Dosage Interest',
+  // Lifestyle
+  'Alcohol Consumption',
+  'Recreational Drugs',
+  'Weight Loss History',
+  'Weight Loss Support',
+  'Health Improvements',
   // Referral
   'Referral Sources',
   'Referrer Name',
-  // Consent fields
+  'Referrer Type',
+  // Status
+  'Taking Medications',
+  'Personalized Treatment Interest',
+  // Consent checkboxes
   'Privacy Policy Accepted',
   'Terms of Use Accepted',
   'Telehealth Consent Accepted',
   'Cancellation Policy Accepted',
   'Florida Bill of Rights Accepted',
   'Florida Consent Accepted',
+  // Consent timestamps
+  'Privacy Policy Accepted At',
+  'Terms of Use Accepted At',
+  'Telehealth Consent Accepted At',
+  'Cancellation Policy Accepted At',
+  'Florida Bill of Rights Accepted At',
+  'Florida Consent Accepted At',
 ]);
 
 // Fields that are checkbox type in Airtable (need boolean values)
@@ -89,10 +117,10 @@ interface IntakeRecord {
   state?: string;
   address?: string;
   // Weight & BMI
-  currentWeight?: number;
-  idealWeight?: number;
+  currentWeight?: number | string;
+  idealWeight?: number | string;
   height?: string;
-  bmi?: number;
+  bmi?: number | string;
   // Goals & Activity
   goals?: string;
   activityLevel?: string;
@@ -144,18 +172,19 @@ interface IntakeRecord {
   personalizedTreatmentInterest?: string;
   submittedAt?: string;
   flowLanguage?: string;
-  // Consent tracking
+  // Consent tracking - checkboxes
   privacyPolicyAccepted?: boolean;
-  privacyPolicyAcceptedAt?: string;
   termsOfUseAccepted?: boolean;
-  termsOfUseAcceptedAt?: string;
   telehealthConsentAccepted?: boolean;
-  telehealthConsentAcceptedAt?: string;
   cancellationPolicyAccepted?: boolean;
-  cancellationPolicyAcceptedAt?: string;
   floridaBillOfRightsAccepted?: boolean;
-  floridaBillOfRightsAcceptedAt?: string;
   floridaConsentAccepted?: boolean;
+  // Consent tracking - timestamps
+  privacyPolicyAcceptedAt?: string;
+  termsOfUseAcceptedAt?: string;
+  telehealthConsentAcceptedAt?: string;
+  cancellationPolicyAcceptedAt?: string;
+  floridaBillOfRightsAcceptedAt?: string;
   floridaConsentAcceptedAt?: string;
 }
 
@@ -200,16 +229,21 @@ export async function POST(request: NextRequest) {
       return String(val);
     };
 
-    // Build fields object
+    // Build fields object - ALL fields from Airtable
     const allFields: Record<string, string | boolean> = {
+      // Core identification
       'Session ID': toString(data.sessionId),
       'First Name': toString(data.firstName),
       'Last Name': toString(data.lastName),
       'Email': toString(data.email),
       'Phone': toString(data.phone),
+      'State': toString(data.state),
+      'Language': toString(data.flowLanguage),
+      // Medical data
       'Date of Birth': toString(data.dob),
       'Sex': toString(data.sex),
-      'State': toString(data.state),
+      'Blood Pressure': toString(data.bloodPressure),
+      'Pregnancy/Breastfeeding': toString(data.pregnancyBreastfeeding),
       'Address': toString(data.address),
       'Current Weight': toString(data.currentWeight),
       'Ideal Weight': toString(data.idealWeight),
@@ -217,6 +251,7 @@ export async function POST(request: NextRequest) {
       'BMI': toString(data.bmi),
       'Goals': toString(data.goals),
       'Activity Level': toString(data.activityLevel),
+      // Medical history
       'Chronic Conditions': toString(data.chronicConditions),
       'Digestive Conditions': toString(data.digestiveConditions),
       'Medications': toString(data.medications),
@@ -227,6 +262,15 @@ export async function POST(request: NextRequest) {
       'Family Conditions': toString(data.familyConditions),
       'Kidney Conditions': toString(data.kidneyConditions),
       'Medical Conditions': toString(data.medicalConditions),
+      // Personal medical history
+      'Personal Diabetes': toString(data.personalDiabetes),
+      'Personal Gastroparesis': toString(data.personalGastroparesis),
+      'Personal Pancreatitis': toString(data.personalPancreatitis),
+      'Personal Thyroid Cancer': toString(data.personalThyroidCancer),
+      'Personal MEN': toString(data.personalMen),
+      'Has Mental Health': toString(data.hasMentalHealth),
+      'Has Chronic Conditions': toString(data.hasChronicConditions),
+      // GLP-1 data
       'GLP-1 History': toString(data.glp1History),
       'GLP-1 Type': toString(data.glp1Type),
       'Side Effects': toString(data.sideEffects),
@@ -237,18 +281,36 @@ export async function POST(request: NextRequest) {
       'Tirzepatide Dosage': toString(data.tirzepatideDosage),
       'Tirzepatide Side Effects': toString(data.tirzepatideSideEffects),
       'Tirzepatide Success': toString(data.tirzepatideSuccess),
+      'Dosage Satisfaction': toString(data.dosageSatisfaction),
+      'Dosage Interest': toString(data.dosageInterest),
+      // Lifestyle
+      'Alcohol Consumption': toString(data.alcoholConsumption),
+      'Recreational Drugs': toString(data.recreationalDrugs),
+      'Weight Loss History': toString(data.weightLossHistory),
+      'Weight Loss Support': toString(data.weightLossSupport),
+      'Health Improvements': toString(data.healthImprovements),
+      // Referral
       'Referral Sources': toString(data.referralSources),
       'Referrer Name': toString(data.referrerName),
+      'Referrer Type': toString(data.referrerType),
+      // Status
       'Qualified': data.qualified ?? false,
       'Taking Medications': toString(data.takingMedications),
       'Personalized Treatment Interest': toString(data.personalizedTreatmentInterest),
-      'Language': toString(data.flowLanguage),
+      // Consent checkboxes
       'Privacy Policy Accepted': data.privacyPolicyAccepted ?? false,
       'Terms of Use Accepted': data.termsOfUseAccepted ?? false,
       'Telehealth Consent Accepted': data.telehealthConsentAccepted ?? false,
       'Cancellation Policy Accepted': data.cancellationPolicyAccepted ?? false,
       'Florida Bill of Rights Accepted': data.floridaBillOfRightsAccepted ?? false,
       'Florida Consent Accepted': data.floridaConsentAccepted ?? false,
+      // Consent timestamps
+      'Privacy Policy Accepted At': toString(data.privacyPolicyAcceptedAt),
+      'Terms of Use Accepted At': toString(data.termsOfUseAcceptedAt),
+      'Telehealth Consent Accepted At': toString(data.telehealthConsentAcceptedAt),
+      'Cancellation Policy Accepted At': toString(data.cancellationPolicyAcceptedAt),
+      'Florida Bill of Rights Accepted At': toString(data.floridaBillOfRightsAcceptedAt),
+      'Florida Consent Accepted At': toString(data.floridaConsentAcceptedAt),
     };
 
     // Build final fields object with proper types
