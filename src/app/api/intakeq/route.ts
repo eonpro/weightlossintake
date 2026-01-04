@@ -107,6 +107,11 @@ async function createIntakeQClient(data: IntakeData): Promise<string | null> {
 
   const stateCode = getStateCode(data.state);
   
+  // Map sex value to IntakeQ format
+  const mappedGender = data.sex === 'Man' || data.sex === 'man' || data.sex === 'hombre' || data.sex === 'Male' ? 'Male' : 
+                       data.sex === 'Woman' || data.sex === 'woman' || data.sex === 'mujer' || data.sex === 'Female' ? 'Female' : 
+                       data.sex || '';
+  
   // Build the client payload for IntakeQ
   const clientPayload = {
     Name: `${data.firstName} ${data.lastName}`.trim(),
@@ -115,8 +120,8 @@ async function createIntakeQClient(data: IntakeData): Promise<string | null> {
     Email: data.email,
     Phone: formatPhone(data.phone),
     DateOfBirth: data.dob,
-    Gender: data.sex === 'Man' || data.sex === 'man' || data.sex === 'hombre' ? 'Male' : 
-            data.sex === 'Woman' || data.sex === 'woman' || data.sex === 'mujer' ? 'Female' : data.sex,
+    Gender: mappedGender,  // This fills the "SEX" field in IntakeQ UI
+    Sex: mappedGender,     // This fills the "GENDER" field in IntakeQ UI
     Address: data.address,
     City: data.city || '',
     State: stateCode,
