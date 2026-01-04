@@ -31,31 +31,12 @@ export default function FamilyConditionsPage() {
     { id: 'none', label: 'No, none of these' }
   ];
 
-  const handleToggleCondition = (conditionId: string) => {
-    if (conditionId === 'none') {
-      setSelectedConditions(['none']);
-    } else {
-      setSelectedConditions(prev => {
-        const filtered = prev.filter(c => c !== 'none');
-        return prev.includes(conditionId)
-          ? filtered.filter(c => c !== conditionId)
-          : [...filtered, conditionId];
-      });
-    }
-  };
-
-  const handleContinue = () => {
-    sessionStorage.setItem('family_conditions', JSON.stringify(selectedConditions));
+  const handleSelect = (conditionId: string) => {
+    // Single select with auto-advance
+    setSelectedConditions([conditionId]);
+    sessionStorage.setItem('family_conditions', JSON.stringify([conditionId]));
     
-    // If "none" selected, skip all follow-up questions and go to pregnancy
-    if (selectedConditions.includes('none')) {
-      router.push('/intake/pregnancy');
-      return;
-    }
-    
-    // Route to the first selected condition's follow-up page
-    // Order: thyroid_cancer → men → pancreatitis → gastroparesis → diabetes_t2
-    const conditionOrder = ['thyroid_cancer', 'men', 'pancreatitis', 'gastroparesis', 'diabetes_t2'];
+    // Route map for follow-up pages
     const routeMap: { [key: string]: string } = {
       'thyroid_cancer': '/intake/thyroid-cancer-personal',
       'men': '/intake/men-personal',
@@ -64,16 +45,15 @@ export default function FamilyConditionsPage() {
       'diabetes_t2': '/intake/diabetes-personal',
     };
     
-    // Find the first selected condition that has a follow-up page
-    for (const condition of conditionOrder) {
-      if (selectedConditions.includes(condition)) {
-        router.push(routeMap[condition]);
-        return;
+    setTimeout(() => {
+      // If condition has a follow-up page, go there
+      if (routeMap[conditionId]) {
+        router.push(routeMap[conditionId]);
+      } else {
+        // "none" or "long_qt" - go to pregnancy
+        router.push('/intake/pregnancy');
       }
-    }
-    
-    // If only long_qt was selected (no follow-up page), go to pregnancy
-    router.push('/intake/pregnancy');
+    }, 150);
   };
 
   return (
@@ -96,7 +76,7 @@ export default function FamilyConditionsPage() {
       <EonmedsLogo />
       
       {/* Main content */}
-      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-6">
           <div>
             <h1 className="page-title">
@@ -116,7 +96,7 @@ export default function FamilyConditionsPage() {
             {conditions.map((condition) => (
               <button
                 key={condition.id}
-                onClick={() => handleToggleCondition(condition.id)}
+                onClick={() => handleSelect(condition.id)}
                 className={`w-full text-left p-4 rounded-2xl border transition-all ${
                   selectedConditions.includes(condition.id)
                     ? 'border-[#f0feab] bg-[#f0feab]'
@@ -152,40 +132,6 @@ export default function FamilyConditionsPage() {
         </div>
       </div>
       
-      {/* Continue button */}
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={selectedConditions.length === 0}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-colors ${
-            selectedConditions.length > 0
-              ? 'bg-black text-white hover:bg-gray-800' 
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-          }`}
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright footer */}
-        <div className="mt-6 text-center">
-          <p className="copyright-text">
-            {language === 'es' ? (
-              <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
-                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
-              </>
-            ) : (
-              <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
-                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
-              </>
-            )}
-          </p>
-        </div>
-      </div>
     </div>
   );
 }
