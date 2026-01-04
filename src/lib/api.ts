@@ -273,9 +273,8 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
       pregnancyBreastfeeding: toEnglish(intakeData.personalInfo?.pregnancyBreastfeeding),
       // Address
       state: intakeData.address?.state,
-      address: (intakeData.address && typeof intakeData.address === 'object')
-        ? JSON.stringify(intakeData.address)
-        : intakeData.address || undefined,
+      address: intakeData.address?.fullAddress || intakeData.address?.street || '',
+      apartment: intakeData.address?.unit || '',
       // Weight & BMI
       currentWeight: intakeData.medicalProfile?.weight?.currentWeight,
       idealWeight: intakeData.medicalProfile?.weight?.idealWeight,

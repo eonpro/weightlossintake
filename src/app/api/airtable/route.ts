@@ -28,6 +28,7 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Blood Pressure',
   'Pregnancy/Breastfeeding',
   'Address',
+  'Apartment',
   'Current Weight (lbs)',
   'Ideal Weight',
   'Height',
@@ -124,6 +125,7 @@ interface IntakeRecord {
   // Address
   state?: string;
   address?: string;
+  apartment?: string;
   // Weight & BMI
   currentWeight?: number | string;
   idealWeight?: number | string;
@@ -256,6 +258,7 @@ export async function POST(request: NextRequest) {
       'Blood Pressure': toString(data.bloodPressure),
       'Pregnancy/Breastfeeding': toString(data.pregnancyBreastfeeding),
       'Address': toString(data.address),
+      'Apartment': toString(data.apartment),
       'Current Weight (lbs)': toString(data.currentWeight),
       'Ideal Weight': toString(data.idealWeight),
       'Height': toString(data.height),
