@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { submitIntake, collectIntakeData, markCheckpointCompleted, submitCheckpoint } from '@/lib/api';
@@ -12,7 +12,8 @@ export default function ReviewPage() {
   const [state, setState] = useState('');
   const [progress, setProgress] = useState(0);
   const [dots, setDots] = useState('');
-  const hasNavigated = useRef(false);
+  const [submissionStatus, setSubmissionStatus] = useState<'pending' | 'submitting' | 'success' | 'error'>('pending');
+  const hasSubmitted = useRef(false);
 
   // Get user data on mount
   useEffect(() => {
@@ -51,7 +52,69 @@ export default function ReviewPage() {
     }
   }, []);
 
-  // Handle animation and navigation
+  // Submit data to Airtable
+  const submitToAirtable = useCallback(async () => {
+    if (hasSubmitted.current) return;
+    hasSubmitted.current = true;
+    
+    setSubmissionStatus('submitting');
+    console.log('🚀 Starting Airtable submission...');
+
+    try {
+      // Collect all intake data
+      const intakeData = collectIntakeData();
+      console.log('📦 Collected intake data:', {
+        sessionId: intakeData.sessionId,
+        firstName: intakeData.personalInfo?.firstName,
+        lastName: intakeData.personalInfo?.lastName,
+        email: intakeData.personalInfo?.email,
+        state: intakeData.address?.state,
+        hasConsents: !!intakeData.consents
+      });
+
+      // Mark checkpoint
+      markCheckpointCompleted('qualification-complete');
+      
+      // Submit to Airtable
+      console.log('📤 Sending to /api/airtable...');
+      const result = await submitIntake(intakeData);
+      console.log('📥 Airtable response:', result);
+
+      if (result.success && result.intakeId) {
+        console.log('✅ SUCCESS! Record ID:', result.intakeId);
+        sessionStorage.setItem('submitted_intake_id', result.intakeId);
+        sessionStorage.setItem('submission_status', 'success');
+        setSubmissionStatus('success');
+        
+        // Navigate after successful submission
+        setTimeout(() => {
+          router.push('/intake/qualified');
+        }, 500);
+      } else {
+        console.error('❌ FAILED:', result.error);
+        sessionStorage.setItem('submission_status', 'failed');
+        sessionStorage.setItem('submission_error', result.error || 'Unknown error');
+        setSubmissionStatus('error');
+        
+        // Still navigate after delay
+        setTimeout(() => {
+          router.push('/intake/qualified');
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('💥 EXCEPTION:', error);
+      sessionStorage.setItem('submission_status', 'error');
+      sessionStorage.setItem('submission_error', String(error));
+      setSubmissionStatus('error');
+      
+      // Still navigate after delay
+      setTimeout(() => {
+        router.push('/intake/qualified');
+      }, 2000);
+    }
+  }, [router]);
+
+  // Handle animation and trigger submission when progress hits 100%
   useEffect(() => {
     // Animate dots
     const dotsInterval = setInterval(() => {
@@ -64,75 +127,8 @@ export default function ReviewPage() {
         const newProgress = prev + 2;
         if (newProgress >= 100) {
           clearInterval(progressInterval);
-          // Redirect to checkout after progress completes
-          if (!hasNavigated.current) {
-            hasNavigated.current = true;
-            setTimeout(async () => {
-              // Prepare qualification data to pass to checkout
-              const qualificationData = {
-                firstName: sessionStorage.getItem('intake_name') ? JSON.parse(sessionStorage.getItem('intake_name')!).firstName : '',
-                lastName: sessionStorage.getItem('intake_name') ? JSON.parse(sessionStorage.getItem('intake_name')!).lastName : '',
-                email: sessionStorage.getItem('intake_contact') ? JSON.parse(sessionStorage.getItem('intake_contact')!).email : '',
-                phone: sessionStorage.getItem('intake_contact') ? JSON.parse(sessionStorage.getItem('intake_contact')!).phone : '',
-                state: sessionStorage.getItem('intake_state') ? JSON.parse(sessionStorage.getItem('intake_state')!).state : '',
-                address: sessionStorage.getItem('intake_address') || '{}',
-                medication_preference: sessionStorage.getItem('medication_preference') || '',
-                weight: sessionStorage.getItem('intake_weight') || '{}',
-                dob: sessionStorage.getItem('intake_dob') || '{}',
-                language: sessionStorage.getItem('language') || 'en',
-                qualified: true,
-                timestamp: new Date().toISOString(),
-                // Enhanced data for smart recommendations
-                digestive_conditions: sessionStorage.getItem('digestive_conditions') || '[]',
-                chronic_conditions: sessionStorage.getItem('chronic_conditions') || '[]',
-                glp1_history: sessionStorage.getItem('glp1_history') || '',
-                goals: sessionStorage.getItem('goals') || '[]',
-                side_effects: sessionStorage.getItem('common_side_effects') || '[]',
-                activity_level: sessionStorage.getItem('activity_level') || ''
-              };
-              
-              // Mark final checkpoint as completed
-              markCheckpointCompleted('qualification-complete');
-              
-              // Submit final checkpoint with qualification data
-              await submitCheckpoint('qualification-complete', qualificationData, 'qualified');
-              
-              // Submit complete intake data to Airtable
-              try {
-                const intakeData = collectIntakeData();
-                console.log('=== INTAKE SUBMISSION DEBUG ===');
-                console.log('Session ID:', intakeData.sessionId);
-                console.log('Personal Info:', intakeData.personalInfo);
-                console.log('Medical Profile:', intakeData.medicalProfile);
-                console.log('Consents:', intakeData.consents);
-
-                const submissionResult = await submitIntake(intakeData);
-                console.log('=== SUBMISSION RESULT ===');
-                console.log('Success:', submissionResult.success);
-                console.log('Intake ID:', submissionResult.intakeId);
-                console.log('Error:', submissionResult.error);
-
-                if (submissionResult.success && submissionResult.intakeId) {
-                  // Store intake ID for reference (qualified page will use this)
-                  sessionStorage.setItem('submitted_intake_id', submissionResult.intakeId);
-                  sessionStorage.setItem('submission_status', 'success');
-                  console.log('✓ Saved intake ID:', submissionResult.intakeId);
-                } else {
-                  console.error('✗ Submission failed:', submissionResult.error);
-                  sessionStorage.setItem('submission_status', 'failed');
-                  sessionStorage.setItem('submission_error', submissionResult.error || 'Unknown error');
-                  // Still continue to qualified page - data is stored locally
-                }
-              } catch (submissionError) {
-                console.error('✗ Submission exception:', submissionError);
-                sessionStorage.setItem('submission_status', 'error');
-                sessionStorage.setItem('submission_error', String(submissionError));
-              }
-              
-              // Navigate to qualified page with celebration
-              router.push('/intake/qualified');
-            }, 1500);
-          }
+          // Trigger submission when progress completes
+          submitToAirtable();
           return 100;
         }
         return newProgress;
@@ -143,7 +139,7 @@ export default function ReviewPage() {
       clearInterval(dotsInterval);
       clearInterval(progressInterval);
     };
-  }, []);
+  }, [submitToAirtable]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -206,9 +202,26 @@ export default function ReviewPage() {
           
           <div className="mt-2 h-6">
             <p className="text-sm text-gray-500 italic">
-              {language === 'es' 
-                ? `Procesando tu información${dots}`
-                : `Processing your information${dots}`}
+              {submissionStatus === 'submitting' && (
+                language === 'es' 
+                  ? `Guardando tu información${dots}`
+                  : `Saving your information${dots}`
+              )}
+              {submissionStatus === 'success' && (
+                language === 'es' 
+                  ? '✓ Información guardada correctamente'
+                  : '✓ Information saved successfully'
+              )}
+              {submissionStatus === 'error' && (
+                language === 'es' 
+                  ? 'Continuando...'
+                  : 'Continuing...'
+              )}
+              {submissionStatus === 'pending' && (
+                language === 'es' 
+                  ? `Procesando tu información${dots}`
+                  : `Processing your information${dots}`
+              )}
             </p>
           </div>
         </div>

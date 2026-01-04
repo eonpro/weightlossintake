@@ -21,7 +21,7 @@ export default function EonmedsLogo({ compact = false, showLottie = true }: Eonm
           className="h-7 w-auto"
         />
         {showLottie && (
-          <div className="w-10 h-10">
+          <div className="w-[70px] h-[70px]">
             <DotLottieReact
               src="https://lottie.host/9c7564a3-b6ee-4e8b-8b5e-14a59b28c515/3Htnjbp08p.lottie"
               loop

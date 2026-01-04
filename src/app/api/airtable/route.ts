@@ -173,10 +173,20 @@ const corsHeaders = {
 };
 
 export async function POST(request: NextRequest) {
+  console.log('=== AIRTABLE API CALLED ===');
+  console.log('Timestamp:', new Date().toISOString());
+  
   try {
     const data: IntakeRecord = await request.json();
     
-    console.log('Received intake submission:', { sessionId: data.sessionId, firstName: data.firstName });
+    console.log('Received intake submission:', { 
+      sessionId: data.sessionId, 
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      state: data.state,
+      qualified: data.qualified
+    });
     // Check for required environment variables
     if (!AIRTABLE_PAT || !AIRTABLE_BASE_ID) {
       console.error('Airtable not configured! AIRTABLE_PAT:', !!AIRTABLE_PAT, 'AIRTABLE_BASE_ID:', !!AIRTABLE_BASE_ID);
