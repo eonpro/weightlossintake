@@ -53,6 +53,8 @@ export const translations = {
     'consent.agreement.florida': '. If you reside in Florida you also agree to the ',
     'consent.agreement.florida.bill': 'Florida Weight Loss Consumer Bill of Rights',
     'consent.agreement.florida.consent': 'Florida Consent',
+    'consent.agreement.newjersey': '. If you reside in New Jersey you also agree to the ',
+    'consent.agreement.newjersey.consent': 'New Jersey Consent for Weight Loss Treatment',
     'consent.continue': 'Continue',
     
     // State page
@@ -264,6 +266,8 @@ export const translations = {
     'consent.agreement.florida': '. Si resides en Florida también aceptas la ',
     'consent.agreement.florida.bill': 'Declaración de Derechos del Consumidor de Pérdida de Peso de Florida',
     'consent.agreement.florida.consent': 'Consentimiento de Florida',
+    'consent.agreement.newjersey': '. Si resides en Nueva Jersey también aceptas el ',
+    'consent.agreement.newjersey.consent': 'Consentimiento de Nueva Jersey para el Tratamiento de Pérdida de Peso',
     'consent.continue': 'Continuar',
     
     // State page

@@ -32,6 +32,9 @@ export default function ConsentPage() {
       sessionStorage.setItem('florida_bill_of_rights_accepted_at', timestamp);
       sessionStorage.setItem('florida_consent_accepted', 'true');
       sessionStorage.setItem('florida_consent_accepted_at', timestamp);
+      // New Jersey-specific consents
+      sessionStorage.setItem('newjersey_consent_accepted', 'true');
+      sessionStorage.setItem('newjersey_consent_accepted_at', timestamp);
 
       router.push('/intake/state');
     }
@@ -132,7 +135,9 @@ export default function ConsentPage() {
                 <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.cancellation')}</a>
                 {t('consent.agreement.florida')}
                 <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.florida.bill')}</a> and the{' '}
-                <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.florida.consent')}</a>.
+                <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.florida.consent')}</a>
+                {t('consent.agreement.newjersey')}
+                <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.newjersey.consent')}</a>.
               </div>
             </div>
           </div>
