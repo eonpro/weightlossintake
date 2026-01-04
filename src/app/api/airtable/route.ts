@@ -40,14 +40,6 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Family Conditions',
   'Kidney Conditions',
   'Medical Conditions',
-  // Personal medical history
-  'Personal Diabetes',
-  'Personal Gastroparesis',
-  'Personal Pancreatitis',
-  'Personal Thyroid Cancer',
-  'Personal MEN',
-  'Has Mental Health',
-  'Has Chronic Conditions',
   // GLP-1 data
   'GLP-1 History',
   'GLP-1 Type',
@@ -266,14 +258,6 @@ export async function POST(request: NextRequest) {
       'Family Conditions': toString(data.familyConditions),
       'Kidney Conditions': toString(data.kidneyConditions),
       'Medical Conditions': toString(data.medicalConditions),
-      // Personal medical history
-      'Personal Diabetes': toString(data.personalDiabetes),
-      'Personal Gastroparesis': toString(data.personalGastroparesis),
-      'Personal Pancreatitis': toString(data.personalPancreatitis),
-      'Personal Thyroid Cancer': toString(data.personalThyroidCancer),
-      'Personal MEN': toString(data.personalMen),
-      'Has Mental Health': toString(data.hasMentalHealth),
-      'Has Chronic Conditions': toString(data.hasChronicConditions),
       // GLP-1 data
       'GLP-1 History': toString(data.glp1History),
       'GLP-1 Type': toString(data.glp1Type),
