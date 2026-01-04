@@ -131,13 +131,9 @@ export default function ConsentPage() {
                 <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.terms')}</a>
                 {t('consent.agreement.and')}
                 <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.privacy')}</a>,{' '}
-                <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.telehealth')}</a> and{' '}
-                <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.cancellation')}</a>
-                {t('consent.agreement.florida')}
-                <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.florida.bill')}</a> and the{' '}
-                <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.florida.consent')}</a>
-                {t('consent.agreement.newjersey')}
-                <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.newjersey.consent')}</a>.
+                <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.telehealth')}</a>{' '}
+                {language === 'es' ? 'y' : 'and'}{' '}
+                <a href="#" className="text-[#4fa87f] underline font-medium" onClick={(e) => e.stopPropagation()}>{t('consent.agreement.cancellation')}</a>.
               </div>
             </div>
           </div>
