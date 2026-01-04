@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -114,11 +115,14 @@ export default function Home() {
     >
       {/* Nurse Image - Circular */}
       <div className="mb-4">
-        <div className="w-32 h-32 rounded-full overflow-hidden">
-          <img
+        <div className="w-32 h-32 rounded-full overflow-hidden relative">
+          <Image
             src="https://static.wixstatic.com/media/c49a9b_3505f05c6c774d748c2e20f178e7c917~mv2.png"
             alt="Healthcare professional"
-            className="w-full h-full object-cover"
+            fill
+            sizes="128px"
+            className="object-cover"
+            priority
           />
         </div>
       </div>
@@ -142,10 +146,13 @@ export default function Home() {
 
         {/* Patient photos */}
         <div className="flex -space-x-3">
-          <img
+          <Image
             src="https://static.wixstatic.com/media/c49a9b_db8b1c89bbf14aeaa7c55037b3fd6aec~mv2.webp"
             alt="Happy patients"
-            className="w-28 h-auto rounded-lg"
+            width={112}
+            height={32}
+            className="rounded-lg"
+            priority
           />
         </div>
 

@@ -19,6 +19,17 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://use.typekit.net/gdk8cbv.css" />
         <meta name="theme-color" content="#ffffff" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        {/* Preload critical landing page images */}
+        <link
+          rel="preload"
+          href="https://static.wixstatic.com/media/c49a9b_3505f05c6c774d748c2e20f178e7c917~mv2.png"
+          as="image"
+        />
+        <link
+          rel="preload"
+          href="https://static.wixstatic.com/media/c49a9b_db8b1c89bbf14aeaa7c55037b3fd6aec~mv2.webp"
+          as="image"
+        />
       </head>
       <body className="font-sofia antialiased bg-white">
         <MetaPixel />
