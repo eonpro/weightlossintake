@@ -45,10 +45,10 @@ export default function PersonalizedTreatmentPage() {
       {/* Main content */}
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
-          <h1 className="page-title">
+          <h1 className="text-[1.75rem] lg:text-[2.1rem] font-medium text-[#413d3d] leading-[1.35]">
             {language === 'es' 
-              ? <>¿Te interesaría que tu proveedor considere un plan de <span className="inline bg-[#f2fdb4]">tratamiento personalizado sin costo adicional</span> para ayudarte a manejar cualquier efecto secundario?</>
-              : <>Would you be interested in having your provider consider a <span className="inline bg-[#f2fdb4]">personalized treatment plan at no extra cost</span> to help you manage any side effects?</>}
+              ? <>¿Te interesaría que tu proveedor considere un plan de <span className="bg-[#f2fdb4]">tratamiento personalizado sin costo adicional</span> para ayudarte a manejar cualquier efecto secundario?</>
+              : <>Would you be interested in having your provider consider a <span className="bg-[#f2fdb4]">personalized treatment plan at no extra cost</span> to help you manage any side effects?</>}
           </h1>
 
           {/* Yes/No options - auto-advance on selection */}
