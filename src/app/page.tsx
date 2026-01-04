@@ -114,7 +114,7 @@ export default function Home() {
     >
       {/* Nurse Image - Circular */}
       <div className="mb-4">
-        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-[#f0feab]/30">
+        <div className="w-32 h-32 rounded-full overflow-hidden">
           <img
             src="https://static.wixstatic.com/media/c49a9b_3505f05c6c774d748c2e20f178e7c917~mv2.png"
             alt="Healthcare professional"
