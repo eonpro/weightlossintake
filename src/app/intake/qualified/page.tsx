@@ -178,10 +178,10 @@ export default function QualifiedPage() {
         >
           <div className="text-left leading-tight">
             <div className="font-semibold text-base" style={{ color: '#ffffff' }}>
-              {language === 'es' ? 'Completar Checkout' : 'Complete Check Out'}
+              {language === 'es' ? 'Selecciona tu tratamiento' : 'Select your treatment'}
             </div>
             <div className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-              {language === 'es' ? 'Descuentos aplicados al checkout' : 'Discounts applied at check out'}
+              {language === 'es' ? 'Descuentos calificados serán aplicados' : 'Qualifying discounts will be applied'}
             </div>
           </div>
           <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: '#ffffff' }}>
