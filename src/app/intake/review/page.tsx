@@ -3,15 +3,13 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { submitIntake, collectIntakeData, markCheckpointCompleted, submitCheckpoint } from '@/lib/api';
+import { submitIntake, collectIntakeData, markCheckpointCompleted } from '@/lib/api';
 
 export default function ReviewPage() {
   const router = useRouter();
   const { language } = useLanguage();
   const [firstName, setFirstName] = useState('');
   const [state, setState] = useState('');
-  const [progress, setProgress] = useState(0);
-  const [dots, setDots] = useState('');
   const [submissionStatus, setSubmissionStatus] = useState<'pending' | 'submitting' | 'success' | 'error'>('pending');
   const hasSubmitted = useRef(false);
 
@@ -102,52 +100,37 @@ export default function ReviewPage() {
     }
   }, [router]);
 
-  // Handle animation and trigger submission when progress hits 100%
+  // Trigger submission after a short delay
   useEffect(() => {
-    // Animate dots
-    const dotsInterval = setInterval(() => {
-      setDots(prev => prev.length >= 3 ? '' : prev + '.');
-    }, 500);
-
-    // Animate progress bar
-    const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        const newProgress = prev + 2;
-        if (newProgress >= 100) {
-          clearInterval(progressInterval);
-          // Trigger submission when progress completes
-          submitToAirtable();
-          return 100;
-        }
-        return newProgress;
-      });
-    }, 90); // Update every 90ms to reach 100% in ~4.5 seconds
+    const timer = setTimeout(() => {
+      submitToAirtable();
+    }, 2000); // Start submission after 2 seconds
 
     return () => {
-      clearInterval(dotsInterval);
-      clearInterval(progressInterval);
+      clearTimeout(timer);
     };
   }, [submitToAirtable]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center px-6">
-        <div className="max-w-md w-full text-center space-y-6">
-          <h1 className="text-2xl">
+        <div className="max-w-md w-full text-center space-y-8">
+          {/* Thank you message - larger font */}
+          <h1 className="text-4xl lg:text-5xl font-bold leading-tight">
             <span className="text-gray-400">
               {language === 'es' ? 'Gracias, ' : 'Thank you, '}
             </span>
-            <span className="text-black font-semibold">{firstName || ''}</span>
+            <span className="text-[#413d3d]">{firstName || ''}</span>
           </h1>
           
           {/* Lottie Animation - Medical processing animation */}
           <div className="flex justify-center">
-            <div className="w-40 h-40 relative">
+            <div className="w-48 h-48 relative">
               <iframe
                 src="https://lottie.host/embed/9fb843e1-1010-4dd3-bb0c-c9e194ec74ef/FPTlU6rmSq.lottie"
-                style={{ 
-                  width: '160px', 
-                  height: '160px',
+                style={{
+                  width: '192px',
+                  height: '192px',
                   border: 'none',
                   background: 'transparent'
                 }}
@@ -156,61 +139,26 @@ export default function ReviewPage() {
             </div>
           </div>
           
-          <div className="space-y-1">
-            <p className="text-lg text-gray-400 leading-tight">
+          {/* Information text - larger font */}
+          <div className="space-y-0">
+            <p className="text-2xl lg:text-3xl text-gray-400 leading-tight">
               {language === 'es' 
                 ? 'Tu información esta siendo asignada a un'
                 : 'Your information is being assigned to a'}
             </p>
-            <p className="text-lg">
-              <span className="text-[#4fa87f] font-semibold">{state || ''}</span>
+            <p className="text-2xl lg:text-3xl leading-tight">
+              <span className="text-[#413d3d] font-bold">{state || ''}</span>
               <span className="text-gray-400"> {language === 'es' ? 'médico licenciado via' : 'licensed physician via'}</span>
             </p>
           </div>
           
           {/* MedLink Logo */}
-          <div className="flex justify-center mt-2">
+          <div className="flex justify-center mt-4">
             <img 
               src="https://static.wixstatic.com/shapes/c49a9b_f5e1ceda9f1341bc9e97cc0a6b4d19a3.svg"
               alt="MedLink"
-              className="h-10"
+              className="h-12"
             />
-          </div>
-          
-          {/* Progress Bar */}
-          <div className="mt-4 px-8">
-            <div className="bg-gray-200 rounded-full h-2 overflow-hidden">
-              <div 
-                className="bg-gradient-to-r from-blue-400 to-purple-400 h-full transition-all duration-300 ease-out"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-            <p className="mt-2 text-sm font-medium text-gray-600">{progress}%</p>
-          </div>
-          
-          <div className="mt-2 h-6">
-            <p className="text-sm text-gray-500 italic">
-              {submissionStatus === 'submitting' && (
-                language === 'es' 
-                  ? `Guardando tu información${dots}`
-                  : `Saving your information${dots}`
-              )}
-              {submissionStatus === 'success' && (
-                language === 'es' 
-                  ? '✓ Información guardada correctamente'
-                  : '✓ Information saved successfully'
-              )}
-              {submissionStatus === 'error' && (
-                language === 'es' 
-                  ? 'Continuando...'
-                  : 'Continuing...'
-              )}
-              {submissionStatus === 'pending' && (
-                language === 'es' 
-                  ? `Procesando tu información${dots}`
-                  : `Processing your information${dots}`
-              )}
-            </p>
           </div>
         </div>
       </div>
