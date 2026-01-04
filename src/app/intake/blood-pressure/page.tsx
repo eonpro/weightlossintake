@@ -101,7 +101,7 @@ export default function BloodPressurePage() {
               <button
                 key={option.id}
                 onClick={() => handleSelect(option.id)}
-                className="option-button w-full p-4 text-left rounded-full transition-all"
+                className="option-button w-full p-4 text-left rounded-2xl transition-all"
               >
                 <div>
                   <span className="text-base lg:text-lg block">

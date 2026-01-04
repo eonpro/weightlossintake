@@ -100,7 +100,7 @@ export default function GLP1TypePage() {
               <button
                 key={med.id}
                 onClick={() => handleSelect(med.id)}
-                className="option-button w-full p-4 text-left rounded-full transition-all"
+                className="option-button w-full p-4 text-left rounded-2xl transition-all"
               >
                 <div>
                   <span className="text-base lg:text-lg block">

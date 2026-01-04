@@ -53,14 +53,14 @@ export default function SexAssignedPage() {
           <div className="space-y-3">
             <button
               onClick={() => handleSelect('man')}
-              className="option-button w-full text-left p-4 rounded-full transition-all"
+              className="option-button w-full text-left p-4 rounded-2xl transition-all"
             >
                 <span className="text-[16px] lg:text-lg font-medium leading-tight">{t('sex.man')}</span>
             </button>
             
             <button
               onClick={() => handleSelect('woman')}
-              className="option-button w-full text-left p-4 rounded-full transition-all"
+              className="option-button w-full text-left p-4 rounded-2xl transition-all"
             >
                 <span className="text-[16px] lg:text-lg font-medium leading-tight">{t('sex.woman')}</span>
             </button>

@@ -58,7 +58,7 @@ export default function SurgeryPage() {
           <div className="space-y-3">
             <button
               onClick={() => handleSelect('yes')}
-              className="option-button w-full p-4 text-left rounded-full transition-all"
+              className="option-button w-full p-4 text-left rounded-2xl transition-all"
             >
               <span className="text-base lg:text-lg">
                 {language === 'es' ? 'Sí' : 'Yes'}
@@ -67,7 +67,7 @@ export default function SurgeryPage() {
 
             <button
               onClick={() => handleSelect('no')}
-              className="option-button w-full p-4 text-left rounded-full transition-all"
+              className="option-button w-full p-4 text-left rounded-2xl transition-all"
             >
               <span className="text-base lg:text-lg">
                 {language === 'es' ? 'No' : 'No'}

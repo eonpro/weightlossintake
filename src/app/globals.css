@@ -174,30 +174,31 @@ button[class*="bg-black"] * {
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* Option buttons styling */
+/* Option buttons styling - matches kidney-conditions design */
 .option-button {
-  background-color: #f8f8f8;
-  border: 1px solid #e0e0e0;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
   color: #413d3d;
-  border-radius: 9999px;
-  padding: 1rem 1.5rem;
+  border-radius: 1rem; /* rounded-2xl */
+  padding: 1rem;
   transition: all 0.2s;
+  width: 100%;
+  text-align: left;
 }
 
 .option-button.selected {
   background-color: #f0feab;
-  border-color: #f0feab;
-  color: #333;
+  border-color: #4fa87f;
+  color: #413d3d;
 }
 
 .option-button.selected span,
 .option-button.selected .text-white {
-  color: #333 !important;
+  color: #413d3d !important;
 }
 
 .option-button:hover:not(.selected) {
-  background-color: #f0f0f0;
-  border-color: #d0d0d0;
+  border-color: #d1d5db;
 }
 
 /* Checkbox styling for options */

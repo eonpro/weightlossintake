@@ -84,7 +84,7 @@ export default function GoalsPage() {
               <button
                 key={option}
                 onClick={() => toggleOption(option)}
-                className={`option-button w-full text-left p-4 rounded-full transition-all ${
+                className={`option-button w-full text-left p-4 rounded-2xl transition-all ${
                   selected.includes(option) ? 'selected' : ''
                 }`}
               >

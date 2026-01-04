@@ -94,7 +94,7 @@ export default function DigestiveConditionsPage() {
               <button
                 key={condition.id}
                 onClick={() => handleConditionToggle(condition.id)}
-                className={`option-button w-full p-4 rounded-full transition-all flex items-center justify-between text-left ${
+                className={`option-button w-full p-4 rounded-2xl transition-all flex items-center justify-between text-left ${
                   selectedConditions.includes(condition.id) ? 'selected' : ''
                 }`}
               >

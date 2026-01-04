@@ -60,7 +60,7 @@ export default function MentalHealthPage() {
           <div className="space-y-3">
             <button
               onClick={() => handleSelect('yes')}
-              className="option-button w-full text-left p-4 rounded-full transition-all"
+              className="option-button w-full text-left p-4 rounded-2xl transition-all"
             >
                 <span className="text-[16px] lg:text-lg font-medium leading-tight">
                   {language === 'es' ? 'Sí' : 'Yes'}
@@ -69,7 +69,7 @@ export default function MentalHealthPage() {
             
             <button
               onClick={() => handleSelect('no')}
-              className="option-button w-full text-left p-4 rounded-full transition-all"
+              className="option-button w-full text-left p-4 rounded-2xl transition-all"
             >
                 <span className="text-[16px] lg:text-lg font-medium leading-tight">
                   {language === 'es' ? 'No' : 'No'}

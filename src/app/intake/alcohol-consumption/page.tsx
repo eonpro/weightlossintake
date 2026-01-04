@@ -84,7 +84,7 @@ export default function AlcoholConsumptionPage() {
               <button
                 key={option.id}
                 onClick={() => handleSelect(option.id)}
-                className="option-button w-full p-4 text-left rounded-full transition-all"
+                className="option-button w-full p-4 text-left rounded-2xl transition-all"
               >
                 <span className="text-base lg:text-lg">
                   {language === 'es' ? option.es : option.en}

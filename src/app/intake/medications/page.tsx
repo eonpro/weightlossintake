@@ -59,7 +59,7 @@ export default function MedicationsPage() {
           <div className="space-y-3">
             <button
               onClick={() => handleSelect('yes')}
-              className={`option-button w-full text-left p-4 rounded-full transition-all ${
+              className={`option-button w-full text-left p-4 rounded-2xl transition-all ${
                 selected === 'yes' ? 'selected' : ''
               }`}
             >
@@ -83,7 +83,7 @@ export default function MedicationsPage() {
             
             <button
               onClick={() => handleSelect('no')}
-              className={`option-button w-full text-left p-4 rounded-full transition-all ${
+              className={`option-button w-full text-left p-4 rounded-2xl transition-all ${
                 selected === 'no' ? 'selected' : ''
               }`}
             >

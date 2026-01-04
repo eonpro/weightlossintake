@@ -46,7 +46,7 @@ export default function MedicationPreferencePage() {
             {/* Option 1 */}
             <button
               onClick={() => handleSelect('recommendation')}
-              className="option-button w-full text-left p-4 rounded-full transition-all"
+              className="option-button w-full text-left p-4 rounded-2xl transition-all"
             >
                 <span className="text-[16px] lg:text-lg font-medium leading-tight">
                   {t('medication.option1')}
@@ -56,7 +56,7 @@ export default function MedicationPreferencePage() {
             {/* Option 2 */}
             <button
               onClick={() => handleSelect('have_in_mind')}
-              className="option-button w-full text-left p-4 rounded-full transition-all"
+              className="option-button w-full text-left p-4 rounded-2xl transition-all"
             >
                 <span className="text-[16px] lg:text-lg font-medium leading-tight">
                   {t('medication.option2')}

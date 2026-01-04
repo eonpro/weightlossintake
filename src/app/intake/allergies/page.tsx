@@ -213,7 +213,7 @@ export default function AllergiesPage() {
                     setSelectedItems([]); // Clear selected items when choosing "No allergies"
                   }
                 }}
-                className={`option-button w-full text-left p-4 rounded-full transition-all ${
+                className={`option-button w-full text-left p-4 rounded-2xl transition-all ${
                   noAllergiesSelected ? 'selected' : ''
                 }`}
               >
