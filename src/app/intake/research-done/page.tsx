@@ -78,9 +78,12 @@ export default function ResearchDonePage() {
               <div className="space-y-4">
                 {/* Title animated in two parts */}
                 <div>
-                  <h1 className={`text-[30px] lg:text-[34px] font-[550] text-[#4fa87f] leading-tight transition-all duration-800 ease-out ${
-                    showLine1 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
-                  }`}>
+                  <h1 
+                    className={`text-[30px] lg:text-[34px] font-[550] leading-tight transition-all duration-800 ease-out ${
+                      showLine1 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
+                    }`}
+                    style={{ color: '#4fa87f' }}
+                  >
                     {language === 'es' ? 
                       'Lo tienes. Comenzaremos con algunas preguntas sobre ti.' : 
                       'You\'ve got it. We\'ll begin with some questions about you.'}
@@ -89,9 +92,12 @@ export default function ResearchDonePage() {
                 
                 {/* Subtitle animated */}
                 <div>
-                  <p className={`text-[30px] lg:text-[34px] font-[550] text-[#4fa87f] leading-tight transition-all duration-800 ease-out ${
-                    showLine2 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
-                  }`}>
+                  <p 
+                    className={`text-[30px] lg:text-[34px] font-[550] leading-tight transition-all duration-800 ease-out ${
+                      showLine2 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
+                    }`}
+                    style={{ color: '#4fa87f' }}
+                  >
                     {language === 'es' ? 
                       'Después de eso, profundizaremos en tu historial de salud para encontrar qué opción de tratamiento coincide con tus objetivos e historial de salud.' : 
                       'After that, we\'ll dive into your health history to find which treatment option matches your goals and health history.'}
@@ -102,17 +108,23 @@ export default function ResearchDonePage() {
           ) : (
             <>
               <div className="space-y-4">
-                <h1 className={`text-[30px] lg:text-[34px] font-[550] text-[#4fa87f] leading-tight transition-all duration-800 ease-out ${
-                  showLine1 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
-                }`}>
+                <h1 
+                  className={`text-[30px] lg:text-[34px] font-[550] leading-tight transition-all duration-800 ease-out ${
+                    showLine1 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
+                  }`}
+                  style={{ color: '#4fa87f' }}
+                >
                   {language === 'es' ? 
                     'Bien, parece que ya has hecho tu investigación.' : 
                     'Nice, it sounds like you\'ve already done your research.'}
                 </h1>
                 
-                <p className={`text-[30px] lg:text-[34px] font-[550] text-[#4fa87f] leading-tight transition-all duration-800 ease-out ${
-                  showLine2 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
-                }`}>
+                <p 
+                  className={`text-[30px] lg:text-[34px] font-[550] leading-tight transition-all duration-800 ease-out ${
+                    showLine2 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
+                  }`}
+                  style={{ color: '#4fa87f' }}
+                >
                   {language === 'es' ? 
                     'Sigamos adelante para encontrar qué opción de tratamiento coincide con tus objetivos e historial de salud.' : 
                     'Let\'s keep going to find which treatment option matches your goals and health history.'}
