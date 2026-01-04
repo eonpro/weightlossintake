@@ -130,8 +130,13 @@ export default function ProgramsIncludePage() {
         </div>
       </div>
       
-      {/* Copyright text */}
+      {/* Bottom section */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
+        {/* Auto-advance message */}
+        <p className="text-center text-gray-400 text-sm mb-4 animate-pulse">
+          {language === 'es' ? 'Cargando siguiente pantalla...' : 'Next screen loading...'}
+        </p>
+        {/* Copyright text */}
         <p className="copyright-text text-center">
           © 2025 EONPro, LLC. All rights reserved.
         </p>
