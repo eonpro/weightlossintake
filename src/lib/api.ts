@@ -627,3 +627,142 @@ export function markCheckpointCompleted(checkpointName: string): void {
     sessionStorage.setItem('completed_checkpoints', JSON.stringify(completed));
   }
 }
+
+// ============================================================================
+// INTAKEQ INTEGRATION
+// Send intake data to IntakeQ and generate PDF
+// ============================================================================
+
+interface IntakeQResult {
+  success: boolean;
+  clientId?: string;
+  pdfGenerated?: boolean;
+  pdfUploaded?: boolean;
+  pdfUrl?: string;
+  error?: string;
+}
+
+export async function sendToIntakeQ(): Promise<IntakeQResult> {
+  if (!isBrowser) {
+    return { success: false, error: 'Not in browser environment' };
+  }
+
+  try {
+    // Gather all intake data from session storage
+    const intakeData = gatherIntakeData();
+    
+    // Parse stored data
+    const nameData = sessionStorage.getItem('intake_name');
+    const contactData = sessionStorage.getItem('intake_contact');
+    const dobData = sessionStorage.getItem('intake_dob');
+    const heightData = sessionStorage.getItem('intake_height');
+    const addressData = sessionStorage.getItem('intake_address');
+    
+    const parsedName = nameData ? JSON.parse(nameData) : {};
+    const parsedContact = contactData ? JSON.parse(contactData) : {};
+    const parsedDob = dobData ? JSON.parse(dobData) : {};
+    const parsedHeight = heightData ? JSON.parse(heightData) : {};
+    const parsedAddress = addressData ? JSON.parse(addressData) : {};
+
+    // Format DOB
+    let dobFormatted = '';
+    if (parsedDob.month && parsedDob.day && parsedDob.year) {
+      dobFormatted = `${parsedDob.month}/${parsedDob.day}/${parsedDob.year}`;
+    }
+
+    // Format height
+    let heightString = '';
+    if (parsedHeight.feet) {
+      heightString = `${parsedHeight.feet}'${parsedHeight.inches || 0}"`;
+    }
+
+    // Get session ID
+    const sessionId = sessionStorage.getItem('intake_session_id') || `EON-${Date.now()}`;
+
+    // Build payload for IntakeQ API
+    const payload = {
+      sessionId,
+      firstName: parsedName.firstName || intakeData.personalInfo?.firstName || '',
+      lastName: parsedName.lastName || intakeData.personalInfo?.lastName || '',
+      email: parsedContact.email || intakeData.personalInfo?.email || '',
+      phone: parsedContact.phone || intakeData.personalInfo?.phone || '',
+      dob: dobFormatted,
+      sex: intakeData.personalInfo?.sex || '',
+      state: intakeData.address?.state || '',
+      address: parsedAddress.street || intakeData.address?.fullAddress || '',
+      apartment: parsedAddress.unit || intakeData.address?.unit || '',
+      city: parsedAddress.city || '',
+      zipCode: parsedAddress.zip || '',
+      currentWeight: intakeData.medicalProfile?.weight?.currentWeight,
+      idealWeight: intakeData.medicalProfile?.weight?.idealWeight,
+      height: heightString,
+      bmi: intakeData.medicalProfile?.bmi,
+      activityLevel: intakeData.medicalProfile?.activityLevel || '',
+      bloodPressure: intakeData.personalInfo?.bloodPressure || '',
+      pregnancyBreastfeeding: intakeData.personalInfo?.pregnancyBreastfeeding || '',
+      chronicConditions: arrayToString(intakeData.medicalHistory?.chronicConditions),
+      digestiveConditions: arrayToString(intakeData.medicalHistory?.digestiveConditions),
+      medications: arrayToString(intakeData.medicalHistory?.medications),
+      allergies: arrayToString(intakeData.medicalHistory?.allergies),
+      mentalHealthConditions: arrayToString(intakeData.medicalHistory?.mentalHealthConditions),
+      surgeryHistory: intakeData.medicalHistory?.surgeryHistory || '',
+      surgeryDetails: arrayToString(intakeData.medicalHistory?.surgeryDetails),
+      familyConditions: arrayToString(intakeData.medicalHistory?.familyConditions),
+      kidneyConditions: arrayToString(intakeData.medicalHistory?.kidneyConditions),
+      medicalConditions: arrayToString(intakeData.medicalHistory?.medicalConditions),
+      glp1History: intakeData.glp1Profile?.history || '',
+      glp1Type: intakeData.glp1Profile?.type || '',
+      sideEffects: arrayToString(intakeData.glp1Profile?.sideEffects),
+      semaglutideDosage: intakeData.glp1Profile?.semaglutideDosage || '',
+      semaglutideSuccess: intakeData.glp1Profile?.semaglutideSuccess || '',
+      semaglutideSideEffects: arrayToString(intakeData.glp1Profile?.semaglutideSideEffects),
+      tirzepatideDosage: intakeData.glp1Profile?.tirzepatideDosage || '',
+      tirzepatideSuccess: intakeData.glp1Profile?.tirzepatideSuccess || '',
+      tirzepatideSideEffects: arrayToString(intakeData.glp1Profile?.tirzepatideSideEffects),
+      personalizedTreatmentInterest: intakeData.lifestyle?.personalizedTreatmentInterest || '',
+      healthImprovements: arrayToString(intakeData.medicalProfile?.goals),
+      weightLossHistory: intakeData.lifestyle?.weightLossHistory || '',
+      referralSources: arrayToString(intakeData.lifestyle?.referralSources),
+      referrerName: intakeData.lifestyle?.referrerName || '',
+      language: sessionStorage.getItem('preferred_language') || 'en',
+    };
+
+    console.log('[IntakeQ] Sending data to IntakeQ...');
+
+    const response = await fetch('/api/intakeq', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      console.log('[IntakeQ] Success:', result.clientId);
+      // Store the IntakeQ client ID
+      sessionStorage.setItem('intakeq_client_id', result.clientId);
+      return {
+        success: true,
+        clientId: result.clientId,
+        pdfGenerated: result.pdfGenerated,
+        pdfUploaded: result.pdfUploaded,
+        pdfUrl: result.pdfUrl,
+      };
+    } else {
+      console.error('[IntakeQ] Failed:', result.error);
+      return { success: false, error: result.error };
+    }
+  } catch (error) {
+    console.error('[IntakeQ] Error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'IntakeQ integration failed',
+    };
+  }
+}
+
+// Helper to convert array to comma-separated string
+function arrayToString(arr: string[] | undefined | null): string {
+  if (!arr || !Array.isArray(arr)) return '';
+  return arr.filter(Boolean).join(', ');
+}

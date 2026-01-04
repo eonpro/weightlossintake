@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { submitIntake, collectIntakeData, markCheckpointCompleted } from '@/lib/api';
+import { submitIntake, collectIntakeData, markCheckpointCompleted, sendToIntakeQ } from '@/lib/api';
 
 export default function ReviewPage() {
   const router = useRouter();
@@ -71,6 +71,17 @@ export default function ReviewPage() {
         sessionStorage.setItem('submitted_intake_id', result.intakeId);
         sessionStorage.setItem('submission_status', 'success');
         setSubmissionStatus('success');
+        
+        // Send to IntakeQ in background (don't wait for it)
+        sendToIntakeQ().then(intakeqResult => {
+          if (intakeqResult.success) {
+            console.log('✅ IntakeQ integration complete:', intakeqResult.clientId);
+          } else {
+            console.warn('⚠️ IntakeQ integration failed:', intakeqResult.error);
+          }
+        }).catch(err => {
+          console.warn('⚠️ IntakeQ integration error:', err);
+        });
         
         // Navigate after successful submission
         setTimeout(() => {
