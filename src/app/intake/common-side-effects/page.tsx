@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import EonmedsLogo from '@/components/EonmedsLogo';
-import CopyrightText from '@/components/CopyrightText';
 
 export default function CommonSideEffectsPage() {
   const router = useRouter();
@@ -65,27 +64,13 @@ export default function CommonSideEffectsPage() {
     }
   ];
 
-  const handleToggle = (effectId: string) => {
-    if (effectId === 'none') {
-      setSelectedItems(['none']);
-    } else {
-      if (selectedItems.includes('none')) {
-        setSelectedItems([effectId]);
-      } else {
-        if (selectedItems.includes(effectId)) {
-          setSelectedItems(selectedItems.filter(item => item !== effectId));
-        } else {
-          setSelectedItems([...selectedItems, effectId]);
-        }
-      }
-    }
-  };
-
-  const handleContinue = () => {
-    if (selectedItems.length > 0) {
-      sessionStorage.setItem('common_side_effects', JSON.stringify(selectedItems));
+  const handleSelect = (effectId: string) => {
+    // Single select with auto-advance
+    setSelectedItems([effectId]);
+    sessionStorage.setItem('common_side_effects', JSON.stringify([effectId]));
+    setTimeout(() => {
       router.push('/intake/personalized-treatment');
-    }
+    }, 150);
   };
 
   return (
@@ -108,7 +93,7 @@ export default function CommonSideEffectsPage() {
       <EonmedsLogo />
       
       {/* Main content */}
-      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <div>
             <h1 className="page-title mb-3">
@@ -127,7 +112,7 @@ export default function CommonSideEffectsPage() {
             {sideEffects.map((effect) => (
               <button
                 key={effect.id}
-                onClick={() => handleToggle(effect.id)}
+                onClick={() => handleSelect(effect.id)}
                 className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
                   selectedItems.includes(effect.id)
                     ? 'bg-[#f0feab] border border-[#4fa87f]'
@@ -159,26 +144,6 @@ export default function CommonSideEffectsPage() {
         </div>
       </div>
 
-      {/* Bottom button */}
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={selectedItems.length === 0}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-            selectedItems.length > 0
-              ? 'bg-black text-white hover:bg-gray-900' 
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright text */}
-        <CopyrightText className="mt-4" />
-      </div>
     </div>
   );
 }
