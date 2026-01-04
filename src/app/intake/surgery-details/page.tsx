@@ -49,7 +49,12 @@ export default function SurgeryDetailsPage() {
 
   const handleToggle = (optionId: string) => {
     if (optionId === 'none') {
+      // Auto-advance when "none" is selected
       setSelectedItems(['none']);
+      sessionStorage.setItem('surgery_details', JSON.stringify(['none']));
+      setTimeout(() => {
+        router.push('/intake/blood-pressure');
+      }, 200);
     } else {
       if (selectedItems.includes('none')) {
         setSelectedItems([optionId]);
@@ -105,20 +110,20 @@ export default function SurgeryDetailsPage() {
                 onClick={() => handleToggle(option.id)}
                 className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
                   selectedItems.includes(option.id)
-                    ? 'bg-[#f0feab] border-2 border-[#f0feab]'
-                    : 'bg-white border-2 border-gray-200'
+                    ? 'bg-[#f0feab] border-2 border-[#4fa87f]'
+                    : 'bg-white border-2 border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center mr-3 transition-all ${
-                  selectedItems.includes(option.id) ? 'bg-gray-200 border-gray-400' : 'bg-white border-gray-300'
+                <div className={`w-5 h-5 flex-shrink-0 rounded border-2 flex items-center justify-center mr-3 transition-all ${
+                  selectedItems.includes(option.id) ? 'bg-white border-[#413d3d]' : 'bg-white border-gray-300'
                 }`}>
                   {selectedItems.includes(option.id) && (
-                    <svg className="w-3 h-3 text-black" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   )}
                 </div>
-                <span className="text-base lg:text-lg">
+                <span className="text-base lg:text-lg font-medium text-[#413d3d]">
                   {language === 'es' ? option.es : option.en}
                 </span>
               </button>
@@ -127,26 +132,31 @@ export default function SurgeryDetailsPage() {
         </div>
       </div>
 
-      {/* Bottom button */}
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={selectedItems.length === 0}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-            selectedItems.length > 0
-              ? 'bg-black text-white hover:bg-gray-900' 
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright text */}
-        <CopyrightText className="mt-4" />
-      </div>
+      {/* Bottom button - only show if items other than 'none' are selected */}
+      {selectedItems.length > 0 && !selectedItems.includes('none') && (
+        <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
+          <button 
+            onClick={handleContinue}
+            className="w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all bg-[#413d3d] hover:bg-[#2a2727]"
+            style={{ color: '#ffffff' }}
+          >
+            <span style={{ color: '#ffffff' }}>{language === 'es' ? 'Continuar' : 'Continue'}</span>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: '#ffffff' }}>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+          
+          {/* Copyright text */}
+          <CopyrightText className="mt-4" />
+        </div>
+      )}
+      
+      {/* Copyright when no button shown */}
+      {(selectedItems.length === 0 || selectedItems.includes('none')) && (
+        <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
+          <CopyrightText />
+        </div>
+      )}
     </div>
   );
 }

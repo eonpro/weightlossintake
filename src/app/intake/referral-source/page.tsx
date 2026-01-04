@@ -12,7 +12,7 @@ export default function ReferralSourcePage() {
   const router = useRouter();
   const { t } = useTranslation();
   const { language } = useLanguage();
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selected, setSelected] = useState('');
 
   const sources = [
     {
@@ -57,24 +57,19 @@ export default function ReferralSourcePage() {
     }
   ];
 
-  const handleToggle = (sourceId: string) => {
-    if (selectedItems.includes(sourceId)) {
-      setSelectedItems(selectedItems.filter(item => item !== sourceId));
-    } else {
-      setSelectedItems([...selectedItems, sourceId]);
-    }
-  };
-
-  const handleSubmit = () => {
-    if (selectedItems.length > 0) {
-      sessionStorage.setItem('referral_sources', JSON.stringify(selectedItems));
+  // Auto-advance on selection
+  const handleSelect = (sourceId: string) => {
+    setSelected(sourceId);
+    sessionStorage.setItem('referral_sources', JSON.stringify([sourceId]));
+    
+    setTimeout(() => {
       // If friend/family or EONMeds rep is selected, go to name page
-      if (selectedItems.includes('friend_family') || selectedItems.includes('eonmeds_rep')) {
+      if (sourceId === 'friend_family' || sourceId === 'eonmeds_rep') {
         router.push('/intake/referral-name');
       } else {
         router.push('/intake/health-improvements');
       }
-    }
+    }, 200);
   };
 
   return (
@@ -116,23 +111,23 @@ export default function ReferralSourcePage() {
             {sources.map((source) => (
               <button
                 key={source.id}
-                onClick={() => handleToggle(source.id)}
+                onClick={() => handleSelect(source.id)}
                 className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
-                  selectedItems.includes(source.id)
-                    ? 'bg-[#f0feab] border-2 border-[#f0feab]'
-                    : 'bg-white border-2 border-gray-200'
+                  selected === source.id
+                    ? 'bg-[#f0feab] border-2 border-[#4fa87f]'
+                    : 'bg-white border-2 border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center mr-3 transition-all ${
-                  selectedItems.includes(source.id) ? 'bg-gray-200 border-gray-400' : 'bg-white border-gray-300'
+                <div className={`w-5 h-5 flex-shrink-0 rounded border-2 flex items-center justify-center mr-3 transition-all ${
+                  selected === source.id ? 'bg-white border-[#413d3d]' : 'bg-white border-gray-300'
                 }`}>
-                  {selectedItems.includes(source.id) && (
-                    <svg className="w-3 h-3 text-black" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  {selected === source.id && (
+                    <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   )}
                 </div>
-                <span className="text-base lg:text-lg">
+                <span className="text-base lg:text-lg font-medium text-[#413d3d]">
                   {language === 'es' ? source.es : source.en}
                 </span>
               </button>
@@ -141,27 +136,9 @@ export default function ReferralSourcePage() {
         </div>
       </div>
 
-      {/* Bottom button */}
+      {/* Copyright footer */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleSubmit}
-          disabled={selectedItems.length === 0}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-            selectedItems.length > 0
-              ? 'bg-black text-white hover:bg-gray-900' 
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
-        >
-          <span>
-            {language === 'es' ? 'Continuar' : 'Continue'}
-          </span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright text */}
-        <CopyrightText className="mt-4" />
+        <CopyrightText />
       </div>
     </div>
   );

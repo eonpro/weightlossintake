@@ -157,6 +157,7 @@ export default function DOBPage() {
             <div>
               <input
                 type="text"
+                inputMode="numeric"
                 placeholder={t('dob.placeholder')}
                 value={dob}
                 onChange={handleDateChange}
