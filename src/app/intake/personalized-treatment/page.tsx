@@ -24,7 +24,7 @@ export default function PersonalizedTreatmentPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col page-fade-in">
       {/* Progress bar */}
       <div className="w-full h-1 bg-gray-200">
         <div className="h-full w-[92%] bg-[#f0feab] transition-all duration-300"></div>
@@ -47,8 +47,8 @@ export default function PersonalizedTreatmentPage() {
         <div className="space-y-8">
           <h1 className="page-title">
             {language === 'es' 
-              ? <>¿Te interesaría que tu proveedor considere un plan de <mark style={{ backgroundColor: '#f2fdb4' }}>tratamiento personalizado sin costo adicional</mark> para ayudarte a manejar cualquier efecto secundario?</>
-              : <>Would you be interested in having your provider consider a <mark style={{ backgroundColor: '#f2fdb4' }}>personalized treatment plan at no extra cost</mark> to help you manage any side effects?</>}
+              ? <>¿Te interesaría que tu proveedor considere un plan de <span style={{ backgroundColor: '#f2fdb4', padding: '0 2px', boxDecorationBreak: 'clone', WebkitBoxDecorationBreak: 'clone' }}>tratamiento personalizado sin costo adicional</span> para ayudarte a manejar cualquier efecto secundario?</>
+              : <>Would you be interested in having your provider consider a <span style={{ backgroundColor: '#f2fdb4', padding: '0 2px', boxDecorationBreak: 'clone', WebkitBoxDecorationBreak: 'clone' }}>personalized treatment plan at no extra cost</span> to help you manage any side effects?</>}
           </h1>
 
           {/* Yes/No options - auto-advance on selection */}

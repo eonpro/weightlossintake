@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -13,18 +13,27 @@ export default function MedicalTeamPage() {
   const { t } = useTranslation();
   const { language } = useLanguage();
   const [showContainer, setShowContainer] = useState(false);
+  const hasNavigated = useRef(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowContainer(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
 
-  const handleContinue = () => {
-    router.push('/intake/common-side-effects');
-  };
+    // Auto-advance after 3 seconds
+    const navigationTimer = setTimeout(() => {
+      if (!hasNavigated.current) {
+        hasNavigated.current = true;
+        router.push('/intake/common-side-effects');
+      }
+    }, 3000);
+
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(navigationTimer);
+    };
+  }, [router]);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col page-fade-in">
       {/* Progress bar */}
       <div className="w-full h-1 bg-gray-200">
         <div className="h-full w-[90%] bg-[#f0feab] transition-all duration-300"></div>
@@ -87,20 +96,9 @@ export default function MedicalTeamPage() {
         </div>
       </div>
 
-      {/* Bottom button */}
+      {/* Bottom section */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          className="continue-button"
-        >
-          <span className="text-white">{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright text */}
-        <CopyrightText className="mt-4" />
+        <CopyrightText />
       </div>
     </div>
   );

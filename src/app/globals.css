@@ -532,6 +532,22 @@ html, body {
   padding-top: max(env(safe-area-inset-top), 12px);
 }
 
+/* Page fade-in animation for smooth transitions */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
 /* Smooth scrolling for better mobile experience */
 @media (max-width: 768px) {
   html {

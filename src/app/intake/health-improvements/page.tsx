@@ -12,7 +12,7 @@ export default function HealthImprovementsPage() {
   const router = useRouter();
   const { t } = useTranslation();
   const { language } = useLanguage();
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string | null>(null);
 
   const improvements = [
     {
@@ -62,31 +62,17 @@ export default function HealthImprovementsPage() {
     }
   ];
 
-  const handleToggle = (improvementId: string) => {
-    if (improvementId === 'none') {
-      setSelectedItems(selectedItems.includes('none') ? [] : ['none']);
-    } else {
-      if (selectedItems.includes('none')) {
-        setSelectedItems([improvementId]);
-      } else {
-        if (selectedItems.includes(improvementId)) {
-          setSelectedItems(selectedItems.filter(item => item !== improvementId));
-        } else {
-          setSelectedItems([...selectedItems, improvementId]);
-        }
-      }
-    }
-  };
-
-  const handleContinue = () => {
-    if (selectedItems.length > 0) {
-      sessionStorage.setItem('health_improvements', JSON.stringify(selectedItems));
+  // Auto-advance on selection
+  const handleSelect = (improvementId: string) => {
+    setSelected(improvementId);
+    sessionStorage.setItem('health_improvements', JSON.stringify([improvementId]));
+    setTimeout(() => {
       router.push('/intake/review');
-    }
+    }, 150);
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col page-fade-in">
       {/* Progress bar */}
       <div className="w-full h-1 bg-gray-200">
         <div className="h-full w-[96%] bg-[#f0feab] transition-all duration-300"></div>
@@ -124,17 +110,17 @@ export default function HealthImprovementsPage() {
             {improvements.map((improvement) => (
               <button
                 key={improvement.id}
-                onClick={() => handleToggle(improvement.id)}
+                onClick={() => handleSelect(improvement.id)}
                 className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
-                  selectedItems.includes(improvement.id)
+                  selected === improvement.id
                     ? 'bg-[#f0feab] border border-[#4fa87f]'
                     : 'bg-white border border-gray-200'
                 }`}
               >
                 <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center mr-3 transition-all ${
-                  selectedItems.includes(improvement.id) ? 'bg-gray-200 border-gray-400' : 'bg-white border-gray-300'
+                  selected === improvement.id ? 'bg-gray-200 border-gray-400' : 'bg-white border-gray-300'
                 }`}>
-                  {selectedItems.includes(improvement.id) && (
+                  {selected === improvement.id && (
                     <svg className="w-3 h-3 text-black" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
@@ -149,25 +135,9 @@ export default function HealthImprovementsPage() {
         </div>
       </div>
 
-      {/* Bottom button */}
+      {/* Bottom section */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={selectedItems.length === 0}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-            selectedItems.length > 0
-              ? 'bg-black text-white hover:bg-gray-900' 
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
-        >
-          <span>{language === 'es' ? 'Envía tu Calificación' : 'Submit Your Qualification'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright text */}
-        <CopyrightText className="mt-4" />
+        <CopyrightText />
       </div>
     </div>
   );

@@ -112,7 +112,7 @@ export default function ReviewPage() {
   }, [submitToAirtable]);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col page-fade-in">
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         <div className="max-w-md w-full text-center space-y-8">
           {/* Thank you message - larger font */}
@@ -125,12 +125,12 @@ export default function ReviewPage() {
           
           {/* Lottie Animation - Medical processing animation */}
           <div className="flex justify-center">
-            <div className="w-48 h-48 relative">
+            <div className="w-64 h-64 relative">
               <iframe
                 src="https://lottie.host/embed/9fb843e1-1010-4dd3-bb0c-c9e194ec74ef/FPTlU6rmSq.lottie"
                 style={{
-                  width: '192px',
-                  height: '192px',
+                  width: '256px',
+                  height: '256px',
                   border: 'none',
                   background: 'transparent'
                 }}

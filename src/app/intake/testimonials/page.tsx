@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -14,6 +14,7 @@ export default function TestimonialsPage() {
   const { language } = useLanguage();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const hasNavigated = useRef(false);
 
   // Language-specific testimonial images
   const testimonialImages = language === 'es' ? [
@@ -48,12 +49,20 @@ export default function TestimonialsPage() {
     }
   }, [currentSlide, isPaused, testimonialImages.length]);
 
-  const handleContinue = () => {
-    router.push('/intake/medical-history-overview');
-  };
+  // Auto-advance after 4 seconds
+  useEffect(() => {
+    const navigationTimer = setTimeout(() => {
+      if (!hasNavigated.current) {
+        hasNavigated.current = true;
+        router.push('/intake/medical-history-overview');
+      }
+    }, 4000);
+
+    return () => clearTimeout(navigationTimer);
+  }, [router]);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col page-fade-in">
       {/* Progress bar */}
       <div className="w-full h-1 bg-gray-100">
         <div className="h-full w-[70%] bg-[#f0feab] transition-all duration-300"></div>
@@ -127,21 +136,10 @@ export default function TestimonialsPage() {
         </div>
       </div>
       
-      {/* Bottom section - Continue button and disclaimer */}
+      {/* Bottom section - Disclaimer only */}
       <div className="px-6 lg:px-8 pb-6 max-w-md lg:max-w-lg mx-auto w-full">
-        {/* Continue Button */}
-        <button
-          onClick={handleContinue}
-          className="w-full py-4 px-6 bg-[#413d3d] text-white rounded-2xl text-lg font-medium flex items-center justify-between hover:bg-[#2a2727] transition-colors"
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-          </svg>
-        </button>
-
         {/* Disclaimer */}
-        <p className="text-[11px] text-[#413d3d]/50 text-center mt-4 leading-relaxed">
+        <p className="text-[11px] text-[#413d3d]/50 text-center leading-relaxed">
           {language === 'es'
             ? 'Los medicamentos son solo una parte del programa de pérdida de peso de EONMeds, que también incluye una dieta baja en calorías y mayor actividad física. Los clientes no fueron compensados por compartir sus opiniones. Los resultados provienen de personas que compraron varios productos, incluidos tratamientos con receta. Estos resultados no han sido verificados de forma independiente y los resultados individuales pueden variar.'
             : 'Medications are just one part of the EONMeds weight loss program, which also includes a low-calorie diet and increased physical activity. Clients were not compensated for sharing their opinions. The results come from individuals who purchased various products, including prescription treatments. These results have not been independently verified, and individual results may vary.'}
