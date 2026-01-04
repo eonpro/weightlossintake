@@ -25,6 +25,7 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Pregnancy/Breastfeeding',
   'Address',
   'Current Weight (lbs)',
+  'Ideal Weight',
   'Height',
   'BMI',
   'Goals',
@@ -40,6 +41,14 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Family Conditions',
   'Kidney Conditions',
   'Medical Conditions',
+  // Personal medical history
+  'Personal Diabetes T2',
+  'Personal Gastroparesis',
+  'Personal Pancreatitis',
+  'Personal Thyroid Cancer',
+  'Personal MEN',
+  'Has Mental Health',
+  'Has Chronic Conditions',
   // GLP-1 data
   'GLP-1 History',
   'GLP-1 Type',
@@ -91,6 +100,7 @@ const CHECKBOX_FIELDS = new Set([
 // Fields that are number type in Airtable (need numeric values)
 const NUMBER_FIELDS = new Set([
   'Current Weight (lbs)',
+  'Ideal Weight',
   'BMI',
 ]);
 
@@ -238,6 +248,7 @@ export async function POST(request: NextRequest) {
       'Pregnancy/Breastfeeding': toString(data.pregnancyBreastfeeding),
       'Address': toString(data.address),
       'Current Weight (lbs)': toString(data.currentWeight),
+      'Ideal Weight': toString(data.idealWeight),
       'Height': toString(data.height),
       'BMI': toString(data.bmi),
       'Goals': toString(data.goals),
@@ -253,6 +264,14 @@ export async function POST(request: NextRequest) {
       'Family Conditions': toString(data.familyConditions),
       'Kidney Conditions': toString(data.kidneyConditions),
       'Medical Conditions': toString(data.medicalConditions),
+      // Personal medical history
+      'Personal Diabetes T2': toString(data.personalDiabetes),
+      'Personal Gastroparesis': toString(data.personalGastroparesis),
+      'Personal Pancreatitis': toString(data.personalPancreatitis),
+      'Personal Thyroid Cancer': toString(data.personalThyroidCancer),
+      'Personal MEN': toString(data.personalMen),
+      'Has Mental Health': toString(data.hasMentalHealth),
+      'Has Chronic Conditions': toString(data.hasChronicConditions),
       // GLP-1 data
       'GLP-1 History': toString(data.glp1History),
       'GLP-1 Type': toString(data.glp1Type),
