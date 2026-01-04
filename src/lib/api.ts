@@ -649,7 +649,7 @@ export async function sendToIntakeQ(): Promise<IntakeQResult> {
 
   try {
     // Gather all intake data from session storage
-    const intakeData = gatherIntakeData();
+    const intakeData = collectIntakeData();
     
     // Parse stored data
     const nameData = sessionStorage.getItem('intake_name');
