@@ -8,21 +8,23 @@ const AIRTABLE_TABLE_NAME = process.env.AIRTABLE_TABLE_NAME || 'Intake Submissio
 // Known safe field names that exist in Airtable
 // IMPORTANT: Only include fields that are actually created in your Airtable table
 // Check your Airtable table columns and add matching field names here
-// All values will be converted to strings to avoid type mismatches
 const KNOWN_AIRTABLE_FIELDS = new Set([
-  // Core identification fields - these should exist in most setups
+  // Core identification fields (text type)
   'Session ID',
   'First Name',
   'Last Name',
   'Email',
   'Phone',
   'State',
-  'Qualified',
   'Language',
-  // These will be included if the columns exist in Airtable:
   'Type',
   'Taking Medications',
   'Personalized Treatment Interest',
+]);
+
+// Fields that are checkbox type in Airtable (need boolean values)
+const CHECKBOX_FIELDS = new Set([
+  'Qualified',
 ]);
 
 interface IntakeRecord {
@@ -151,8 +153,8 @@ export async function POST(request: NextRequest) {
       return String(val);
     };
 
-    // Build fields object - ALL values as strings to avoid type mismatches
-    const allFields: Record<string, string> = {
+    // Build fields object
+    const allFields: Record<string, string | boolean> = {
       'Session ID': toString(data.sessionId),
       'First Name': toString(data.firstName),
       'Last Name': toString(data.lastName),
@@ -190,7 +192,7 @@ export async function POST(request: NextRequest) {
       'Tirzepatide Success': toString(data.tirzepatideSuccess),
       'Referral Sources': toString(data.referralSources),
       'Referrer Name': toString(data.referrerName),
-      'Qualified': toString(data.qualified),
+      'Qualified': data.qualified ?? false,
       'Taking Medications': toString(data.takingMedications),
       'Personalized Treatment Interest': toString(data.personalizedTreatmentInterest),
       'Language': toString(data.flowLanguage),
@@ -200,8 +202,8 @@ export async function POST(request: NextRequest) {
       'Cancellation Policy Accepted': toString(data.cancellationPolicyAccepted),
     };
 
-    // Filter out empty values AND unknown field names to prevent Airtable 422 errors
-    const fields: Record<string, string> = {};
+    // Build final fields object with proper types
+    const fields: Record<string, string | boolean> = {};
     const skippedFields: string[] = [];
     
     for (const [key, value] of Object.entries(allFields)) {
@@ -210,8 +212,13 @@ export async function POST(request: NextRequest) {
         continue;
       }
       
-      // Only include fields that are known to exist in Airtable
-      // This prevents 422 errors for missing columns
+      // Handle checkbox fields (need boolean)
+      if (CHECKBOX_FIELDS.has(key)) {
+        fields[key] = value === 'Yes' || value === 'true' || value === true;
+        continue;
+      }
+      
+      // Only include text fields that are known to exist in Airtable
       if (KNOWN_AIRTABLE_FIELDS.has(key)) {
         fields[key] = value;
       } else {
