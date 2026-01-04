@@ -15,13 +15,21 @@ const IntroLottie = dynamic(() => import('@/components/IntroLottie'), {
   ssr: false
 });
 
+// Star SVG component
+const StarIcon = () => (
+  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="#FFD700">
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+  </svg>
+);
+
 export default function Home() {
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const router = useRouter();
   const [showIntro, setShowIntro] = useState(true); // Always start with intro showing
   const [fadeOut, setFadeOut] = useState(false);
   const [mounted, setMounted] = useState(false);
-  
+
   // Handle navigation to goals page
   const handleContinue = () => {
     // Track Privacy Policy acceptance from landing page
@@ -29,13 +37,13 @@ export default function Home() {
     sessionStorage.setItem('privacy_policy_accepted_at', new Date().toISOString());
     router.push('/intake/goals');
   };
-  
+
   // Enable Enter key navigation when not showing intro
   useEnterNavigation(handleContinue, showIntro);
 
   useEffect(() => {
     setMounted(true);
-    
+
     // Always show intro for 3 seconds
     const timer = setTimeout(() => {
       setFadeOut(true);
@@ -43,7 +51,7 @@ export default function Home() {
         setShowIntro(false);
       }, 500);
     }, 3000); // 3 seconds duration
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -62,10 +70,10 @@ export default function Home() {
 
   // Progress bar component
   const progressBar = <div className="w-full h-1 bg-[#f0feab]"></div>;
-  
+
   // Logo component
   const logo = <EonmedsLogo />;
-  
+
   // Button with disclaimers
   const buttonWithDisclaimer = (
     <>
@@ -77,8 +85,8 @@ export default function Home() {
           {t('landing.disclaimer1.end')}
         </p>
       </div>
-      
-      <button 
+
+      <button
         onClick={handleContinue}
         className="continue-button">
         <span className="!text-white">{t('landing.button.start')}</span>
@@ -86,7 +94,7 @@ export default function Home() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
         </svg>
       </button>
-      
+
       {/* Copyright footer - matching other pages */}
       <div className="mt-6 text-center">
         <p className="copyright-text">
@@ -104,14 +112,51 @@ export default function Home() {
       button={buttonWithDisclaimer}
       compactMode={true}
     >
+      {/* Nurse Image - Circular */}
+      <div className="mb-4">
+        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-[#f0feab]/30">
+          <img
+            src="https://static.wixstatic.com/media/c49a9b_3505f05c6c774d748c2e20f178e7c917~mv2.png"
+            alt="Healthcare professional"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </div>
+
       {/* Title and subtitle */}
-      <div className="text-left title-spacing">
+      <div className="text-left">
         <h1 className="page-title" style={{ color: '#4fa87f' }}>
           {t('landing.title')}
         </h1>
         <p className="page-subtitle">
           {t('landing.subtitle')}
         </p>
+      </div>
+
+      {/* Trust section */}
+      <div className="mt-6 space-y-3">
+        {/* Trusted by text */}
+        <p className="text-[15px] font-medium text-[#413d3d]">
+          {language === 'es' ? 'Confiado por más de 20,000 pacientes' : 'Trusted by over 20,000 patients'}
+        </p>
+
+        {/* Patient photos */}
+        <div className="flex -space-x-3">
+          <img
+            src="https://static.wixstatic.com/media/c49a9b_db8b1c89bbf14aeaa7c55037b3fd6aec~mv2.webp"
+            alt="Happy patients"
+            className="w-28 h-auto rounded-lg"
+          />
+        </div>
+
+        {/* 5 Star rating */}
+        <div className="flex space-x-1">
+          <StarIcon />
+          <StarIcon />
+          <StarIcon />
+          <StarIcon />
+          <StarIcon />
+        </div>
       </div>
     </ViewportAwareLayout>
   );
