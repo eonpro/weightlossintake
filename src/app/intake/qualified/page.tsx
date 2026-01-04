@@ -174,13 +174,13 @@ export default function QualifiedPage() {
         {/* Checkout button */}
         <button
           onClick={handleCheckout}
-          className="w-full max-w-sm bg-[#413d3d] hover:bg-[#2a2727] py-4 px-6 rounded-full flex items-center justify-between transition-colors"
+          className="w-full max-w-sm bg-[#413d3d] hover:bg-[#2a2727] py-3 px-6 rounded-full flex items-center justify-between transition-colors"
         >
-          <div className="text-left">
+          <div className="text-left leading-tight">
             <div className="font-semibold text-base" style={{ color: '#ffffff' }}>
               {language === 'es' ? 'Completar Checkout' : 'Complete Check Out'}
             </div>
-            <div className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+            <div className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
               {language === 'es' ? 'Descuentos aplicados al checkout' : 'Discounts applied at check out'}
             </div>
           </div>
