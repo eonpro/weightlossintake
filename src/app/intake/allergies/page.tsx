@@ -168,7 +168,7 @@ export default function AllergiesPage() {
                   <button
                     key={index}
                     onClick={() => handleAddItem(suggestion)}
-                    className="w-full text-left p-3 text-white hover:bg-white/10 first:rounded-t-2xl last:rounded-b-2xl"
+                    className="w-full text-left p-3 text-[#413d3d] hover:bg-white/10 first:rounded-t-2xl last:rounded-b-2xl"
                   >
                     {suggestion}
                   </button>
@@ -189,7 +189,7 @@ export default function AllergiesPage() {
                     key={index}
                     className="bg-white/20 px-3 py-2 rounded-full flex items-center gap-2"
                   >
-                    <span className="text-sm text-white">{item}</span>
+                    <span className="text-sm text-[#413d3d]">{item}</span>
                     <button
                       onClick={() => handleRemoveItem(item)}
                       className="text-[#413d3d]/60 hover:text-[#413d3d]"
@@ -229,7 +229,7 @@ export default function AllergiesPage() {
                       </svg>
                     )}
                   </div>
-                  <span className="text-[16px] lg:text-lg font-medium leading-tight text-white">
+                  <span className="text-[16px] lg:text-lg font-medium leading-tight text-[#413d3d]">
                     {language === 'es' 
                       ? 'No tengo alergias a medicamentos o suplementos'
                       : 'I have no allergies to medications or supplements'}

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import EonmedsLogo from '@/components/EonmedsLogo';
 import IntakePageLayout from '@/components/IntakePageLayout';
+import CopyrightText from '@/components/CopyrightText';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 
@@ -214,13 +215,7 @@ export default function ContactInfoPage() {
     </button>
   );
 
-  const copyrightText = (
-    <p className="text-[9px] lg:text-[11px] text-gray-400 text-center leading-tight">
-      {language === 'es' 
-        ? '© 2025 EONPro, LLC. Todos los derechos reservados.\nProceso exclusivo y protegido. Copiar o reproducir\nsin autorización está prohibido.'
-        : '© 2025 EONPro, LLC. All rights reserved.\nExclusive and protected process. Copying or reproduction\nwithout authorization is prohibited.'}
-    </p>
-  );
+  const copyrightText = <CopyrightText />;
 
   return (
     <IntakePageLayout

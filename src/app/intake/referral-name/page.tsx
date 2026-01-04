@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import EonmedsLogo from '@/components/EonmedsLogo';
+import CopyrightText from '@/components/CopyrightText';
 
 export default function ReferralNamePage() {
   const router = useRouter();
@@ -44,7 +45,7 @@ export default function ReferralNamePage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-[#d2c7bb] to-[#e9e1d7] flex flex-col">
       {/* Progress bar */}
       <div className="w-full h-1 bg-white/20">
         <div className="h-full w-[95%] bg-[#f0feab] transition-all duration-300"></div>
@@ -129,11 +130,7 @@ export default function ReferralNamePage() {
         </button>
         
         {/* Copyright text */}
-        <p className="text-[9px] lg:text-[11px] text-gray-400 text-center mt-4 leading-tight">
-          {language === 'es' 
-            ? '© 2025 EONPro, LLC. Todos los derechos reservados.\nProceso exclusivo y protegido. Copiar o reproducir\nsin autorización está prohibido.'
-            : '© 2025 EONPro, LLC. All rights reserved.\nExclusive and protected process. Copying or reproduction\nwithout authorization is prohibited.'}
-        </p>
+        <CopyrightText className="mt-4" />
       </div>
     </div>
   );

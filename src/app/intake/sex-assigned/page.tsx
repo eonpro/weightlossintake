@@ -47,7 +47,7 @@ export default function SexAssignedPage() {
           </p>
           
           {/* Selection prompt */}
-          <p className="text-lg text-white mt-8">{t('sex.selectPrompt')}</p>
+          <p className="text-lg text-[#413d3d] mt-8">{t('sex.selectPrompt')}</p>
           
           {/* Options */}
           <div className="space-y-3">
