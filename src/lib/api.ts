@@ -722,8 +722,8 @@ export async function sendToIntakeQ(): Promise<IntakeQResult> {
       personalizedTreatmentInterest: intakeData.qualificationStatus?.personalizedTreatmentInterest || '',
       healthImprovements: arrayToString(intakeData.medicalProfile?.goals),
       weightLossHistory: arrayToString(intakeData.lifestyle?.weightLossHistory),
-      referralSources: arrayToString(intakeData.lifestyle?.referralSources),
-      referrerName: intakeData.lifestyle?.referrerName || '',
+      referralSources: arrayToString(intakeData.referral?.sources),
+      referrerName: intakeData.referral?.referrerName || '',
       language: sessionStorage.getItem('preferred_language') || 'en',
     };
 
