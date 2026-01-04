@@ -71,7 +71,7 @@ export default function ConsentPage() {
             <div className="bg-[#f0feab] rounded-2xl overflow-hidden flex h-20">
               <div className="flex-shrink-0 relative w-20">
                 <Image
-                  src="https://static.wixstatic.com/media/c49a9b_23b226f763e04a678830d974e42cbf2d~mv2.webp"
+                  src="https://static.wixstatic.com/media/c49a9b_8d1a5c0e8f6247ba9d79bf0abc49169a~mv2.webp"
                   alt="Healthcare professional"
                   fill
                   sizes="(max-width: 768px) 80px, 80px"
@@ -89,7 +89,7 @@ export default function ConsentPage() {
             <div className="bg-[#e4fb74] rounded-2xl overflow-hidden flex h-20">
               <div className="flex-shrink-0 relative w-24">
                 <Image
-                  src="https://static.wixstatic.com/media/c49a9b_4f62708aea0f4b2da0450a97e2e03653~mv2.webp"
+                  src="https://static.wixstatic.com/media/c49a9b_5e690e4cf43e4e769ef7d4e9f5691a5b~mv2.webp"
                   alt="Licensed medical provider"
                   fill
                   sizes="(max-width: 768px) 96px, 96px"
