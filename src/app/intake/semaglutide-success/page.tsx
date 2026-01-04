@@ -37,11 +37,13 @@ export default function SemaglutideSuccessPage() {
     }
   ];
 
-  const handleContinue = () => {
-    if (selected) {
-      sessionStorage.setItem('semaglutide_success', selected);
+  // Auto-advance on selection
+  const handleSelect = (value: string) => {
+    setSelected(value);
+    sessionStorage.setItem('semaglutide_success', value);
+    setTimeout(() => {
       router.push('/intake/dosage-satisfaction');
-    }
+    }, 150);
   };
 
   return (
@@ -76,11 +78,11 @@ export default function SemaglutideSuccessPage() {
             {successOptions.map((option) => (
               <button
                 key={option.id}
-                onClick={() => setSelected(option.id)}
+                onClick={() => handleSelect(option.id)}
                 className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
                   selected === option.id
-                    ? 'bg-[#f0feab] border-2 border-[#f0feab]'
-                    : 'bg-white border-2 border-gray-200'
+                    ? 'bg-[#f0feab] border border-[#4fa87f]'
+                    : 'bg-white border border-gray-200'
                 }`}
               >
                 <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center mr-3 transition-all ${
@@ -101,25 +103,9 @@ export default function SemaglutideSuccessPage() {
         </div>
       </div>
 
-      {/* Bottom button */}
+      {/* Copyright footer */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={!selected}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-            selected 
-              ? 'bg-black text-white hover:bg-gray-900' 
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright text */}
-        <CopyrightText className="mt-4" />
+        <CopyrightText />
       </div>
     </div>
   );

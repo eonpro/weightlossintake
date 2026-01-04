@@ -114,11 +114,11 @@ export default function ReferralSourcePage() {
                 onClick={() => handleSelect(source.id)}
                 className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
                   selected === source.id
-                    ? 'bg-[#f0feab] border-2 border-[#4fa87f]'
-                    : 'bg-white border-2 border-gray-200 hover:border-gray-300'
+                    ? 'bg-[#f0feab] border border-[#4fa87f]'
+                    : 'bg-white border border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <div className={`w-5 h-5 flex-shrink-0 rounded border-2 flex items-center justify-center mr-3 transition-all ${
+                <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center mr-3 transition-all ${
                   selected === source.id ? 'bg-white border-[#413d3d]' : 'bg-white border-gray-300'
                 }`}>
                   {selected === source.id && (

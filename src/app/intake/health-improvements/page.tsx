@@ -127,8 +127,8 @@ export default function HealthImprovementsPage() {
                 onClick={() => handleToggle(improvement.id)}
                 className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
                   selectedItems.includes(improvement.id)
-                    ? 'bg-[#f0feab] border-2 border-[#f0feab]'
-                    : 'bg-white border-2 border-gray-200'
+                    ? 'bg-[#f0feab] border border-[#4fa87f]'
+                    : 'bg-white border border-gray-200'
                 }`}
               >
                 <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center mr-3 transition-all ${
