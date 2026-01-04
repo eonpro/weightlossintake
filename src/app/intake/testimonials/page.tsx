@@ -164,10 +164,6 @@ export default function TestimonialsPage() {
       </div>
       
       <div className="px-6 lg:px-8 pb-6 max-w-md lg:max-w-lg mx-auto w-full">
-        {/* Auto-advance message */}
-        <p className="text-center text-gray-400 text-sm mb-4 animate-pulse">
-          {language === 'es' ? 'Cargando siguiente pantalla...' : 'Next screen loading...'}
-        </p>
         {/* Disclaimer */}
         <p className="copyright-text text-center mt-4">
           {language === 'es'

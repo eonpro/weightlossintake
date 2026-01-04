@@ -115,10 +115,6 @@ export default function ObesityStatsPage() {
       {/* Bottom section with copyright */}
       <div className="fixed bottom-0 left-0 right-0 w-full z-50 px-6 pb-6 pt-8" style={{ background: 'linear-gradient(to top, #ffffff 0%, #ffffff 50%, transparent 100%)' }}>
         <div className="max-w-md lg:max-w-lg mx-auto">
-            {/* Auto-advance message */}
-            <p className="text-center text-gray-400 text-sm mb-4 animate-pulse">
-              {isSpanish ? 'Cargando siguiente pantalla...' : 'Next screen loading...'}
-            </p>
             {/* Copyright footer */}
             <div className="text-center">
               <p className="copyright-text">

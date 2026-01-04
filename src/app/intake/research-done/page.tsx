@@ -125,10 +125,6 @@ export default function ResearchDonePage() {
       
       {/* Bottom section */}
       <div className="px-6 lg:px-8 pb-6 lg:pb-8 max-w-md lg:max-w-lg mx-auto w-full">
-        {/* Auto-advance message */}
-        <p className="text-center text-gray-400 text-sm mb-4 animate-pulse">
-          {language === 'es' ? 'Cargando siguiente pantalla...' : 'Next screen loading...'}
-        </p>
         {/* Copyright text */}
         <CopyrightText className="mt-4" />
       </div>
