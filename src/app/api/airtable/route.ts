@@ -7,54 +7,22 @@ const AIRTABLE_TABLE_NAME = process.env.AIRTABLE_TABLE_NAME || 'Intake Submissio
 
 // Known safe field names that exist in Airtable
 // IMPORTANT: Only include fields that are actually created in your Airtable table
-// Fields with wrong types will cause 422 errors
+// Check your Airtable table columns and add matching field names here
 // All values will be converted to strings to avoid type mismatches
 const KNOWN_AIRTABLE_FIELDS = new Set([
+  // Core identification fields - these should exist in most setups
   'Session ID',
   'First Name',
   'Last Name',
   'Email',
   'Phone',
-  'Date of Birth',
-  'Sex',
   'State',
-  'Address',
-  'Current Weight',
-  'Ideal Weight',
-  'Height',
-  'BMI',
-  'Goals',
-  'Activity Level',
-  'Chronic Conditions',
-  'Digestive Conditions',
-  'Medications',
-  'Allergies',
-  'Mental Health Conditions',
-  'Surgery History',
-  'Surgery Details',
-  'Family Conditions',
-  'Kidney Conditions',
-  'Medical Conditions',
-  'GLP-1 History',
-  'GLP-1 Type',
-  'Side Effects',
-  'Medication Preference',
-  'Semaglutide Dosage',
-  'Semaglutide Side Effects',
-  'Semaglutide Success',
-  'Tirzepatide Dosage',
-  'Tirzepatide Side Effects',
-  'Tirzepatide Success',
-  'Referral Sources',
-  'Referrer Name',
   'Qualified',
+  'Language',
+  // These will be included if the columns exist in Airtable:
+  'Type',
   'Taking Medications',
   'Personalized Treatment Interest',
-  'Language',
-  'Privacy Policy Accepted',
-  'Terms of Use Accepted',
-  'Telehealth Consent Accepted',
-  'Cancellation Policy Accepted',
 ]);
 
 interface IntakeRecord {
