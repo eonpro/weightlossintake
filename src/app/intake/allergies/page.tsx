@@ -113,15 +113,15 @@ export default function AllergiesPage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Progress bar */}
-      <div className="w-full h-1 bg-white/20">
+      <div className="w-full h-1 bg-gray-200">
         <div className="h-full w-[88%] bg-[#f0feab] transition-all duration-300"></div>
       </div>
       
       {/* Back button */}
       <div className="px-6 lg:px-8 pt-6 max-w-md lg:max-w-2xl mx-auto w-full">
-        <Link href="/intake/medications" className="inline-block p-2 -ml-2 hover:bg-white/10 rounded-lg">
+        <Link href="/intake/medications" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
           <svg className="w-6 h-6 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
           </svg>
@@ -163,12 +163,12 @@ export default function AllergiesPage() {
             
             {/* Suggestions dropdown */}
             {showSuggestions && searchValue && filteredSuggestions.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-2xl shadow-lg z-10">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-gray-200 backdrop-blur-sm border border-white/30 rounded-2xl shadow-lg z-10">
                 {filteredSuggestions.map((suggestion, index) => (
                   <button
                     key={index}
                     onClick={() => handleAddItem(suggestion)}
-                    className="w-full text-left p-3 text-[#413d3d] hover:bg-white/10 first:rounded-t-2xl last:rounded-b-2xl"
+                    className="w-full text-left p-3 text-[#413d3d] hover:bg-gray-100 first:rounded-t-2xl last:rounded-b-2xl"
                   >
                     {suggestion}
                   </button>
@@ -187,7 +187,7 @@ export default function AllergiesPage() {
                 {selectedItems.map((item, index) => (
                   <div
                     key={index}
-                    className="bg-white/20 px-3 py-2 rounded-full flex items-center gap-2"
+                    className="bg-gray-200 px-3 py-2 rounded-full flex items-center gap-2"
                   >
                     <span className="text-sm text-[#413d3d]">{item}</span>
                     <button

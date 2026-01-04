@@ -142,14 +142,14 @@ export default function QualifiedPage() {
           className="w-full max-w-sm bg-[#413d3d] hover:bg-[#2a2727] py-4 px-6 rounded-full flex items-center justify-between transition-colors"
         >
           <div className="text-left">
-            <div className="font-semibold text-base text-white">
+            <div className="font-semibold text-base" style={{ color: '#ffffff' }}>
               {language === 'es' ? 'Completar Checkout' : 'Complete Check Out'}
             </div>
-            <div className="text-sm text-white/80">
+            <div className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
               {language === 'es' ? 'Descuentos aplicados al checkout' : 'Discounts applied at check out'}
             </div>
           </div>
-          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: '#ffffff' }}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 12h12m0 0l-4-4m4 4l-4 4"></path>
           </svg>
         </button>

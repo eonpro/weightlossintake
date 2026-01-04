@@ -4,12 +4,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useTranslation } from '@/hooks/useTranslation';
 import EonmedsLogo from '@/components/EonmedsLogo';
+import CopyrightText from '@/components/CopyrightText';
 
 export default function KidneyConditionsPage() {
   const router = useRouter();
-  const { t } = useTranslation();
   const { language } = useLanguage();
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
 
@@ -27,6 +26,11 @@ export default function KidneyConditionsPage() {
 
   const handleToggleCondition = (conditionId: string) => {
     if (conditionId === 'none') {
+      // "None" is selected - save and auto-navigate
+      sessionStorage.setItem('kidney_conditions', JSON.stringify(['none']));
+      setTimeout(() => {
+        router.push('/intake/medical-conditions');
+      }, 200);
       setSelectedConditions(['none']);
     } else {
       setSelectedConditions(prev => {
@@ -46,13 +50,13 @@ export default function KidneyConditionsPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Progress bar */}
-      <div className="w-full h-1 bg-white/20">
+      <div className="w-full h-1 bg-gray-200">
         <div className="h-full w-[89%] bg-[#f0feab] transition-all duration-300"></div>
       </div>
       
       {/* Back button */}
-      <div className="px-6 lg:px-8 pt-8 lg:pt-6">
-        <Link href="/intake/allergies" className="inline-block p-2 -ml-2 hover:bg-white/10 rounded-lg">
+      <div className="px-6 lg:px-8 pt-6 max-w-md lg:max-w-2xl mx-auto w-full">
+        <Link href="/intake/medications" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
           <svg className="w-6 h-6 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
           </svg>
@@ -79,23 +83,23 @@ export default function KidneyConditionsPage() {
                 onClick={() => handleToggleCondition(condition.id)}
                 className={`w-full text-left p-4 rounded-2xl border transition-all ${
                   selectedConditions.includes(condition.id)
-                    ? 'border-[#f0feab] bg-[#f0feab]'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-[#4fa87f] bg-[#f0feab]'
+                    : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}
               >
                 <div className="flex items-center">
                   <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center flex-shrink-0 ${
                     selectedConditions.includes(condition.id)
-                      ? 'border-[#f0feab] bg-[#f0feab]'
-                      : 'border-gray-300'
+                      ? 'border-[#413d3d] bg-white'
+                      : 'border-gray-300 bg-white'
                   }`}>
                     {selectedConditions.includes(condition.id) && (
-                      <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                       </svg>
                     )}
                   </div>
-                  <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                  <span className="text-[16px] lg:text-lg font-medium leading-tight text-[#413d3d]">
                     {condition.label}
                   </span>
                 </div>
@@ -105,39 +109,25 @@ export default function KidneyConditionsPage() {
         </div>
       </div>
       
-      {/* Continue button */}
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={selectedConditions.length === 0}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-colors ${
-            selectedConditions.length > 0
-              ? 'bg-black text-white hover:bg-gray-800' 
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-          }`}
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright footer */}
-        <div className="mt-6 text-center">
-          <p className="text-[9px] lg:text-[11px] text-gray-400 leading-tight">
-            {language === 'es' ? (
-              <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
-                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
-              </>
-            ) : (
-              <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
-                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
-              </>
-            )}
-          </p>
+      {/* Continue button - only show if conditions other than 'none' are selected */}
+      {selectedConditions.length > 0 && !selectedConditions.includes('none') && (
+        <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
+          <button 
+            onClick={handleContinue}
+            className="w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-colors bg-[#413d3d] hover:bg-[#2a2727]"
+            style={{ color: '#ffffff' }}
+          >
+            <span style={{ color: '#ffffff' }}>{language === 'es' ? 'Continuar' : 'Continue'}</span>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: '#ffffff' }}>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
         </div>
+      )}
+      
+      {/* Copyright footer */}
+      <div className="px-6 lg:px-8 pb-6 max-w-md lg:max-w-2xl mx-auto w-full">
+        <CopyrightText />
       </div>
     </div>
   );
