@@ -161,9 +161,9 @@ export default function ContactInfoPage() {
         ? Math.round(((weightLbs / (heightInches * heightInches)) * 703) * 10) / 10 
         : null;
       
-      // Format height string
-      const heightString = parsedHeight.feet 
-        ? `${parsedHeight.feet}'${parsedHeight.inches || 0}"` 
+      // Format height string using parsed integer values for consistency with BMI calculation
+      const heightString = heightFeet 
+        ? `${heightFeet}'${heightInchesVal}"` 
         : '';
       
       // Format DOB
