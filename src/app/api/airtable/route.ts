@@ -20,11 +20,59 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Type',
   'Taking Medications',
   'Personalized Treatment Interest',
+  // Medical data fields (text type)
+  'Goals',
+  'Activity Level',
+  'Current Weight',
+  'Ideal Weight',
+  'Height',
+  'BMI',
+  'Date of Birth',
+  'Sex',
+  'Address',
+  // Medical history
+  'Chronic Conditions',
+  'Digestive Conditions',
+  'Medications',
+  'Allergies',
+  'Mental Health Conditions',
+  'Surgery History',
+  'Surgery Details',
+  'Family Conditions',
+  'Kidney Conditions',
+  'Medical Conditions',
+  // GLP-1 data
+  'GLP-1 History',
+  'GLP-1 Type',
+  'Side Effects',
+  'Medication Preference',
+  'Semaglutide Dosage',
+  'Semaglutide Side Effects',
+  'Semaglutide Success',
+  'Tirzepatide Dosage',
+  'Tirzepatide Side Effects',
+  'Tirzepatide Success',
+  // Referral
+  'Referral Sources',
+  'Referrer Name',
+  // Consent fields
+  'Privacy Policy Accepted',
+  'Terms of Use Accepted',
+  'Telehealth Consent Accepted',
+  'Cancellation Policy Accepted',
+  'Florida Bill of Rights Accepted',
+  'Florida Consent Accepted',
 ]);
 
 // Fields that are checkbox type in Airtable (need boolean values)
 const CHECKBOX_FIELDS = new Set([
   'Qualified',
+  'Privacy Policy Accepted',
+  'Terms of Use Accepted',
+  'Telehealth Consent Accepted',
+  'Cancellation Policy Accepted',
+  'Florida Bill of Rights Accepted',
+  'Florida Consent Accepted',
 ]);
 
 interface IntakeRecord {
@@ -196,10 +244,12 @@ export async function POST(request: NextRequest) {
       'Taking Medications': toString(data.takingMedications),
       'Personalized Treatment Interest': toString(data.personalizedTreatmentInterest),
       'Language': toString(data.flowLanguage),
-      'Privacy Policy Accepted': toString(data.privacyPolicyAccepted),
-      'Terms of Use Accepted': toString(data.termsOfUseAccepted),
-      'Telehealth Consent Accepted': toString(data.telehealthConsentAccepted),
-      'Cancellation Policy Accepted': toString(data.cancellationPolicyAccepted),
+      'Privacy Policy Accepted': data.privacyPolicyAccepted ?? false,
+      'Terms of Use Accepted': data.termsOfUseAccepted ?? false,
+      'Telehealth Consent Accepted': data.telehealthConsentAccepted ?? false,
+      'Cancellation Policy Accepted': data.cancellationPolicyAccepted ?? false,
+      'Florida Bill of Rights Accepted': data.floridaBillOfRightsAccepted ?? false,
+      'Florida Consent Accepted': data.floridaConsentAccepted ?? false,
     };
 
     // Build final fields object with proper types
