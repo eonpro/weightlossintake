@@ -155,10 +155,14 @@ export default function ContactInfoPage() {
       const parsedGoals = goalsData ? JSON.parse(goalsData) : [];
       const parsedDob = dobData ? JSON.parse(dobData) : {};
       
-      // Calculate BMI
+      // Calculate BMI - ensure height values are parsed as integers
       const weightLbs = currentWeight ? parseInt(currentWeight) : null;
-      const heightInches = parsedHeight.feet && parsedHeight.inches 
-        ? (parsedHeight.feet * 12) + parsedHeight.inches 
+      const heightFeet = parsedHeight.feet ? parseInt(parsedHeight.feet) : null;
+      const heightInchesVal = parsedHeight.inches !== undefined && parsedHeight.inches !== '' 
+        ? parseInt(parsedHeight.inches) 
+        : 0;
+      const heightInches = heightFeet 
+        ? (heightFeet * 12) + heightInchesVal 
         : null;
       const bmi = weightLbs && heightInches 
         ? Math.round(((weightLbs / (heightInches * heightInches)) * 703) * 10) / 10 

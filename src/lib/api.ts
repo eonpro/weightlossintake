@@ -510,8 +510,8 @@ export function collectIntakeData(): IntakeSubmission {
   const weightObject = {
     currentWeight: currentWeight ? parseInt(currentWeight) : null,
     idealWeight: idealWeight ? parseInt(idealWeight) : null,
-    heightFeet: parsedHeight.feet || null,
-    heightInches: parsedHeight.inches || null
+    heightFeet: parsedHeight.feet ? parseInt(parsedHeight.feet) : null,
+    heightInches: parsedHeight.inches !== undefined && parsedHeight.inches !== '' ? parseInt(parsedHeight.inches) : null
   };
 
   const intakeData: IntakeSubmission = {
