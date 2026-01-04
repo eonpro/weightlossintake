@@ -101,6 +101,12 @@ const CHECKBOX_FIELDS = new Set([
   'Florida Consent Accepted',
 ]);
 
+// Fields that are number type in Airtable (need numeric values)
+const NUMBER_FIELDS = new Set([
+  'Current Weight',
+  'BMI',
+]);
+
 interface IntakeRecord {
   sessionId: string;
   // Personal Info
@@ -229,7 +235,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Build fields object - ALL fields from Airtable
-    const allFields: Record<string, string | boolean> = {
+    const allFields: Record<string, string | boolean | number> = {
       // Core identification
       'Session ID': toString(data.sessionId),
       'First Name': toString(data.firstName),
@@ -312,18 +318,27 @@ export async function POST(request: NextRequest) {
     };
 
     // Build final fields object with proper types
-    const fields: Record<string, string | boolean> = {};
+    const fields: Record<string, string | boolean | number> = {};
     const skippedFields: string[] = [];
     
     for (const [key, value] of Object.entries(allFields)) {
       // Skip empty values
-      if (!value || value === '') {
+      if (value === undefined || value === null || value === '') {
         continue;
       }
       
       // Handle checkbox fields (need boolean)
       if (CHECKBOX_FIELDS.has(key)) {
         fields[key] = value === 'Yes' || value === 'true' || value === true;
+        continue;
+      }
+      
+      // Handle number fields (need numeric values)
+      if (NUMBER_FIELDS.has(key)) {
+        const numValue = parseFloat(String(value));
+        if (!isNaN(numValue)) {
+          fields[key] = numValue;
+        }
         continue;
       }
       
