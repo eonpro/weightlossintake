@@ -6,7 +6,9 @@ const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 const AIRTABLE_TABLE_NAME = process.env.AIRTABLE_TABLE_NAME || 'Intake Submissions';
 
 // Known safe field names that exist in Airtable
-// Add fields here as you create them in Airtable
+// IMPORTANT: Only include fields that are actually created in your Airtable table
+// Fields with wrong types will cause 422 errors
+// All values will be converted to strings to avoid type mismatches
 const KNOWN_AIRTABLE_FIELDS = new Set([
   'Session ID',
   'First Name',
@@ -15,12 +17,10 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Phone',
   'Date of Birth',
   'Sex',
-  'Blood Pressure',
-  'Pregnancy/Breastfeeding',
   'State',
   'Address',
-  'Current Weight (lbs)',
-  'Ideal Weight (lbs)',
+  'Current Weight',
+  'Ideal Weight',
   'Height',
   'BMI',
   'Goals',
@@ -35,13 +35,6 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Family Conditions',
   'Kidney Conditions',
   'Medical Conditions',
-  'Personal Diabetes T2',
-  'Personal Gastroparesis',
-  'Personal Pancreatitis',
-  'Personal Thyroid Cancer',
-  'Personal MEN',
-  'Has Mental Health',
-  'Has Chronic Conditions',
   'GLP-1 History',
   'GLP-1 Type',
   'Side Effects',
@@ -52,32 +45,16 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Tirzepatide Dosage',
   'Tirzepatide Side Effects',
   'Tirzepatide Success',
-  'Dosage Satisfaction',
-  'Dosage Interest',
-  'Alcohol Consumption',
-  'Recreational Drugs',
-  'Weight Loss History',
-  'Weight Loss Support',
-  'Health Improvements',
   'Referral Sources',
   'Referrer Name',
-  'Referrer Type',
   'Qualified',
   'Taking Medications',
   'Personalized Treatment Interest',
   'Language',
   'Privacy Policy Accepted',
-  'Privacy Policy Accepted At',
   'Terms of Use Accepted',
-  'Terms of Use Accepted At',
   'Telehealth Consent Accepted',
-  'Telehealth Consent Accepted At',
   'Cancellation Policy Accepted',
-  'Cancellation Policy Accepted At',
-  'Florida Bill of Rights Accepted',
-  'Florida Bill of Rights Accepted At',
-  'Florida Consent Accepted',
-  'Florida Consent Accepted At',
 ]);
 
 interface IntakeRecord {
@@ -198,88 +175,70 @@ export async function POST(request: NextRequest) {
       }, { headers: corsHeaders });
     }
 
-    // Build fields object - only include non-empty values
-    // This prevents 422 errors when Airtable table doesn't have all columns
-    const allFields: Record<string, unknown> = {
-      'Session ID': data.sessionId,
-      'First Name': data.firstName,
-      'Last Name': data.lastName,
-      'Email': data.email,
-      'Phone': data.phone,
-      'Date of Birth': data.dob,
-      'Sex': data.sex,
-      'Blood Pressure': data.bloodPressure,
-      'Pregnancy/Breastfeeding': data.pregnancyBreastfeeding,
-      'State': data.state,
-      'Address': data.address,
-      'Current Weight (lbs)': data.currentWeight,
-      'Ideal Weight (lbs)': data.idealWeight,
-      'Height': data.height,
-      'BMI': data.bmi,
-      'Goals': data.goals,
-      'Activity Level': data.activityLevel,
-      'Chronic Conditions': data.chronicConditions,
-      'Digestive Conditions': data.digestiveConditions,
-      'Medications': data.medications,
-      'Allergies': data.allergies,
-      'Mental Health Conditions': data.mentalHealthConditions,
-      'Surgery History': data.surgeryHistory,
-      'Surgery Details': data.surgeryDetails,
-      'Family Conditions': data.familyConditions,
-      'Kidney Conditions': data.kidneyConditions,
-      'Medical Conditions': data.medicalConditions,
-      'Personal Diabetes T2': data.personalDiabetes,
-      'Personal Gastroparesis': data.personalGastroparesis,
-      'Personal Pancreatitis': data.personalPancreatitis,
-      'Personal Thyroid Cancer': data.personalThyroidCancer,
-      'Personal MEN': data.personalMen,
-      'Has Mental Health': data.hasMentalHealth,
-      'Has Chronic Conditions': data.hasChronicConditions,
-      'GLP-1 History': data.glp1History,
-      'GLP-1 Type': data.glp1Type,
-      'Side Effects': data.sideEffects,
-      'Medication Preference': data.medicationPreference,
-      'Semaglutide Dosage': data.semaglutideDosage,
-      'Semaglutide Side Effects': data.semaglutideSideEffects,
-      'Semaglutide Success': data.semaglutideSuccess,
-      'Tirzepatide Dosage': data.tirzepatideDosage,
-      'Tirzepatide Side Effects': data.tirzepatideSideEffects,
-      'Tirzepatide Success': data.tirzepatideSuccess,
-      'Dosage Satisfaction': data.dosageSatisfaction,
-      'Dosage Interest': data.dosageInterest,
-      'Alcohol Consumption': data.alcoholConsumption,
-      'Recreational Drugs': data.recreationalDrugs,
-      'Weight Loss History': data.weightLossHistory,
-      'Weight Loss Support': data.weightLossSupport,
-      'Health Improvements': data.healthImprovements,
-      'Referral Sources': data.referralSources,
-      'Referrer Name': data.referrerName,
-      'Referrer Type': data.referrerType,
-      'Qualified': data.qualified,
-      'Taking Medications': data.takingMedications,
-      'Personalized Treatment Interest': data.personalizedTreatmentInterest,
-      'Language': data.flowLanguage,
-      'Privacy Policy Accepted': data.privacyPolicyAccepted,
-      'Privacy Policy Accepted At': data.privacyPolicyAcceptedAt,
-      'Terms of Use Accepted': data.termsOfUseAccepted,
-      'Terms of Use Accepted At': data.termsOfUseAcceptedAt,
-      'Telehealth Consent Accepted': data.telehealthConsentAccepted,
-      'Telehealth Consent Accepted At': data.telehealthConsentAcceptedAt,
-      'Cancellation Policy Accepted': data.cancellationPolicyAccepted,
-      'Cancellation Policy Accepted At': data.cancellationPolicyAcceptedAt,
-      'Florida Bill of Rights Accepted': data.floridaBillOfRightsAccepted,
-      'Florida Bill of Rights Accepted At': data.floridaBillOfRightsAcceptedAt,
-      'Florida Consent Accepted': data.floridaConsentAccepted,
-      'Florida Consent Accepted At': data.floridaConsentAcceptedAt,
+    // Helper to convert any value to string (Airtable text fields)
+    const toString = (val: unknown): string => {
+      if (val === null || val === undefined) return '';
+      if (typeof val === 'boolean') return val ? 'Yes' : 'No';
+      if (typeof val === 'number') return String(val);
+      return String(val);
     };
 
-    // Filter out undefined/null/empty values AND unknown field names to prevent Airtable 422 errors
-    const fields: Record<string, unknown> = {};
+    // Build fields object - ALL values as strings to avoid type mismatches
+    const allFields: Record<string, string> = {
+      'Session ID': toString(data.sessionId),
+      'First Name': toString(data.firstName),
+      'Last Name': toString(data.lastName),
+      'Email': toString(data.email),
+      'Phone': toString(data.phone),
+      'Date of Birth': toString(data.dob),
+      'Sex': toString(data.sex),
+      'State': toString(data.state),
+      'Address': toString(data.address),
+      'Current Weight': toString(data.currentWeight),
+      'Ideal Weight': toString(data.idealWeight),
+      'Height': toString(data.height),
+      'BMI': toString(data.bmi),
+      'Goals': toString(data.goals),
+      'Activity Level': toString(data.activityLevel),
+      'Chronic Conditions': toString(data.chronicConditions),
+      'Digestive Conditions': toString(data.digestiveConditions),
+      'Medications': toString(data.medications),
+      'Allergies': toString(data.allergies),
+      'Mental Health Conditions': toString(data.mentalHealthConditions),
+      'Surgery History': toString(data.surgeryHistory),
+      'Surgery Details': toString(data.surgeryDetails),
+      'Family Conditions': toString(data.familyConditions),
+      'Kidney Conditions': toString(data.kidneyConditions),
+      'Medical Conditions': toString(data.medicalConditions),
+      'GLP-1 History': toString(data.glp1History),
+      'GLP-1 Type': toString(data.glp1Type),
+      'Side Effects': toString(data.sideEffects),
+      'Medication Preference': toString(data.medicationPreference),
+      'Semaglutide Dosage': toString(data.semaglutideDosage),
+      'Semaglutide Side Effects': toString(data.semaglutideSideEffects),
+      'Semaglutide Success': toString(data.semaglutideSuccess),
+      'Tirzepatide Dosage': toString(data.tirzepatideDosage),
+      'Tirzepatide Side Effects': toString(data.tirzepatideSideEffects),
+      'Tirzepatide Success': toString(data.tirzepatideSuccess),
+      'Referral Sources': toString(data.referralSources),
+      'Referrer Name': toString(data.referrerName),
+      'Qualified': toString(data.qualified),
+      'Taking Medications': toString(data.takingMedications),
+      'Personalized Treatment Interest': toString(data.personalizedTreatmentInterest),
+      'Language': toString(data.flowLanguage),
+      'Privacy Policy Accepted': toString(data.privacyPolicyAccepted),
+      'Terms of Use Accepted': toString(data.termsOfUseAccepted),
+      'Telehealth Consent Accepted': toString(data.telehealthConsentAccepted),
+      'Cancellation Policy Accepted': toString(data.cancellationPolicyAccepted),
+    };
+
+    // Filter out empty values AND unknown field names to prevent Airtable 422 errors
+    const fields: Record<string, string> = {};
     const skippedFields: string[] = [];
     
     for (const [key, value] of Object.entries(allFields)) {
       // Skip empty values
-      if (value === undefined || value === null || value === '') {
+      if (!value || value === '') {
         continue;
       }
       
