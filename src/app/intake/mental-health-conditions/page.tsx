@@ -31,32 +31,13 @@ export default function MentalHealthConditionsPage() {
     { value: 'psychosis', label: 'Psychosis' }
   ];
 
-  const toggleCondition = (value: string) => {
-    if (value === 'none') {
-      // Auto-advance when selecting "none"
-      setSelected(['none']);
-      sessionStorage.setItem('mental_health_conditions', JSON.stringify(['none']));
-      setTimeout(() => {
-        router.push('/intake/programs-include');
-      }, 150);
-    } else {
-      if (selected.includes('none')) {
-        setSelected([value]);
-      } else {
-        setSelected(prev => 
-          prev.includes(value) 
-            ? prev.filter(c => c !== value)
-            : [...prev, value]
-        );
-      }
-    }
-  };
-
-  const handleContinue = () => {
-    if (selected.length > 0) {
-      sessionStorage.setItem('mental_health_conditions', JSON.stringify(selected));
+  const handleSelect = (value: string) => {
+    // Single select with auto-advance
+    setSelected([value]);
+    sessionStorage.setItem('mental_health_conditions', JSON.stringify([value]));
+    setTimeout(() => {
       router.push('/intake/programs-include');
-    }
+    }, 150);
   };
 
   return (
@@ -79,7 +60,7 @@ export default function MentalHealthConditionsPage() {
       <EonmedsLogo />
       
       {/* Main content */}
-      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           {/* Title */}
           <h1 className="page-title">
@@ -100,7 +81,7 @@ export default function MentalHealthConditionsPage() {
             {conditions.map((condition) => (
               <button
                 key={condition.value}
-                onClick={() => toggleCondition(condition.value)}
+                onClick={() => handleSelect(condition.value)}
                 className={`w-full text-left p-4 rounded-2xl border transition-all ${
                   selected.includes(condition.value)
                     ? 'border-[#f0feab] bg-[#f0feab]'
@@ -132,23 +113,6 @@ export default function MentalHealthConditionsPage() {
         </div>
       </div>
       
-      {/* Continue button */}
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={selected.length === 0}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-            selected.length > 0
-              ? 'bg-black text-white hover:bg-gray-800' 
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-          }`}
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-      </div>
     </div>
   );
 }
