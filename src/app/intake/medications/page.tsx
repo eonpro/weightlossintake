@@ -66,8 +66,8 @@ export default function MedicationsPage() {
               <div className="flex items-center">
                 <div className={`w-5 h-5 rounded mr-3 flex items-center justify-center flex-shrink-0 border ${
                   selected === 'yes'
-                    ? 'bg-white/30 border-white/60'
-                    : 'border-white/40'
+                    ? 'bg-[#f0feab] border-[#413d3d]'
+                    : 'border-gray-300 bg-white'
                 }`}>
                   {selected === 'yes' && (
                     <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,7 +75,7 @@ export default function MedicationsPage() {
                     </svg>
                   )}
                 </div>
-                <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                <span className="text-[16px] lg:text-lg font-medium leading-tight text-[#413d3d]">
                   {language === 'es' ? 'Sí' : 'Yes'}
                 </span>
               </div>
@@ -90,8 +90,8 @@ export default function MedicationsPage() {
               <div className="flex items-center">
                 <div className={`w-5 h-5 rounded mr-3 flex items-center justify-center flex-shrink-0 border ${
                   selected === 'no'
-                    ? 'bg-white/30 border-white/60'
-                    : 'border-white/40'
+                    ? 'bg-[#f0feab] border-[#413d3d]'
+                    : 'border-gray-300 bg-white'
                 }`}>
                   {selected === 'no' && (
                     <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,7 +99,7 @@ export default function MedicationsPage() {
                     </svg>
                   )}
                 </div>
-                <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                <span className="text-[16px] lg:text-lg font-medium leading-tight text-[#413d3d]">
                   {language === 'es' ? 'No' : 'No'}
                 </span>
               </div>

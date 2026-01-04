@@ -220,8 +220,8 @@ export default function AllergiesPage() {
                 <div className="flex items-center">
                   <div className={`w-5 h-5 rounded mr-3 flex items-center justify-center flex-shrink-0 border ${
                     noAllergiesSelected
-                      ? 'bg-white/30 border-white/60'
-                      : 'border-white/40'
+                      ? 'bg-[#f0feab] border-[#413d3d]'
+                      : 'border-gray-300 bg-white'
                   }`}>
                     {noAllergiesSelected && (
                       <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -101,8 +101,8 @@ export default function DigestiveConditionsPage() {
                 <div className="flex items-center gap-3">
                   <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center transition-all ${
                     selectedConditions.includes(condition.id)
-                      ? 'bg-white/30 border-white/60'
-                      : 'border-white/40'
+                      ? 'bg-[#f0feab] border-[#413d3d]'
+                      : 'border-gray-300 bg-white'
                   }`}>
                     {selectedConditions.includes(condition.id) && (
                       <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -110,7 +110,7 @@ export default function DigestiveConditionsPage() {
                       </svg>
                     )}
                   </div>
-                  <span className="text-base lg:text-lg text-white">{condition.label}</span>
+                  <span className="text-base lg:text-lg text-[#413d3d]">{condition.label}</span>
                 </div>
                 <div></div>
               </button>
