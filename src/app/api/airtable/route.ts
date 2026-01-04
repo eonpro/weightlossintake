@@ -73,13 +73,8 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Cancellation Policy Accepted',
   'Florida Bill of Rights Accepted',
   'Florida Consent Accepted',
-  // Consent timestamps
-  'Privacy Policy Accepted At',
-  'Terms of Use Accepted At',
-  'Telehealth Consent Accepted At',
-  'Cancellation Policy Accepted At',
-  'Florida Bill of Rights Accepted At',
-  'Florida Consent Accepted At',
+  // Note: Consent timestamp fields (e.g., "Privacy Policy Accepted At") are computed fields
+  // in Airtable and cannot be written to directly - they auto-populate when checkbox is set
 ]);
 
 // Fields that are checkbox type in Airtable (need boolean values)
@@ -285,20 +280,13 @@ export async function POST(request: NextRequest) {
       'Qualified': data.qualified ?? false,
       'Taking Medications': toString(data.takingMedications),
       'Personalized Treatment Interest': toString(data.personalizedTreatmentInterest),
-      // Consent checkboxes
+      // Consent checkboxes - timestamps are auto-computed by Airtable when these are set
       'Privacy Policy Accepted': data.privacyPolicyAccepted ?? false,
       'Terms of Use Accepted': data.termsOfUseAccepted ?? false,
       'Telehealth Consent Accepted': data.telehealthConsentAccepted ?? false,
       'Cancellation Policy Accepted': data.cancellationPolicyAccepted ?? false,
       'Florida Bill of Rights Accepted': data.floridaBillOfRightsAccepted ?? false,
       'Florida Consent Accepted': data.floridaConsentAccepted ?? false,
-      // Consent timestamps
-      'Privacy Policy Accepted At': toString(data.privacyPolicyAcceptedAt),
-      'Terms of Use Accepted At': toString(data.termsOfUseAcceptedAt),
-      'Telehealth Consent Accepted At': toString(data.telehealthConsentAcceptedAt),
-      'Cancellation Policy Accepted At': toString(data.cancellationPolicyAcceptedAt),
-      'Florida Bill of Rights Accepted At': toString(data.floridaBillOfRightsAcceptedAt),
-      'Florida Consent Accepted At': toString(data.floridaConsentAcceptedAt),
     };
 
     // Build final fields object with proper types
