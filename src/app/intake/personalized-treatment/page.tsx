@@ -47,8 +47,8 @@ export default function PersonalizedTreatmentPage() {
         <div className="space-y-8">
           <h1 className="page-title">
             {language === 'es' 
-              ? <>¿Te interesaría que tu proveedor considere un <span className="text-[#4fa87f]">plan de tratamiento personalizado</span> sin costo adicional para ayudarte a manejar cualquier efecto secundario?</>
-              : <>Would you be interested in having your provider consider a <span className="text-[#4fa87f]">personalized treatment plan</span> at no extra cost to help you manage any side effects?</>}
+              ? <>¿Te interesaría que tu proveedor considere un plan de <mark style={{ backgroundColor: '#f2fdb4' }}>tratamiento personalizado sin costo adicional</mark> para ayudarte a manejar cualquier efecto secundario?</>
+              : <>Would you be interested in having your provider consider a <mark style={{ backgroundColor: '#f2fdb4' }}>personalized treatment plan at no extra cost</mark> to help you manage any side effects?</>}
           </h1>
 
           {/* Yes/No options - auto-advance on selection */}

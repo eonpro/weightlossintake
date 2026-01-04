@@ -149,24 +149,24 @@ export default function QualifiedPage() {
         {/* Title with emoji - LEFT ALIGNED */}
         <div className="space-y-4 mb-8">
           <h1 className="text-2xl lg:text-3xl font-bold leading-tight">
-            <span className="text-[#4fa87f]">
+            <mark style={{ backgroundColor: '#f2fdb4' }}>
               {language === 'es' ? '¡Excelentes noticias' : 'Great news'} {firstName}
-            </span>{' '}
+            </mark>{' '}
             <span>🥳</span>{' '}
             <span className="text-[#413d3d]">—</span>
             <br />
             <span className="text-[#413d3d]">
               {language === 'es' 
-                ? <>Según tus respuestas, calificas para tratamiento con <span className="text-[#4fa87f]">Semaglutida</span> o <span className="text-[#4fa87f]">Tirzepatida</span>.</>
-                : <>Based on your answers, you qualify for treatment with either <span className="text-[#4fa87f]">Semaglutide</span> or <span className="text-[#4fa87f]">Tirzepatide</span>.</>
+                ? <>Según tus respuestas, calificas para tratamiento con <mark style={{ backgroundColor: '#f2fdb4' }}>Semaglutida</mark> o <mark style={{ backgroundColor: '#f2fdb4' }}>Tirzepatida</mark>.</>
+                : <>Based on your answers, you qualify for treatment with either <mark style={{ backgroundColor: '#f2fdb4' }}>Semaglutide</mark> or <mark style={{ backgroundColor: '#f2fdb4' }}>Tirzepatide</mark>.</>
               }
             </span>
           </h1>
 
           <p className="text-base text-[#413d3d]">
             {language === 'es'
-              ? <>Ambos son <span className="text-[#4fa87f]">medicamentos GLP-1</span> altamente efectivos clínicamente comprobados para apoyar la pérdida de peso, mejorar la salud metabólica y ayudar a controlar el apetito.</>
-              : <>Both are highly effective <span className="text-[#4fa87f]">GLP-1 medications</span> clinically proven to support weight loss, improve metabolic health, and help curb appetite.</>
+              ? <>Ambos son <mark style={{ backgroundColor: '#f2fdb4' }}>medicamentos GLP-1</mark> altamente efectivos clínicamente comprobados para apoyar la pérdida de peso, mejorar la salud metabólica y ayudar a controlar el apetito.</>
+              : <>Both are highly effective <mark style={{ backgroundColor: '#f2fdb4' }}>GLP-1 medications</mark> clinically proven to support weight loss, improve metabolic health, and help curb appetite.</>
             }
           </p>
         </div>
