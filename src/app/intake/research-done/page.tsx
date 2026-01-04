@@ -78,7 +78,7 @@ export default function ResearchDonePage() {
               <div className="space-y-4">
                 {/* Title animated in two parts */}
                 <div>
-                  <h1 className={`text-xl lg:text-2xl font-medium text-black leading-tight transition-all duration-800 ease-out ${
+                  <h1 className={`text-[30px] lg:text-[34px] font-[550] text-[#4fa87f] leading-tight transition-all duration-800 ease-out ${
                     showLine1 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
                   }`}>
                     {language === 'es' ? 
@@ -89,7 +89,7 @@ export default function ResearchDonePage() {
                 
                 {/* Subtitle animated */}
                 <div>
-                  <p className={`text-xl lg:text-2xl font-medium text-black leading-tight transition-all duration-800 ease-out ${
+                  <p className={`text-[30px] lg:text-[34px] font-[550] text-[#4fa87f] leading-tight transition-all duration-800 ease-out ${
                     showLine2 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
                   }`}>
                     {language === 'es' ? 
@@ -102,7 +102,7 @@ export default function ResearchDonePage() {
           ) : (
             <>
               <div className="space-y-4">
-                <h1 className={`text-xl lg:text-2xl font-medium text-black leading-tight transition-all duration-800 ease-out ${
+                <h1 className={`text-[30px] lg:text-[34px] font-[550] text-[#4fa87f] leading-tight transition-all duration-800 ease-out ${
                   showLine1 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
                 }`}>
                   {language === 'es' ? 
@@ -110,7 +110,7 @@ export default function ResearchDonePage() {
                     'Nice, it sounds like you\'ve already done your research.'}
                 </h1>
                 
-                <p className={`text-xl lg:text-2xl font-medium text-black leading-tight transition-all duration-800 ease-out ${
+                <p className={`text-[30px] lg:text-[34px] font-[550] text-[#4fa87f] leading-tight transition-all duration-800 ease-out ${
                   showLine2 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
                 }`}>
                   {language === 'es' ? 
