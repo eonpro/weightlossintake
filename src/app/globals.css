@@ -423,8 +423,8 @@ button, .button-like {
 .input-field {
   width: 100%;
   padding: 16px;
-  font-size: 17px; /* Increased by 1px */
-  font-weight: 530; /* Reduced by 20 */
+  font-size: 17px !important; /* Increased by 1px */
+  font-weight: 530 !important; /* Reduced by 20 */
   background: white;
   border: 2px solid rgba(0, 0, 0, 0.1);
   border-radius: 16px;
@@ -446,8 +446,8 @@ button, .button-like {
 .select-field {
   padding: 16px;
   padding-right: 48px;
-  font-size: 17px; /* Increased by 1px */
-  font-weight: 530; /* Reduced by 20 */
+  font-size: 17px !important; /* Increased by 1px */
+  font-weight: 530 !important; /* Reduced by 20 */
   background: white;
   border: 2px solid rgba(0, 0, 0, 0.1);
   border-radius: 16px;
@@ -576,7 +576,7 @@ html, body {
   input:focus,
   textarea:focus,
   select:focus {
-    font-size: 16px !important; /* Prevent zoom on iOS */
+    font-size: 17px !important; /* Prevent zoom on iOS - minimum 16px needed */
   }
   
   /* Ensure consistent font weight for all inputs */
@@ -584,7 +584,7 @@ html, body {
   input[type="email"],
   input[type="text"],
   input[type="number"] {
-    font-weight: 550; /* medium weight + 50 */
+    font-weight: 530; /* Reduced by 20 */
   }
   
   /* Add more top padding on mobile to avoid overlap with language selector */
