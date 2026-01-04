@@ -13,22 +13,111 @@ This is a **medical intake questionnaire web application** for **EONMeds/EONPro*
 
 ---
 
-## Key Challenges and Analysis
+## Codebase Analysis (January 4, 2026)
 
-### Current State Issues
-1. **Code Duplication**: 60+ intake pages with repeated patterns
-2. **No State Management**: Using raw sessionStorage
-3. **No Validation Library**: Manual validation scattered everywhere
-4. **No Type Safety**: Many `any` types
-5. **No Tests**: Zero test coverage
+### Architecture Overview
 
-### Enterprise Solution: Configuration-Driven Forms
+| System | Status | Description |
+|--------|--------|-------------|
+| **V1 (Legacy)** | ✅ ACTIVE | 60+ individual page files in `/intake/` using sessionStorage |
+| **V2 (Enterprise)** | ⚠️ BUILT, NOT DEPLOYED | Configuration-driven system in `/v2/` |
 
-The new architecture uses:
-- **Zustand** for state management with persistence
-- **Zod** for schema validation
-- **React Hook Form** for form handling
-- **Configuration-driven forms** - single component renders all steps
+### Component Usage Analysis
+
+| Component | Import Count | Status | Notes |
+|-----------|-------------|--------|-------|
+| `EonmedsLogo` | 63 | ✅ Heavily used | Core branding |
+| `CopyrightText` | ~20 | ✅ Used | Footer component |
+| `BMIWidget` | 1 | ✅ Used | BMI result page |
+| `ClientProviders` | 1 | ✅ Used | Root layout |
+| `LanguageToggle` | 1 | ✅ Used | In ClientProviders |
+| `IntroLottie` | 1 | ✅ Used | Landing page (dynamic) |
+| `IntakePageLayout` | 1 | ⚠️ Underutilized | Only contact-info |
+| `ViewportAwareLayout` | 1 | ⚠️ Underutilized | Only main page |
+| `form-engine/*` | 2 | ⚠️ V2 Only | Not in production |
+
+### Store & State Management
+
+| System | Usage | Notes |
+|--------|-------|-------|
+| **sessionStorage (V1)** | All 60+ pages | Direct storage access |
+| **Zustand Store (V2)** | 2 files | Only v2/page.tsx and FormStep.tsx |
+| **localStorage** | Language preference | Via LanguageContext |
+
+### V2 Enterprise System Status
+
+| Module | File | Status |
+|--------|------|--------|
+| Types | `@/types/form.ts` | ✅ Complete, used by V2 |
+| Validation | `@/validation/schemas.ts` | ❌ **NOT USED ANYWHERE** |
+| Store | `@/store/intakeStore.ts` | ⚠️ Only V2 |
+| Config | `@/config/forms/weightloss-intake.ts` | ⚠️ Partial (~15 of 60+ steps) |
+| Form Engine | `@/components/form-engine/` | ⚠️ Only V2 |
+
+---
+
+## What's Working ✅
+
+1. **Full V1 Intake Flow** - All 60+ pages functional
+2. **Airtable Integration** - Submissions working (BMI bug fixed)
+3. **Bilingual Support** - English/Spanish translations
+4. **BMI Calculation** - Fixed string concatenation bug
+5. **Session Persistence** - Data saved across steps
+6. **Responsive Design** - Mobile/desktop layouts
+7. **Progress Tracking** - Progress bar on pages
+8. **Consent Management** - Checkbox tracking with timestamps
+9. **Conditional Navigation** - GLP-1 history branching
+
+---
+
+## Cleanup Completed (January 4, 2026) ✅
+
+| Action | Status | Details |
+|--------|--------|---------|
+| Remove `page-backup.tsx` | ✅ Done | Deleted duplicate file |
+| Clean console.log | ✅ Done | Reduced from 28 → 3 statements |
+| Remove Lottie packages | ✅ Done | Removed unused npm deps |
+| Protect debug endpoints | ✅ Done | Dev-only + key protection |
+
+---
+
+## Issues Found (Remaining)
+
+### 1. Unused Dependencies (package.json)
+```
+- @lottiefiles/dotlottie-react  ← ✅ REMOVED
+- lottie-react                   ← ✅ REMOVED
+- react-hook-form               ← Only in V2 (not live)
+- @hookform/resolvers           ← Only in V2 (not live)
+- zod                           ← Schemas defined but NEVER imported
+- zustand                       ← Only in V2 (not live)
+```
+
+### 2. Backup/Dead Files
+```
+- src/app/intake/contact-info/page-backup.tsx  ← Duplicate backup
+```
+
+### 3. Debug/Dev Files (Consider for Production)
+```
+- src/app/api/airtable/test/route.ts  ← Test endpoint
+- src/app/intake/debug/page.tsx       ← Debug page
+```
+
+### 4. Console.log Statements
+```
+Total: 28 console.log statements across 6 files
+- src/lib/api.ts: 1
+- src/app/intake/contact-info/page.tsx: 10
+- src/app/api/airtable/route.ts: 9
+- src/app/intake/review/page.tsx: 5
+- src/app/intake/debug/page.tsx: 2
+- src/components/IntroLottie.tsx: 1
+```
+
+### 5. Type Safety Issues
+- Multiple `any` types in api.ts, debug page, store
+- Loose typing in sessionStorage operations
 
 ---
 
@@ -46,79 +135,70 @@ The new architecture uses:
 | 7 | Create dynamic FormStep renderer | ✅ Complete |
 | 8 | Create V2 test routes | ✅ Complete |
 
-### Phase 2: Migration (Next Steps)
+### Phase 2: Code Cleanup 🔄 IN PROGRESS
 | ID | Task | Status |
 |----|------|--------|
-| 9 | Complete full step configuration | Pending |
+| C1 | Remove backup file (page-backup.tsx) | Pending |
+| C2 | Remove/reduce console.log statements | Pending |
+| C3 | Remove unused Lottie packages | Pending |
+| C4 | Review debug/test endpoints for production | Pending |
+
+### Phase 3: V2 Migration (Future)
+| ID | Task | Status |
+|----|------|--------|
+| 9 | Complete full step configuration (60+ steps) | Pending |
 | 10 | Add all conditional navigation | Pending |
 | 11 | Migrate landing page to v2 | Pending |
 | 12 | Add custom step components (consent, address, BMI) | Pending |
 | 13 | Test full flow end-to-end | Pending |
+| 14 | Connect Zod validation to form engine | Pending |
 
-### Phase 3: Quality & Testing
+### Phase 4: Quality & Testing (Future)
 | ID | Task | Status |
 |----|------|--------|
-| 14 | Add Vitest test framework | Pending |
-| 15 | Write unit tests for store | Pending |
-| 16 | Write unit tests for validation | Pending |
-| 17 | Add E2E tests with Playwright | Pending |
+| 15 | Add Vitest test framework | Pending |
+| 16 | Write unit tests for store | Pending |
+| 17 | Write unit tests for validation | Pending |
+| 18 | Add E2E tests with Playwright | Pending |
+
+---
+
+## Safe Cleanup Actions
+
+### ✅ SAFE TO REMOVE (No Impact on V1)
+1. `page-backup.tsx` - Duplicate backup file
+2. Unused npm packages (can reinstall if needed for V2)
+3. Console.log statements (use conditional logging)
+
+### ⚠️ KEEP FOR NOW (V2 Future Use)
+1. `@/types/form.ts` - Will use when V2 goes live
+2. `@/validation/schemas.ts` - Will use when V2 goes live
+3. `@/store/intakeStore.ts` - Will use when V2 goes live
+4. `@/config/forms/` - Will use when V2 goes live
+5. `@/components/form-engine/` - Will use when V2 goes live
+
+### ⚠️ REVIEW FOR PRODUCTION
+1. `debug/page.tsx` - Remove or add auth gate
+2. `api/airtable/test/route.ts` - Remove or add auth gate
 
 ---
 
 ## Project Status Board
 
-### New Architecture Files Created
+### Production (V1)
+- ✅ All intake pages working
+- ✅ Airtable integration functional
+- ✅ BMI calculation fixed
+- ✅ Bilingual support active
+- ✅ Mobile responsive
 
-| File | Purpose |
-|------|---------|
-| `src/types/form.ts` | TypeScript type definitions |
-| `src/store/intakeStore.ts` | Zustand store with persistence |
-| `src/validation/schemas.ts` | Zod validation schemas |
-| `src/config/forms/weightloss-intake.ts` | Form configuration |
-| `src/components/form-engine/FormStep.tsx` | Dynamic step renderer |
-| `src/components/form-engine/fields/*.tsx` | Reusable field components |
-| `src/app/v2/page.tsx` | V2 landing page |
-| `src/app/v2/intake/[stepId]/page.tsx` | Dynamic step page |
-
-### Dependencies Added
-```json
-{
-  "zod": "^3.x",
-  "zustand": "^4.x",
-  "react-hook-form": "^7.x",
-  "@hookform/resolvers": "^3.x"
-}
-```
-
-### V2 Routes Available
-- `/v2` - Landing page with progress resume
-- `/v2/intake/goals` - Goals selection (multi-select)
-- `/v2/intake/medication-preference` - Single-select with auto-advance
-- `/v2/intake/research-done` - Info page
-- `/v2/intake/consent` - Custom component
-- `/v2/intake/state` - State selection
-- `/v2/intake/name` - Name input
-- `/v2/intake/dob` - Date of birth
-- `/v2/intake/contact-info` - Email/phone
-- And more...
-
----
-
-## Executor's Feedback
-
-### Progress Report
-✅ **Foundation complete!** The enterprise form engine is now built.
-
-### Key Features Implemented
-1. **Zustand Store** - Centralized state with localStorage persistence
-2. **Configuration-Driven** - Steps defined in JSON, rendered dynamically
-3. **Auto-Advance** - Single-select pages navigate automatically
-4. **Conditional Navigation** - Different paths based on responses
-5. **Validation Ready** - Zod schemas for all field types
-6. **Type-Safe** - Full TypeScript types throughout
-
-### Test the V2 Flow
-Visit `/v2` to test the new enterprise architecture.
+### Development (V2)
+- ✅ Types defined
+- ✅ Store created
+- ✅ Validation schemas ready
+- ⚠️ Only ~15 of 60+ steps configured
+- ⚠️ Not connected to Airtable
+- ⚠️ Not deployed
 
 ---
 
@@ -127,31 +207,32 @@ Visit `/v2` to test the new enterprise architecture.
 1. **Zustand persist middleware** - Use `partialize` to exclude actions from storage
 2. **Configuration pattern** - Separate data from presentation completely
 3. **Conditional navigation** - Array of rules with operator-based matching
-4. **Field rendering** - Switch statement pattern for multiple field types
-5. **Progress calculation** - Store completed steps array, compute percentage
+4. **BMI Bug** - Always parseInt() height values from sessionStorage (strings!)
+5. **Lottie Libraries** - iframe embeds work better than React libraries for simple use
+6. **Unused dependencies** - Installed for V2 but V1 still in production
 
 ---
 
 ## Architecture Comparison
 
-### Before (60+ files)
+### V1 (Current Production)
 ```
 src/app/intake/goals/page.tsx
 src/app/intake/medication-preference/page.tsx
 src/app/intake/research-done/page.tsx
-... 60 more files with duplicated code
+... 60+ more files with some repeated patterns
 ```
 
-### After (Configuration-Driven)
+### V2 (Future - Configuration-Driven)
 ```
 src/config/forms/weightloss-intake.ts  # All steps defined here
 src/app/v2/intake/[stepId]/page.tsx    # Single dynamic route
 src/components/form-engine/FormStep.tsx # Single renderer
 ```
 
-**Benefits:**
+**V2 Benefits:**
 - Add new steps by updating config only
 - Consistent behavior across all steps
 - Easy A/B testing
-- No code duplication
+- Reduced code duplication
 - Full type safety

@@ -359,9 +359,6 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
       ? { ...airtableData, updateRecordId: existingRecordId }
       : airtableData;
     
-    console.log(existingRecordId 
-      ? `📝 Updating existing record: ${existingRecordId}` 
-      : '➕ Creating new record');
 
     // Send to Airtable API route
     const response = await fetch('/api/airtable', {

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ClientProviders from '@/components/ClientProviders';
+import MetaPixel from '@/components/MetaPixel';
 
 export const metadata: Metadata = {
   title: "EONMeds - Medical Intake",
@@ -20,6 +21,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body className="font-sofia antialiased bg-white">
+        <MetaPixel />
         <ClientProviders>
           {children}
         </ClientProviders>

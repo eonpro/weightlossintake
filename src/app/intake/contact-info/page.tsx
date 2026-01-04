@@ -91,14 +91,9 @@ export default function ContactInfoPage() {
   const handleContinue = async () => {
     // Prevent double submission
     if (isSubmitting) {
-      console.log('Already submitting...');
       return;
     }
 
-    console.log('Starting submission...');
-    console.log('Email:', email, 'Valid:', validateEmail(email));
-    console.log('Phone:', phone, 'Valid:', validatePhone(phone));
-    console.log('Consent:', consent);
 
     // Validate inputs
     const isEmailValid = validateEmail(email);
@@ -116,7 +111,6 @@ export default function ContactInfoPage() {
     }
     
     if (!consent) {
-      console.log('Consent not checked');
       return;
     }
 
@@ -133,7 +127,6 @@ export default function ContactInfoPage() {
         phone: formattedPhone 
       }));
       
-      console.log('Data saved to sessionStorage');
       
       // Collect all data available at this midpoint
       const nameData = sessionStorage.getItem('intake_name');
@@ -206,7 +199,6 @@ export default function ContactInfoPage() {
         flowLanguage: localStorage.getItem('preferredLanguage') || 'en',
       };
       
-      console.log('📍 MIDPOINT CHECKPOINT - Submitting to Airtable:', midpointData);
       
       // Submit midpoint data to Airtable (fire and forget - don't block navigation)
       fetch('/api/airtable', {
@@ -217,7 +209,6 @@ export default function ContactInfoPage() {
         .then(res => res.json())
         .then(result => {
           if (result.success && result.recordId) {
-            console.log('✅ Midpoint saved to Airtable! Record ID:', result.recordId);
             // Store the record ID for later update
             sessionStorage.setItem('airtable_record_id', result.recordId);
             sessionStorage.setItem('midpoint_submitted', 'true');
@@ -238,7 +229,6 @@ export default function ContactInfoPage() {
         sessionStorage.setItem('completed_checkpoints', JSON.stringify(completedCheckpoints));
       }
       
-      console.log('Navigating to /intake/support-info...');
       
       // Navigate to next page immediately (don't wait for Airtable)
       router.push('/intake/support-info');

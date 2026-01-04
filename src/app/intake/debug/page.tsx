@@ -1,18 +1,31 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { collectIntakeData, submitIntake, getSessionId } from '@/lib/api';
+import { useRouter } from 'next/navigation';
+import { collectIntakeData, submitIntake } from '@/lib/api';
 
 export default function DebugPage() {
-  const [apiStatus, setApiStatus] = useState<any>(null);
-  const [testStatus, setTestStatus] = useState<any>(null);
-  const [sessionData, setSessionData] = useState<any>(null);
+  const router = useRouter();
+  const [apiStatus, setApiStatus] = useState<Record<string, unknown> | null>(null);
+  const [testStatus, setTestStatus] = useState<Record<string, unknown> | null>(null);
+  const [sessionData, setSessionData] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isAllowed, setIsAllowed] = useState(false);
 
-  // Load session data on mount
+  // Check if debug is allowed (dev mode only)
   useEffect(() => {
+    // Only allow in development or with special query param
+    const isDev = process.env.NODE_ENV === 'development';
+    const hasDebugKey = new URLSearchParams(window.location.search).get('key') === 'eon-debug-2025';
+
+    if (!isDev && !hasDebugKey) {
+      router.push('/');
+      return;
+    }
+
+    setIsAllowed(true);
     refreshSessionData();
-  }, []);
+  }, [router]);
 
   const refreshSessionData = () => {
     // Get all sessionStorage keys that start with 'intake_' or common keys
@@ -94,6 +107,15 @@ export default function DebugPage() {
     }
     setLoading(false);
   };
+
+  // Don't render until we verify access
+  if (!isAllowed) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <p className="text-gray-500">Checking access...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">

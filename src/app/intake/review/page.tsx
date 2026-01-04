@@ -58,30 +58,18 @@ export default function ReviewPage() {
     hasSubmitted.current = true;
     
     setSubmissionStatus('submitting');
-    console.log('🚀 Starting Airtable submission...');
 
     try {
       // Collect all intake data
       const intakeData = collectIntakeData();
-      console.log('📦 Collected intake data:', {
-        sessionId: intakeData.sessionId,
-        firstName: intakeData.personalInfo?.firstName,
-        lastName: intakeData.personalInfo?.lastName,
-        email: intakeData.personalInfo?.email,
-        state: intakeData.address?.state,
-        hasConsents: !!intakeData.consents
-      });
 
       // Mark checkpoint
       markCheckpointCompleted('qualification-complete');
       
       // Submit to Airtable
-      console.log('📤 Sending to /api/airtable...');
       const result = await submitIntake(intakeData);
-      console.log('📥 Airtable response:', result);
 
       if (result.success && result.intakeId) {
-        console.log('✅ SUCCESS! Record ID:', result.intakeId);
         sessionStorage.setItem('submitted_intake_id', result.intakeId);
         sessionStorage.setItem('submission_status', 'success');
         setSubmissionStatus('success');

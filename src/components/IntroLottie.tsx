@@ -20,7 +20,6 @@ function IntroLottie() {
       ></iframe>
     `;
 
-    console.log('Lottie intro animation loaded');
   }, []);
 
   return (

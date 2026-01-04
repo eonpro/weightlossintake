@@ -3,22 +3,57 @@
 import { useEffect, useState, useRef } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import CopyrightText from '@/components/CopyrightText';
+import { redirectToCheckout, trackMetaEvent } from '@/lib/meta';
 
 export default function QualifiedPage() {
   const { language } = useLanguage();
   const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [dob, setDob] = useState('');
   const [showConfetti, setShowConfetti] = useState(false);
   const confettiRef = useRef<boolean>(false);
 
   useEffect(() => {
-    // Get first name from session
+    // Track Lead event when user reaches qualified page
+    trackMetaEvent('Lead');
+
+    // Get user data from session
     const nameData = sessionStorage.getItem('intake_name');
+    const contactData = sessionStorage.getItem('intake_contact');
+    const dobData = sessionStorage.getItem('intake_dob');
+
     if (nameData) {
       try {
         const parsed = JSON.parse(nameData);
         setFirstName(parsed.firstName || '');
+        setLastName(parsed.lastName || '');
       } catch {
         setFirstName('');
+      }
+    }
+
+    if (contactData) {
+      try {
+        const parsed = JSON.parse(contactData);
+        setEmail(parsed.email || '');
+        setPhone(parsed.phone || '');
+      } catch {
+        // ignore
+      }
+    }
+
+    if (dobData) {
+      try {
+        const parsed = JSON.parse(dobData);
+        // Format DOB as string
+        if (parsed.month && parsed.day && parsed.year) {
+          setDob(`${parsed.month}/${parsed.day}/${parsed.year}`);
+        }
+      } catch {
+        // DOB might be stored as string already
+        setDob(dobData);
       }
     }
 
@@ -66,19 +101,18 @@ export default function QualifiedPage() {
   };
 
   const handleCheckout = () => {
-    // Set flag for seamless redirect
-    sessionStorage.setItem('checkout_redirect_in_progress', 'true');
-    window.onbeforeunload = null;
-    
     // Get the intake ID if available
-    const intakeId = sessionStorage.getItem('submitted_intake_id');
-    let checkoutUrl = 'https://checkout.eonmeds.com';
-    
-    if (intakeId) {
-      checkoutUrl = `https://checkout.eonmeds.com?ref=${intakeId}`;
-    }
-    
-    window.location.replace(checkoutUrl);
+    const intakeId = sessionStorage.getItem('submitted_intake_id') || undefined;
+
+    // Redirect to checkout with all tracking params
+    redirectToCheckout({
+      firstName,
+      lastName,
+      email,
+      phone,
+      dob,
+      intakeId,
+    });
   };
 
   return (

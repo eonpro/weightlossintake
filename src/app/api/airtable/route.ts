@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Development-only logging
+const isDev = process.env.NODE_ENV === 'development';
+const log = (...args: unknown[]) => isDev && console.log(...args);
+
 // Airtable API configuration - uses Personal Access Token (PAT)
 const AIRTABLE_PAT = process.env.AIRTABLE_PAT;
 const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
@@ -200,15 +204,15 @@ const corsHeaders = {
 };
 
 export async function POST(request: NextRequest) {
-  console.log('=== AIRTABLE API CALLED ===');
-  console.log('Timestamp:', new Date().toISOString());
+  log('=== AIRTABLE API CALLED ===');
+  log('Timestamp:', new Date().toISOString());
   
   try {
     const data: IntakeRecord = await request.json();
     
     const isUpdate = !!data.updateRecordId;
-    console.log('Received intake submission:', { 
-      sessionId: data.sessionId, 
+    log('Received intake submission:', {
+      sessionId: data.sessionId,
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
@@ -346,9 +350,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    console.log('Sending fields to Airtable:', Object.keys(fields));
+    log('Sending fields to Airtable:', Object.keys(fields));
     if (skippedFields.length > 0) {
-      console.log('Skipped unknown fields:', skippedFields);
+      log('Skipped unknown fields:', skippedFields);
     }
 
     // Determine if this is a CREATE or UPDATE operation
@@ -358,7 +362,7 @@ export async function POST(request: NextRequest) {
     
     const httpMethod = isUpdate ? 'PATCH' : 'POST';
     
-    console.log(`${isUpdate ? '📝 UPDATING' : '➕ CREATING'} Airtable record...`);
+    log(`${isUpdate ? '📝 UPDATING' : '➕ CREATING'} Airtable record...`);
 
     // Send to Airtable using Personal Access Token with retry logic
     let lastError: unknown = null;
@@ -384,11 +388,11 @@ export async function POST(request: NextRequest) {
           break;
         }
         
-        console.log(`Airtable attempt ${attempt} failed with status ${response.status}, retrying...`);
+        log(`Airtable attempt ${attempt} failed with status ${response.status}, retrying...`);
         lastError = `HTTP ${response.status}`;
         
       } catch (fetchError) {
-        console.log(`Airtable attempt ${attempt} network error:`, fetchError);
+        log(`Airtable attempt ${attempt} network error:`, fetchError);
         lastError = fetchError;
       }
       
@@ -421,7 +425,7 @@ export async function POST(request: NextRequest) {
 
     const result = await response.json();
 
-    console.log('Successfully saved to Airtable with ID:', result.id);
+    log('Successfully saved to Airtable with ID:', result.id);
     return NextResponse.json({
       success: true,
       recordId: result.id,

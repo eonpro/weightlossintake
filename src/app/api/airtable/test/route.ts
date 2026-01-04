@@ -2,12 +2,24 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Test endpoint for Airtable integration debugging
 // GET /api/airtable/test - Check configuration and test connection
+// PROTECTED: Only available in development or with debug key
 
 const AIRTABLE_PAT = process.env.AIRTABLE_PAT;
 const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 const AIRTABLE_TABLE_NAME = process.env.AIRTABLE_TABLE_NAME || 'Intake Submissions';
 
 export async function GET(request: NextRequest) {
+  // Security: Block in production unless debug key is provided
+  const { searchParams } = new URL(request.url);
+  const debugKey = searchParams.get('key');
+  const isDev = process.env.NODE_ENV === 'development';
+
+  if (!isDev && debugKey !== 'eon-debug-2025') {
+    return NextResponse.json(
+      { error: 'Not authorized', message: 'Debug endpoint only available in development' },
+      { status: 403 }
+    );
+  }
   const diagnostics: Record<string, unknown> = {
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
