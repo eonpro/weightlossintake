@@ -2,13 +2,10 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useTranslation } from '@/hooks/useTranslation';
 
 export default function BMICalculatingPage() {
   const router = useRouter();
-  const { t } = useTranslation();
   const { language } = useLanguage();
   const [firstName, setFirstName] = useState('there');
   const hasNavigated = useRef(false);
@@ -26,15 +23,14 @@ export default function BMICalculatingPage() {
     }
   }, []);
 
-  // Handle animation and navigation
+  // Handle navigation after delay
   useEffect(() => {
-    // Navigate after animation completes (~4.5 seconds)
     const navigationTimer = setTimeout(() => {
       if (!hasNavigated.current) {
         hasNavigated.current = true;
         router.push('/intake/bmi-result');
       }
-    }, 4500);
+    }, 4000);
 
     return () => {
       clearTimeout(navigationTimer);
@@ -43,60 +39,54 @@ export default function BMICalculatingPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Back button */}
-      <div className="px-6 lg:px-8 pt-6 max-w-md lg:max-w-2xl mx-auto w-full">
-        <Link href="/intake/current-weight" className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg">
-          <svg className="w-6 h-6 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
-          </svg>
-        </Link>
+      {/* Top greeting - positioned at top */}
+      <div className="pt-16 lg:pt-20 px-6 text-center">
+        <h1 className="text-[28px] lg:text-[32px] font-medium leading-tight">
+          <span className="text-gray-400">
+            {language === 'es' ? 'Un momento' : 'One moment'}
+          </span>{' '}
+          <span className="text-[#413d3d] font-bold">{firstName}</span>
+          <span className="text-[#413d3d] font-bold">...</span>
+        </h1>
       </div>
-      
+
+      {/* Center content - Lottie and text */}
       <div className="flex-1 flex flex-col items-center justify-center px-6">
-        <div className="max-w-md w-full text-center space-y-8">
-          {/* Title - Large text matching screenshot */}
-          <h1 className="text-[40px] lg:text-[45px] font-bold leading-tight">
-            <span className="text-gray-300">
-              {language === 'es' ? 'Un momento' : 'One moment'}
-            </span>{' '}
-            <span className="text-[#413d3d]">{firstName}</span>
-            <span className="text-gray-300">...</span>
-          </h1>
-          
-          {/* Lottie Animation - Scale/BMI calculating animation */}
-          <div className="flex justify-center">
-            <div className="w-40 h-40 relative">
+        <div className="max-w-md w-full text-center">
+          {/* Lottie Animation - Scale with fire icon */}
+          <div className="flex justify-center mb-12">
+            <div className="w-48 h-48 lg:w-56 lg:h-56 relative">
               <iframe
-                src="https://lottie.host/embed/9ac83824-a212-4120-a230-69bb96ec0aab/DmWr5YKiHt.lottie"
-                style={{ 
-                  width: '160px', 
-                  height: '160px',
+                src="https://lottie.host/embed/8d60540b-e634-4247-9b7b-dada7087a87c/7hOThmLlIm.lottie"
+                style={{
+                  width: '100%',
+                  height: '100%',
                   border: 'none',
                   background: 'transparent'
                 }}
-                title="Loading animation"
+                title="BMI calculating animation"
               />
             </div>
           </div>
-          
+
           {/* BMI Text - Matching screenshot styling */}
           <div className="space-y-0">
-            <p className="text-[40px] lg:text-[45px] font-bold leading-tight text-gray-300">
+            <p className="text-[24px] lg:text-[28px] leading-tight text-gray-400">
               {language === 'es' ? 'EONPro está calculando' : 'EONPro is calculating'}
             </p>
-            <p className="text-[40px] lg:text-[45px] font-bold leading-tight">
-              <span className="text-gray-300">
+            <p className="text-[24px] lg:text-[28px] leading-tight">
+              <span className="text-gray-400">
                 {language === 'es' ? 'tu ' : 'your '}
               </span>
-              <span className="text-[#413d3d]">
+              <span className="text-[#413d3d] font-bold">
                 {language === 'es' ? 'Índice de Masa' : 'Body Mass Index'}
               </span>
             </p>
-            <p className="text-[40px] lg:text-[45px] font-bold leading-tight">
+            <p className="text-[24px] lg:text-[28px] leading-tight">
               {language === 'es' ? (
-                <span className="text-[#413d3d]">Corporal </span>
+                <span className="text-[#413d3d] font-bold">Corporal </span>
               ) : null}
-              <span className="text-gray-300">
+              <span className="text-gray-400">
                 ({language === 'es' ? 'IMC' : 'BMI'})
               </span>
             </p>
