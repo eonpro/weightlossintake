@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import EonmedsLogo from '@/components/EonmedsLogo';
@@ -10,6 +11,27 @@ export default function PregnancyPage() {
   const router = useRouter();
   const { t } = useTranslation();
   const { language } = useLanguage();
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Auto-skip for male patients - men can't be pregnant or breastfeeding
+  useEffect(() => {
+    const sex = sessionStorage.getItem('intake_sex');
+    if (sex === 'man' || sex === 'male' || sex === 'hombre') {
+      sessionStorage.setItem('pregnancy_breastfeeding', 'n/a');
+      router.push('/intake/surgery');
+    } else {
+      setIsLoading(false);
+    }
+  }, [router]);
+
+  // Don't render anything while checking sex - prevents flash
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#4fa87f] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   const handleSelect = (value: string) => {
     sessionStorage.setItem('pregnancy_breastfeeding', value);

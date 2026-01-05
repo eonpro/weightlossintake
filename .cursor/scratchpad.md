@@ -213,6 +213,84 @@ Total: 28 console.log statements across 6 files
 
 ---
 
+## SOAP Note PDF Generation Plan (January 4, 2026)
+
+### Background & Motivation
+
+Need to generate a **second PDF document** (SOAP Note) alongside the existing Intake Form PDF. This SOAP note is a medical document that:
+- Uses the same patient data collected during intake
+- Follows a standardized SOAP (Subjective, Objective, Assessment, Plan) format
+- Includes provider attestation with electronic signature
+- Gets uploaded to IntakeQ patient profile
+
+### Key Requirements
+
+1. **Same Data Source** - Uses all data from intake form (name, DOB, sex, height, weight, BMI, medical history, etc.)
+2. **SOAP Format** - Structured medical document with S/O/A/P sections
+3. **Provider Signature** - Include image: `https://static.wixstatic.com/media/c49a9b_4dc4d9fce65f4c2a94047782401ffe9a~mv2.png`
+4. **Same UI Style** - Match the existing intake form PDF styling (Poppins font, green accents, section boxes)
+5. **PDF.co Generation** - Use same API as intake form
+6. **IntakeQ Upload** - Upload to "SOAP NOTES" folder on patient profile
+
+### Implementation Plan
+
+#### Phase 1: SOAP HTML Template
+| Task | Description |
+|------|-------------|
+| Create `generateSoapNoteHtml()` | Function that builds HTML from patient data |
+| Map intake fields to SOAP sections | Correctly place data in S/O/A/P format |
+| Style matching intake form | Same CSS, fonts, colors |
+| Add provider signature image | Embed in Provider Attestation section |
+
+#### Phase 2: Airtable Script Integration
+| Task | Description |
+|------|-------------|
+| Add SOAP PDF generation | After intake PDF, generate SOAP PDF |
+| Upload to IntakeQ | Second upload call to "SOAP NOTES" folder |
+| Update Airtable status | Track both PDFs |
+
+### SOAP Note Data Mapping
+
+| SOAP Section | Source Data Fields |
+|--------------|-------------------|
+| **Patient Info** | firstName, lastName, DOB, sex, state |
+| **S - Subjective** | GLP-1 history, goals, activity level, symptoms |
+| **O - Objective** | Height, weight, BMI, blood pressure, medical history, medications, allergies |
+| **A - Assessment** | BMI classification, contraindications check, medical necessity |
+| **P - Plan** | Medication recommendation based on GLP-1 type preference |
+| **Provider** | Static provider info + signature image |
+
+### BMI Classification Logic
+```
+BMI < 18.5 → Underweight
+18.5 - 24.9 → Normal
+25.0 - 29.9 → Overweight (Class 0)
+30.0 - 34.9 → Obesity Class I
+35.0 - 39.9 → Obesity Class II
+≥ 40.0 → Obesity Class III (Morbid)
+```
+
+### Provider Information (Static)
+- **Provider**: Dr. Gavin Sigle
+- **NPI**: 1497917561
+- **License**: FL ME145797
+- **Signature**: https://static.wixstatic.com/media/c49a9b_4dc4d9fce65f4c2a94047782401ffe9a~mv2.png
+
+### Files to Modify
+
+1. **Airtable Automation Script** - Add SOAP PDF generation after intake PDF
+2. **IntakeQ Upload** - Second upload to different folder
+
+### Success Criteria
+
+- [ ] SOAP PDF generates with all patient data correctly placed
+- [ ] Provider signature image renders in PDF
+- [ ] PDF uploads to IntakeQ "SOAP NOTES" folder
+- [ ] Styling matches intake form PDF
+- [ ] Both PDFs attached to same patient profile
+
+---
+
 ## Architecture Comparison
 
 ### V1 (Current Production)
