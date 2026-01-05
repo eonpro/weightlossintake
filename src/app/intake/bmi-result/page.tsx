@@ -91,7 +91,7 @@ export default function BMIResultPage() {
         <div className="space-y-5">
           {/* Header Text */}
           <div className="text-left mb-5">
-            <h2 className="page-title">
+            <h2 className="text-[22px] md:text-[26px] font-semibold text-[#413d3d] leading-snug">
               {t('bmi.result.header.line1')}<br/>
               {t('bmi.result.header.line2')}<br/>
               {t('bmi.result.header.line3')}<br/>
@@ -133,7 +133,7 @@ export default function BMIResultPage() {
           </div>
 
           {/* Goal Card */}
-          <div className="bg-[#f0feab] rounded-3xl p-5 space-y-3">
+          <div className="bg-[#e8f99e] rounded-3xl p-5 space-y-3">
             <h2 className="text-lg font-semibold text-black">{t('bmi.result.yourGoal')}</h2>
             <div className="text-5xl font-bold text-[#4fa87f]">{weightToLose ? `${Math.abs(weightToLose).toFixed(2)}` : '0.00'} {t('common.lbs')}</div>
             <p className="text-sm text-black font-normal">{t('bmi.result.averageLoss')}</p>
