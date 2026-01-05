@@ -45,10 +45,10 @@ export default function PersonalizedTreatmentPage() {
       {/* Main content */}
       <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
-          <h1 className="page-title" style={{ lineHeight: '1.5' }}>
+          <h1 className="page-title" style={{ lineHeight: '1.35' }}>
             {language === 'es' 
-              ? <>¿Te interesaría que tu proveedor considere un plan de <span style={{ backgroundColor: '#f2fdb4', padding: '0 4px', borderRadius: '4px' }}>tratamiento personalizado sin costo adicional</span> para ayudarte a manejar cualquier efecto secundario?</>
-              : <>Would you be interested in having your provider consider a <span style={{ backgroundColor: '#f2fdb4', padding: '0 4px', borderRadius: '4px' }}>personalized treatment plan at no extra cost</span> to help you manage any side effects?</>}
+              ? <>¿Te interesaría que tu proveedor considere un plan de <span style={{ backgroundColor: '#f2fdb4', boxDecorationBreak: 'clone', WebkitBoxDecorationBreak: 'clone' } as React.CSSProperties}>tratamiento personalizado sin costo adicional</span> para ayudarte a manejar cualquier efecto secundario?</>
+              : <>Would you be interested in having your provider consider a <span style={{ backgroundColor: '#f2fdb4', boxDecorationBreak: 'clone', WebkitBoxDecorationBreak: 'clone' } as React.CSSProperties}>personalized treatment plan at no extra cost</span> to help you manage any side effects?</>}
           </h1>
 
           {/* Yes/No options - auto-advance on selection */}
