@@ -16,6 +16,11 @@ export default function TirzepatideSideEffectsPage() {
 
   const sideEffects = [
     {
+      id: 'none',
+      es: 'No tuve efectos secundarios',
+      en: 'I had no side effects'
+    },
+    {
       id: 'nausea_vomit',
       es: 'Náuseas/Vómitos',
       en: 'Nausea/Vomiting'
@@ -59,35 +64,18 @@ export default function TirzepatideSideEffectsPage() {
       id: 'other',
       es: 'Otro',
       en: 'Other'
-    },
-    {
-      id: 'none',
-      es: 'No tuve efectos secundarios',
-      en: 'I had no side effects'
     }
   ];
 
   const handleToggle = (effectId: string) => {
-    if (effectId === 'none') {
-      setSelectedItems(['none']);
-    } else {
-      if (selectedItems.includes('none')) {
-        setSelectedItems([effectId]);
-      } else {
-        if (selectedItems.includes(effectId)) {
-          setSelectedItems(selectedItems.filter(item => item !== effectId));
-        } else {
-          setSelectedItems([...selectedItems, effectId]);
-        }
-      }
-    }
-  };
-
-  const handleContinue = () => {
-    if (selectedItems.length > 0) {
-      sessionStorage.setItem('tirzepatide_side_effects', JSON.stringify(selectedItems));
+    // Single-select with auto-advance
+    setSelectedItems([effectId]);
+    sessionStorage.setItem('tirzepatide_side_effects', JSON.stringify([effectId]));
+    
+    // Auto-advance after short delay
+    setTimeout(() => {
       router.push('/intake/tirzepatide-success');
-    }
+    }, 300);
   };
 
   return (
@@ -154,25 +142,9 @@ export default function TirzepatideSideEffectsPage() {
         </div>
       </div>
 
-      {/* Bottom button */}
+      {/* Copyright text */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={selectedItems.length === 0}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-all ${
-            selectedItems.length > 0
-              ? 'bg-black text-white hover:bg-gray-900' 
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright text */}
-        <CopyrightText className="mt-4" />
+        <CopyrightText />
       </div>
     </div>
   );

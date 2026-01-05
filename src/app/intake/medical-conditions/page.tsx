@@ -14,6 +14,7 @@ export default function MedicalConditionsPage() {
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
 
   const conditions = language === 'es' ? [
+    { id: 'none', label: 'No, ninguna de estas aplica a mí' },
     { id: 'diabetes_t1', label: 'Diabetes (Tipo 1)', sublabel: 'Insulina Dependiente' },
     { id: 'cancer', label: 'Cáncer' },
     { id: 'glaucoma', label: 'Glaucoma' },
@@ -28,9 +29,9 @@ export default function MedicalConditionsPage() {
     { id: 'cystic_fibrosis', label: 'Fibrosis quística' },
     { id: 'hyponatremia', label: 'Hiponatremia' },
     { id: 'phenylketonuria', label: 'Fenilcetonuria' },
-    { id: 'sleep_apnea', label: 'Apnea obstructiva del sueño' },
-    { id: 'none', label: 'No, ninguna de estas aplica a mí' }
+    { id: 'sleep_apnea', label: 'Apnea obstructiva del sueño' }
   ] : [
+    { id: 'none', label: 'No, none of these apply to me' },
     { id: 'diabetes_t1', label: 'Diabetes (Type 1)', sublabel: 'Insulin Dependent' },
     { id: 'cancer', label: 'Cancer' },
     { id: 'glaucoma', label: 'Glaucoma' },
@@ -45,26 +46,18 @@ export default function MedicalConditionsPage() {
     { id: 'cystic_fibrosis', label: 'Cystic fibrosis' },
     { id: 'hyponatremia', label: 'Hyponatremia' },
     { id: 'phenylketonuria', label: 'Phenylketonuria' },
-    { id: 'sleep_apnea', label: 'Obstructive sleep apnea' },
-    { id: 'none', label: 'No, none of these apply to me' }
+    { id: 'sleep_apnea', label: 'Obstructive sleep apnea' }
   ];
 
   const handleToggleCondition = (conditionId: string) => {
-    if (conditionId === 'none') {
-      setSelectedConditions(['none']);
-    } else {
-      setSelectedConditions(prev => {
-        const filtered = prev.filter(c => c !== 'none');
-        return prev.includes(conditionId)
-          ? filtered.filter(c => c !== conditionId)
-          : [...filtered, conditionId];
-      });
-    }
-  };
-
-  const handleContinue = () => {
-    sessionStorage.setItem('medical_conditions', JSON.stringify(selectedConditions));
-    router.push('/intake/family-conditions');
+    // Single-select with auto-advance
+    setSelectedConditions([conditionId]);
+    sessionStorage.setItem('medical_conditions', JSON.stringify([conditionId]));
+    
+    // Auto-advance after short delay
+    setTimeout(() => {
+      router.push('/intake/family-conditions');
+    }, 300);
   };
 
   return (
@@ -143,39 +136,21 @@ export default function MedicalConditionsPage() {
         </div>
       </div>
       
-      {/* Continue button */}
+      {/* Copyright footer */}
       <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
-        <button 
-          onClick={handleContinue}
-          disabled={selectedConditions.length === 0}
-          className={`w-full py-4 px-8 rounded-full text-lg font-medium flex items-center justify-center space-x-3 transition-colors ${
-            selectedConditions.length > 0
-              ? 'bg-black text-white hover:bg-gray-800' 
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-          }`}
-        >
-          <span>{language === 'es' ? 'Continuar' : 'Continue'}</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-        
-        {/* Copyright footer */}
-        <div className="mt-6 text-center">
-          <p className="copyright-text">
-            {language === 'es' ? (
-              <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
-                Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
-              </>
-            ) : (
-              <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
-                Exclusive and protected process. Copying or reproduction without authorization is prohibited.
-              </>
-            )}
-          </p>
-        </div>
+        <p className="copyright-text text-center">
+          {language === 'es' ? (
+            <>
+              © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+              Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
+            </>
+          ) : (
+            <>
+              © 2025 EONPro, LLC. All rights reserved.<br/>
+              Exclusive and protected process. Copying or reproduction without authorization is prohibited.
+            </>
+          )}
+        </p>
       </div>
     </div>
   );
