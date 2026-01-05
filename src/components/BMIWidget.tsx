@@ -57,10 +57,10 @@ export default function BMIWidget({ bmi, language }: BMIWidgetProps) {
         setIndicatorPosition(position);
         
         // Show label after dot animation completes
-        setTimeout(() => {
-          setShowLabel(true);
+          setTimeout(() => {
+            setShowLabel(true);
           isAnimating.current = false;
-        }, 1200);
+          }, 1200);
       }, 300);
     }
   }, [bmi]);
@@ -78,7 +78,7 @@ export default function BMIWidget({ bmi, language }: BMIWidgetProps) {
       {/* Floating Label */}
       <div 
         className="absolute top-0 z-20 transition-all duration-400"
-        style={{
+        style={{ 
           left: `${indicatorPosition}%`,
           transform: 'translateX(-50%)',
           opacity: showLabel ? 1 : 0,
@@ -86,13 +86,14 @@ export default function BMIWidget({ bmi, language }: BMIWidgetProps) {
         }}
       >
         <div 
-          className="relative text-white text-[11px] font-semibold tracking-wide px-4 py-2 rounded-full whitespace-nowrap"
+          className="relative text-[11px] font-semibold tracking-wide px-4 py-2 rounded-full whitespace-nowrap"
           style={{
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-            boxShadow: '0 4px 15px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.1)'
+            boxShadow: '0 4px 15px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.1)',
+            color: '#ffffff'
           }}
         >
-          <span>{statusText} · {getBMICategory(bmi)}</span>
+          <span style={{ color: '#ffffff' }}>{statusText} · {getBMICategory(bmi)}</span>
           {/* Arrow pointing down */}
           <div 
             className="absolute left-1/2 -translate-x-1/2"
