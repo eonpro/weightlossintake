@@ -18,6 +18,7 @@ export default function BMIResultPage() {
   const [idealWeight, setIdealWeight] = useState(0);
   const [heightStr, setHeightStr] = useState('');
   const [firstName, setFirstName] = useState('');
+  const [showBmiInfo, setShowBmiInfo] = useState(false);
 
   useEffect(() => {
     // Get data from session storage
@@ -139,7 +140,34 @@ export default function BMIResultPage() {
             
             <div className="space-y-2 pt-2">
               <p className="text-base font-normal text-black">{t('bmi.result.bmiGoal')} <span className="text-[#4fa87f] font-semibold">{goalBMI ? goalBMI.toFixed(2) : 'NaN'}</span></p>
-              <p className="text-[#4fa87f] text-sm font-medium underline">{t('bmi.result.whyImportant')}</p>
+              
+              {/* Expandable BMI Info */}
+              <button 
+                onClick={() => setShowBmiInfo(!showBmiInfo)}
+                className="flex items-center gap-1 text-[#4fa87f] text-sm font-medium"
+              >
+                <span className="underline">{t('bmi.result.whyImportant')}</span>
+                <svg 
+                  className={`w-4 h-4 transition-transform duration-200 ${showBmiInfo ? 'rotate-180' : ''}`} 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {/* Expandable Info Box */}
+              <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showBmiInfo ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
+                <div className="bg-white/60 rounded-xl p-3 mt-1 border border-[#4fa87f]/20">
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    {language === 'es' 
+                      ? 'El IMC es una medida de la grasa corporal basada en la altura y el peso. Los médicos lo usan para evaluar riesgos de salud relacionados con el peso y determinar tratamientos apropiados.'
+                      : 'BMI is a measure of body fat based on height and weight. Doctors use it to assess weight-related health risks and determine appropriate treatments for conditions like heart disease and diabetes.'}
+                  </p>
+                </div>
+              </div>
+              
               <p className="text-sm text-black font-normal leading-relaxed">{t('bmi.result.doctorsUse')}</p>
             </div>
 
