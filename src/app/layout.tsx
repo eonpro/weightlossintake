@@ -4,6 +4,7 @@ import ClientProviders from '@/components/ClientProviders';
 import MetaPixel from '@/components/MetaPixel';
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://intake.eonmeds.com"),
   title: "EONMeds - Medical Intake",
   description: "Secure medical intake form for telehealth consultations",
   icons: {
@@ -14,6 +15,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: "EONMeds - Medical Intake",
     description: "Secure medical intake form for telehealth consultations",
+    url: "https://intake.eonmeds.com",
+    siteName: "EONMeds",
     images: [
       {
         url: "https://static.wixstatic.com/media/c49a9b_81e73b843c9a45a0880abe0b345de391~mv2.jpg",
@@ -23,6 +26,7 @@ export const metadata: Metadata = {
       },
     ],
     type: "website",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
