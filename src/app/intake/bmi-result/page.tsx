@@ -91,7 +91,7 @@ export default function BMIResultPage() {
         <div className="space-y-5">
           {/* Header Text */}
           <div className="text-left mb-5">
-            <h2 className="text-2xl font-medium text-black leading-snug">
+            <h2 className="page-title">
               {t('bmi.result.header.line1')}<br/>
               {t('bmi.result.header.line2')}<br/>
               {t('bmi.result.header.line3')}<br/>
@@ -101,7 +101,7 @@ export default function BMIResultPage() {
           
           {/* BMI Result Card */}
           <div className="bg-[#f0feab] rounded-3xl p-5 space-y-3">
-            <h1 className="text-lg font-semibold text-black">
+            <h1 className="text-[22px] font-semibold text-black">
               <span className="text-[#4fa87f]">{firstName || 'firstname'}</span>, {t('bmi.result.yourBMI')} {t('bmi.result.is')}
             </h1>
             
@@ -112,7 +112,7 @@ export default function BMIResultPage() {
               <p className="font-normal">{t('bmi.result.height')}: <span className="text-[#4fa87f]">{heightStr || 'feet\'inches"'}</span></p>
             </div>
             
-            <p className="text-[13px] text-gray-600 font-normal leading-relaxed pt-2">
+            <p className="text-[12px] text-gray-500 font-normal leading-snug pt-2">
               {t('bmi.result.disclaimer')}
             </p>
             
