@@ -91,7 +91,7 @@ export default function BMIResultPage() {
         <div className="space-y-5">
           {/* Header Text */}
           <div className="text-left mb-5">
-            <h2 className="text-[22px] md:text-[26px] font-semibold text-[#413d3d] leading-snug">
+            <h2 className="text-[22px] md:text-[26px] font-semibold text-[#413d3d] leading-tight">
               {t('bmi.result.header.line1')}<br/>
               {t('bmi.result.header.line2')}<br/>
               {t('bmi.result.header.line3')}<br/>
@@ -133,7 +133,7 @@ export default function BMIResultPage() {
           </div>
 
           {/* Goal Card */}
-          <div className="bg-[#e8f99e] rounded-3xl p-5 space-y-3">
+          <div className="bg-[#d4f084] rounded-3xl p-5 space-y-3">
             <h2 className="text-lg font-semibold text-black">{t('bmi.result.yourGoal')}</h2>
             <div className="text-5xl font-bold text-[#4fa87f]">{weightToLose ? `${Math.abs(weightToLose).toFixed(2)}` : '0.00'} {t('common.lbs')}</div>
             <p className="text-sm text-black font-normal">{t('bmi.result.averageLoss')}</p>
@@ -159,7 +159,7 @@ export default function BMIResultPage() {
               
               {/* Expandable Info Box */}
               <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showBmiInfo ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
-                <div className="bg-white/60 rounded-xl p-3 mt-1 border border-[#4fa87f]/20">
+                <div className="bg-[#f5ffd6] rounded-xl p-3 mt-1 border border-[#4fa87f]/20">
                   <p className="text-sm text-gray-700 leading-relaxed">
                     {language === 'es' 
                       ? 'El IMC es una medida de la grasa corporal basada en la altura y el peso. Los médicos lo usan para evaluar riesgos de salud relacionados con el peso y determinar tratamientos apropiados.'
@@ -172,7 +172,7 @@ export default function BMIResultPage() {
             </div>
 
             {/* Doctor Image */}
-            <div className="flex items-center space-x-4 bg-[#e4fb74] rounded-2xl p-4 mt-3">
+            <div className="flex items-center space-x-4 bg-[#f0feab] rounded-2xl p-4 mt-3">
               <img 
                 src="https://static.wixstatic.com/media/c49a9b_60e51d36e98e4128a6edb7987a3d6b8b~mv2.webp"
                 alt="Doctor"
