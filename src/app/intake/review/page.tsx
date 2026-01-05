@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { submitIntake, collectIntakeData, markCheckpointCompleted, sendToIntakeQ } from '@/lib/api';
+import { submitIntake, collectIntakeData, markCheckpointCompleted } from '@/lib/api';
 
 export default function ReviewPage() {
   const router = useRouter();
@@ -72,16 +72,15 @@ export default function ReviewPage() {
         sessionStorage.setItem('submission_status', 'success');
         setSubmissionStatus('success');
         
-        // Send to IntakeQ in background (don't wait for it)
-        sendToIntakeQ().then(intakeqResult => {
-          if (intakeqResult.success) {
-            console.log('✅ IntakeQ integration complete:', intakeqResult.clientId);
-          } else {
-            console.warn('⚠️ IntakeQ integration failed:', intakeqResult.error);
-          }
-        }).catch(err => {
-          console.warn('⚠️ IntakeQ integration error:', err);
-        });
+        // NOTE: IntakeQ integration is handled by Airtable automation
+        // The Airtable automation has full functionality including:
+        // - Custom fields (BMI, weight, height, etc.)
+        // - Intake PDF generation and upload
+        // - SOAP Note PDF generation with state-based license
+        // - Proper field mapping to IntakeQ client profile
+        // 
+        // The local sendToIntakeQ() was disabled to avoid creating
+        // duplicate/incomplete IntakeQ profiles before Airtable automation runs.
         
         // Navigate after successful submission
         setTimeout(() => {
