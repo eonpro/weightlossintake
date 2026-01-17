@@ -8,6 +8,7 @@ import EonmedsLogo from '@/components/EonmedsLogo';
 import CopyrightText from '@/components/CopyrightText';
 import { useCheckoutStore, getPatientInfoFromIntake, loadShippingFromIntake } from '@/store/checkoutStore';
 import { ADDONS, EXPEDITED_SHIPPING_PRICE, formatPrice } from '@/lib/stripe';
+import { logger } from '@/lib/logger';
 
 const translations = {
   en: {
@@ -222,6 +223,7 @@ export default function PaymentPage() {
         }
       } catch (err) {
         // Payment initialization error - display to user
+        logger.error('Payment initialization failed', { error: err });
         setError(err instanceof Error ? err.message : 'Failed to initialize payment');
       } finally {
         setLoading(false);
@@ -486,8 +488,28 @@ export default function PaymentPage() {
           ) : error ? (
             <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
               <p className="text-sm text-red-600">{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-2 text-sm text-red-600 underline"
+              >
+                {language === 'es' ? 'Intentar de nuevo' : 'Try again'}
+              </button>
             </div>
-          ) : null}
+          ) : (
+            <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
+              <p className="text-sm text-yellow-700">
+                {language === 'es' 
+                  ? 'No se pudo inicializar el pago. Por favor, intente de nuevo.'
+                  : 'Unable to initialize payment. Please try again.'}
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-2 text-sm text-yellow-700 underline"
+              >
+                {language === 'es' ? 'Recargar página' : 'Reload page'}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
