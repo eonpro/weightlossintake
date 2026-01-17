@@ -8,6 +8,7 @@ import IntakePageLayout from '@/components/IntakePageLayout';
 import CopyrightText from '@/components/CopyrightText';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
+import { logger } from '@/lib/logger';
 
 export default function ContactInfoPage() {
   const router = useRouter();
@@ -39,7 +40,7 @@ export default function ContactInfoPage() {
   const validatePhone = (phone: string) => {
     // Remove all non-digits
     const digitsOnly = phone.replace(/\D/g, '');
-    
+
     if (country === 'US' || country === 'PR') {
       // US and Puerto Rico phone: 10 digits
       return digitsOnly.length === 10;
@@ -59,7 +60,7 @@ export default function ContactInfoPage() {
   const formatPhoneNumber = (value: string) => {
     const digitsOnly = value.replace(/\D/g, '');
     let formatted = digitsOnly;
-    
+
     if (digitsOnly.length > 0) {
       if (digitsOnly.length <= 3) {
         formatted = digitsOnly;
@@ -69,14 +70,14 @@ export default function ContactInfoPage() {
         formatted = `${digitsOnly.slice(0, 3)} ${digitsOnly.slice(3, 6)} ${digitsOnly.slice(6, 10)}`;
       }
     }
-    
+
     return formatted;
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const digitsOnly = value.replace(/\D/g, '');
-    
+
     // Limit to 10 digits
     if (digitsOnly.length <= 10) {
       const formatted = formatPhoneNumber(digitsOnly);
@@ -98,36 +99,36 @@ export default function ContactInfoPage() {
     // Validate inputs
     const isEmailValid = validateEmail(email);
     const isPhoneValid = validatePhone(phone);
-    
+
     // Set error messages if invalid
     if (!isEmailValid) {
       setEmailError(language === 'es' ? 'Por favor ingrese un email válido' : 'Please enter a valid email');
       return;
     }
-    
+
     if (!isPhoneValid) {
       setPhoneError(language === 'es' ? 'Por favor ingrese un número de teléfono válido de 10 dígitos' : 'Please enter a valid 10-digit phone number');
       return;
     }
-    
+
     if (!consent) {
       return;
     }
 
     // All validations passed, proceed with submission
     setIsSubmitting(true);
-    
+
     try {
       // Save data to session storage
       const phoneDigitsOnly = phone.replace(/\D/g, '');
       const formattedPhone = '+1' + phoneDigitsOnly;
-      
-      sessionStorage.setItem('intake_contact', JSON.stringify({ 
-        email, 
-        phone: formattedPhone 
+
+      sessionStorage.setItem('intake_contact', JSON.stringify({
+        email,
+        phone: formattedPhone
       }));
-      
-      
+
+
       // Collect all data available at this midpoint
       const nameData = sessionStorage.getItem('intake_name');
       const stateData = sessionStorage.getItem('intake_state');
@@ -139,68 +140,86 @@ export default function ContactInfoPage() {
       const goalsData = sessionStorage.getItem('intake_goals');
       const activityData = sessionStorage.getItem('intake_activity_level');
       const sexAssigned = sessionStorage.getItem('sex_assigned');
-      
-      // Parse data
-      const parsedName = nameData ? JSON.parse(nameData) : {};
-      const parsedState = stateData ? JSON.parse(stateData) : {};
-      const parsedAddress = addressData ? JSON.parse(addressData) : {};
-      const parsedHeight = heightData ? JSON.parse(heightData) : {};
-      const parsedGoals = goalsData ? JSON.parse(goalsData) : [];
-      const parsedDob = dobData ? JSON.parse(dobData) : {};
-      
+
+      // Parse data with error handling
+      const safeJsonParse = <T,>(data: string | null, fallback: T): T => {
+        if (!data) return fallback;
+        try {
+          return JSON.parse(data);
+        } catch {
+          return fallback;
+        }
+      };
+
+      const parsedName = safeJsonParse<Record<string, string>>(nameData, {});
+      const parsedState = safeJsonParse<Record<string, string>>(stateData, {});
+      const parsedAddress = safeJsonParse<Record<string, string>>(addressData, {});
+      const parsedHeight = safeJsonParse<Record<string, string>>(heightData, {});
+      const parsedGoals = safeJsonParse<string[]>(goalsData, []);
+      const parsedDob = safeJsonParse<Record<string, string>>(dobData, {});
+
       // Calculate BMI - ensure height values are parsed as integers
       const weightLbs = currentWeight ? parseInt(currentWeight) : null;
       const heightFeet = parsedHeight.feet ? parseInt(parsedHeight.feet) : null;
-      const heightInchesVal = parsedHeight.inches !== undefined && parsedHeight.inches !== '' 
-        ? parseInt(parsedHeight.inches) 
+      const heightInchesVal = parsedHeight.inches !== undefined && parsedHeight.inches !== ''
+        ? parseInt(parsedHeight.inches)
         : 0;
-      const heightInches = heightFeet 
-        ? (heightFeet * 12) + heightInchesVal 
+      const heightInches = heightFeet
+        ? (heightFeet * 12) + heightInchesVal
         : null;
-      const bmi = weightLbs && heightInches 
-        ? Math.round(((weightLbs / (heightInches * heightInches)) * 703) * 10) / 10 
+      const bmi = weightLbs && heightInches
+        ? Math.round(((weightLbs / (heightInches * heightInches)) * 703) * 10) / 10
         : null;
-      
+
       // Format height string using parsed integer values for consistency with BMI calculation
-      const heightString = heightFeet 
-        ? `${heightFeet}'${heightInchesVal}"` 
+      const heightString = heightFeet
+        ? `${heightFeet}'${heightInchesVal}"`
         : '';
-      
+
       // Format DOB
       const dobString = parsedDob.month && parsedDob.day && parsedDob.year
         ? `${parsedDob.month} ${parsedDob.day}, ${parsedDob.year}`
         : '';
-      
+
       // Get or create session ID
       let sessionId = sessionStorage.getItem('intake_session_id');
       if (!sessionId) {
         sessionId = `EON-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         sessionStorage.setItem('intake_session_id', sessionId);
       }
-      
+
       // Build midpoint checkpoint data for Airtable
-      const midpointData = {
+      // Filter out null/undefined values as Zod schema doesn't accept null
+      const midpointData: Record<string, string | number | boolean> = {
         sessionId,
         firstName: parsedName.firstName || '',
         lastName: parsedName.lastName || '',
-        email,
-        phone: formattedPhone,
-        dob: dobString,
+        email: email || '',
+        phone: formattedPhone || '',
+        dob: dobString || '',
         sex: sexAssigned || '',
         state: parsedState.state || parsedAddress.state || '',
         address: parsedAddress.fullAddress || parsedAddress.street || '',
         apartment: parsedAddress.unit || '',
-        currentWeight: weightLbs,
-        idealWeight: idealWeight ? parseInt(idealWeight) : null,
-        height: heightString,
-        bmi,
+        height: heightString || '',
         goals: Array.isArray(parsedGoals) ? parsedGoals.join(', ') : '',
         activityLevel: activityData || '',
         qualified: false, // Not yet qualified at midpoint
         flowLanguage: localStorage.getItem('preferredLanguage') || 'en',
       };
-      
-      
+
+      // Only add numeric fields if they have valid values
+      if (weightLbs !== null && weightLbs !== undefined) {
+        midpointData.currentWeight = weightLbs;
+      }
+      if (idealWeight) {
+        midpointData.idealWeight = parseInt(idealWeight);
+      }
+      if (bmi !== null && bmi !== undefined) {
+        midpointData.bmi = bmi;
+      }
+
+
       // Submit midpoint data to Airtable (fire and forget - don't block navigation)
       fetch('/api/airtable', {
         method: 'POST',
@@ -214,13 +233,14 @@ export default function ContactInfoPage() {
             sessionStorage.setItem('airtable_record_id', result.recordId);
             sessionStorage.setItem('midpoint_submitted', 'true');
           } else {
-            console.error('❌ Midpoint save failed:', result.error);
+            // Log midpoint save failure (no PHI in result.error)
+            logger.error('Midpoint save failed:', result.error);
           }
         })
-        .catch(err => {
-          console.error('❌ Midpoint submission error:', err);
+        .catch(() => {
+          // Silent fail - don't block user flow for midpoint checkpoint
         });
-      
+
       // Mark checkpoint as completed
       const completedCheckpoints = JSON.parse(
         sessionStorage.getItem('completed_checkpoints') || '[]'
@@ -229,13 +249,12 @@ export default function ContactInfoPage() {
         completedCheckpoints.push('personal-info');
         sessionStorage.setItem('completed_checkpoints', JSON.stringify(completedCheckpoints));
       }
-      
-      
+
+
       // Navigate to next page immediately (don't wait for Airtable)
       router.push('/intake/support-info');
-    } catch (error) {
-      console.error('Error during submission:', error);
-      // Even if there's an error, try to navigate
+    } catch {
+      // Error during submission - still navigate to maintain UX
       router.push('/intake/support-info');
     } finally {
       setIsSubmitting(false);
@@ -257,7 +276,7 @@ export default function ContactInfoPage() {
   );
 
   const continueButton = (
-    <button 
+    <button
       onClick={handleContinue}
       disabled={!email || !phone || !consent || isSubmitting}
       className={`continue-button ${
@@ -280,20 +299,20 @@ export default function ContactInfoPage() {
       button={continueButton}
       copyright={copyrightText}
     >
-      <div className="max-w-md lg:max-w-2xl mx-auto w-full">
-        {/* Logo - inside max-w wrapper for proper alignment */}
-        <EonmedsLogo inline={true} />
-        <div className="space-y-6">
-          <div className="space-y-3">
-            <h1 className="page-title">
-              {language === 'es' ? '¿Cómo podemos contactarte?' : 'How can we contact you?'}
-            </h1>
-            <p className="page-subtitle text-sm">
-              {language === 'es' 
-                ? 'Usamos esta información para mantenerte informado sobre tu tratamiento, enviarte actualizaciones importantes y ayudarte a mantenerte conectado con tu proveedor.'
-                : 'We use this information to keep you informed about your treatment, send you important updates, and help you stay connected with your provider.'}
-            </p>
-          </div>
+      {/* Logo */}
+      <EonmedsLogo inline={true} />
+
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <h1 className="page-title">
+            {language === 'es' ? '¿Cómo podemos contactarte?' : 'How can we contact you?'}
+          </h1>
+          <p className="page-subtitle">
+            {language === 'es'
+              ? 'Usamos esta información para mantenerte informado sobre tu tratamiento, enviarte actualizaciones importantes y ayudarte a mantenerte conectado con tu proveedor.'
+              : 'We use this information to keep you informed about your treatment, send you important updates, and help you stay connected with your provider.'}
+          </p>
+        </div>
 
           <div className="space-y-4">
             {/* Email Input */}
@@ -314,7 +333,7 @@ export default function ContactInfoPage() {
             <div>
               <div className="flex space-x-2 w-full overflow-hidden">
                 <div className="relative flex-shrink-0">
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setShowCountryDropdown(!showCountryDropdown)}
                     className="input-field flex items-center space-x-2 !w-auto"
@@ -325,7 +344,7 @@ export default function ContactInfoPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
-                  
+
                   {showCountryDropdown && (
                     <div className="absolute z-10 mt-2 w-48 bg-[#eae3db] border border-[#d2c7bb] rounded-2xl shadow-lg">
                       {countries.map(c => (
@@ -348,7 +367,7 @@ export default function ContactInfoPage() {
                     </div>
                   )}
                 </div>
-                
+
                 <input
                   type="tel"
                   placeholder="000 000 0000"
@@ -368,18 +387,18 @@ export default function ContactInfoPage() {
               <button
                 type="button"
                 onClick={() => setConsent(!consent)}
-                className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                  consent ? 'bg-white' : 'bg-transparent'
+                className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
+                  consent ? 'bg-[#413d3d] border-[#413d3d]' : 'bg-white border-gray-300'
                 }`}
-                style={{ border: '1.5px solid #413d3d' }}
+                style={{ border: consent ? '2px solid #413d3d' : '2px solid #d1d5db' }}
               >
                 {consent && (
-                  <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 )}
               </button>
-              <div className="ml-3 text-sm text-gray-600 leading-relaxed">
+              <div className="ml-3 text-[13px] text-gray-600" style={{ lineHeight: '1.4' }}>
                 {language === 'es'
                   ? <>Acepto la <a href="#" className="text-[#4fa87f] underline">Política de Privacidad</a> y autorizo recibir comunicaciones importantes por correo electrónico y mensajes de texto (SMS) de EONMeds/EONPro y afiliados con respecto a mi tratamiento.</>
                   : <>I accept the <a href="#" className="text-[#4fa87f] underline">Privacy Policy</a> and I authorize receiving important communications via email and text messages (SMS) from EONMeds/EONPro and affiliates regarding my treatment.</>
@@ -388,14 +407,13 @@ export default function ContactInfoPage() {
             </div>
           </div>
 
-          {/* SMS Disclosure */}
-          <div className="info-container">
-            <p className="text-xs leading-relaxed">
-              {language === 'es'
-                ? 'Para ayudar a garantizar la seguridad del paciente, necesitamos verificar tu número de teléfono. Al proporcionarlo y continuar, consientes recibir mensajes de texto de EONPro para verificación y otros usos legalmente permitidos relacionados con tu cuenta y nuestros servicios. Esto puede incluir confirmaciones de pedidos, actualizaciones de envío y mensajes de tu proveedor. Pueden aplicarse tarifas de mensajes y datos. La frecuencia de los mensajes puede variar. Responde AYUDA para asistencia o STOP para cancelar la suscripción. Pueden aplicarse tarifas estándar de mensajes y datos. Estos mensajes pueden incluir recordatorios médicos, actualizaciones de tratamiento, promociones y otra información relacionada con tu atención.'
-                : 'To help ensure patient safety, we need to verify your phone number. By providing it and continuing, you consent to receive text messages from EONPro for verification and other legally permitted uses related to your account and our services. This may include order confirmations, shipping updates, and messages from your provider. Message and data rates may apply. Message frequency may vary. Reply HELP for assistance or STOP to unsubscribe. Standard message and data rates may apply. These messages may include medical reminders, treatment updates, promotions, and other information related to your care.'}
-            </p>
-          </div>
+        {/* SMS Disclosure */}
+        <div className="info-container">
+          <p className="text-xs leading-tight">
+            {language === 'es'
+              ? 'Para ayudar a garantizar la seguridad del paciente, necesitamos verificar tu número de teléfono. Al proporcionarlo y continuar, consientes recibir mensajes de texto de EONPro para verificación y otros usos legalmente permitidos relacionados con tu cuenta y nuestros servicios. Esto puede incluir confirmaciones de pedidos, actualizaciones de envío y mensajes de tu proveedor. Pueden aplicarse tarifas de mensajes y datos. La frecuencia de los mensajes puede variar. Responde AYUDA para asistencia o STOP para cancelar la suscripción. Pueden aplicarse tarifas estándar de mensajes y datos. Estos mensajes pueden incluir recordatorios médicos, actualizaciones de tratamiento, promociones y otra información relacionada con tu atención.'
+              : 'To help ensure patient safety, we need to verify your phone number. By providing it and continuing, you consent to receive text messages from EONPro for verification and other legally permitted uses related to your account and our services. This may include order confirmations, shipping updates, and messages from your provider. Message and data rates may apply. Message frequency may vary. Reply HELP for assistance or STOP to unsubscribe. Standard message and data rates may apply. These messages may include medical reminders, treatment updates, promotions, and other information related to your care.'}
+          </p>
         </div>
       </div>
     </IntakePageLayout>

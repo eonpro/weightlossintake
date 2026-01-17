@@ -9,16 +9,20 @@ const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 const AIRTABLE_TABLE_NAME = process.env.AIRTABLE_TABLE_NAME || 'Intake Submissions';
 
 export async function GET(request: NextRequest) {
-  // Security: Block in production unless debug key is provided
+  // Security: Block in production completely, or require env-based key
   const { searchParams } = new URL(request.url);
   const debugKey = searchParams.get('key');
   const isDev = process.env.NODE_ENV === 'development';
+  const validDebugKey = process.env.DEBUG_API_KEY; // Set this in Vercel env vars if needed
 
-  if (!isDev && debugKey !== 'eon-debug-2025') {
-    return NextResponse.json(
-      { error: 'Not authorized', message: 'Debug endpoint only available in development' },
-      { status: 403 }
-    );
+  // In production: only allow if DEBUG_API_KEY is set AND matches
+  if (!isDev) {
+    if (!validDebugKey || debugKey !== validDebugKey) {
+      return NextResponse.json(
+        { error: 'Not authorized', message: 'Debug endpoint not available' },
+        { status: 403 }
+      );
+    }
   }
   const diagnostics: Record<string, unknown> = {
     timestamp: new Date().toISOString(),

@@ -4,24 +4,21 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useTranslation } from '@/hooks/useTranslation';
 import Image from 'next/image';
 import CopyrightText from '@/components/CopyrightText';
 
 export default function TestimonialsPage() {
   const router = useRouter();
-  const { t } = useTranslation();
   const { language } = useLanguage();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const hasNavigated = useRef(false);
 
-  // Language-specific testimonial images
+  // Testimonial images - these already have the card design embedded
   const testimonialImages = language === 'es' ? [
     'https://static.wixstatic.com/media/c49a9b_b4dbc66741324c1f9124e3bff2094d84~mv2.webp',
     'https://static.wixstatic.com/media/c49a9b_b020b2170766409e850210d418615da1~mv2.webp',
     'https://static.wixstatic.com/media/c49a9b_e54335aad0164b22aa8a2b123bb34b7c~mv2.webp',
-    'https://static.wixstatic.com/media/c49a9b_b020b2170766409e850210d418615da1~mv2.webp',
     'https://static.wixstatic.com/media/c49a9b_98e7e84f7213491a97bd9f27542c96af~mv2.webp',
     'https://static.wixstatic.com/media/c49a9b_84d69338ec814bcca3c4bacc9f1d0044~mv2.webp'
   ] : [
@@ -38,26 +35,24 @@ export default function TestimonialsPage() {
     setCurrentSlide(0);
   }, [language]);
 
-  // Auto-scroll functionality - 2 seconds per slide
+  // Auto-scroll - 1.5 seconds per image
   useEffect(() => {
     if (!isPaused) {
       const interval = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % testimonialImages.length);
-      }, 2000);
-
+      }, 1500);
       return () => clearInterval(interval);
     }
-  }, [currentSlide, isPaused, testimonialImages.length]);
+  }, [isPaused, testimonialImages.length]);
 
-  // Auto-advance after 4 seconds
+  // Auto-advance to next page after 5 seconds
   useEffect(() => {
     const navigationTimer = setTimeout(() => {
       if (!hasNavigated.current) {
         hasNavigated.current = true;
         router.push('/intake/medical-history-overview');
       }
-    }, 4000);
-
+    }, 5000);
     return () => clearTimeout(navigationTimer);
   }, [router]);
 
@@ -77,9 +72,9 @@ export default function TestimonialsPage() {
         </Link>
       </div>
       
-      {/* Main content - no logo */}
-      <div className="flex-1 flex flex-col px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
-        {/* Header with Blue Verified Badge Icon */}
+      {/* Main content */}
+      <div className="flex-1 flex flex-col px-6 lg:px-8 pb-4 max-w-md lg:max-w-lg mx-auto w-full">
+        {/* Header */}
         <div className="space-y-3 mb-6">
           <div className="flex justify-start">
             <img 
@@ -88,7 +83,7 @@ export default function TestimonialsPage() {
               className="w-12 h-12"
             />
           </div>
-          <h1 className="text-[26px] lg:text-[30px] font-semibold leading-tight text-[#413d3d]">
+          <h1 className="text-[26px] lg:text-[30px] leading-tight text-[#413d3d]">
             {language === 'es' 
               ? 'Únete a los miles de transformaciones que hemos ayudado a lograr.'
               : 'Join the thousands of transformations we\'ve helped achieve.'}
@@ -100,35 +95,42 @@ export default function TestimonialsPage() {
           </p>
         </div>
 
-        {/* Single Card Carousel - Centered */}
+        {/* Simple Fade Carousel - One image at a time */}
         <div 
           className="relative flex-1 flex flex-col items-center justify-center"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          <div className="w-full max-w-[280px] mx-auto">
-            <Image
-              src={testimonialImages[currentSlide]}
-              alt={`Testimonial ${currentSlide + 1}`}
-              width={280}
-              height={420}
-              className="w-full h-auto rounded-2xl"
-              style={{ objectFit: 'contain' }}
-              priority
-            />
+          {/* Single centered image with crossfade */}
+          <div className="relative w-full max-w-[260px] aspect-[3/4]">
+            {testimonialImages.map((img, index) => (
+              <div
+                key={index}
+                className="absolute inset-0 transition-opacity duration-500 ease-in-out"
+                style={{ opacity: currentSlide === index ? 1 : 0 }}
+              >
+                <Image
+                  src={img}
+                  alt={`Transformation ${index + 1}`}
+                  fill
+                  className="object-contain rounded-2xl"
+                  priority={index === 0}
+                  sizes="260px"
+                />
+              </div>
+            ))}
           </div>
 
-          {/* Carousel Dots */}
-          <div className="flex justify-center space-x-1.5 mt-4">
+          {/* Dots */}
+          <div className="flex justify-center space-x-2 mt-4">
             {testimonialImages.map((_, index) => (
               <button
                 key={index}
-                onClick={() => {
-                  setCurrentSlide(index);
-                  setIsPaused(false);
-                }}
+                onClick={() => setCurrentSlide(index)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  currentSlide === index ? 'bg-gray-400' : 'bg-gray-300'
+                  currentSlide === index 
+                    ? 'bg-[#4fa87f] w-4' 
+                    : 'bg-gray-300 hover:bg-gray-400'
                 }`}
               />
             ))}
@@ -136,16 +138,14 @@ export default function TestimonialsPage() {
         </div>
       </div>
       
-      {/* Bottom section - Disclaimer only */}
+      {/* Bottom */}
       <div className="px-6 lg:px-8 pb-6 max-w-md lg:max-w-lg mx-auto w-full">
-        {/* Disclaimer */}
-        <p className="text-[11px] text-[#413d3d]/50 text-center leading-relaxed">
+        <p className="text-[10px] text-[#413d3d]/40 text-center leading-relaxed">
           {language === 'es'
-            ? 'Los medicamentos son solo una parte del programa de pérdida de peso de EONMeds, que también incluye una dieta baja en calorías y mayor actividad física. Los clientes no fueron compensados por compartir sus opiniones. Los resultados provienen de personas que compraron varios productos, incluidos tratamientos con receta. Estos resultados no han sido verificados de forma independiente y los resultados individuales pueden variar.'
-            : 'Medications are just one part of the EONMeds weight loss program, which also includes a low-calorie diet and increased physical activity. Clients were not compensated for sharing their opinions. The results come from individuals who purchased various products, including prescription treatments. These results have not been independently verified, and individual results may vary.'}
+            ? 'Resultados individuales pueden variar.'
+            : 'Individual results may vary.'}
         </p>
-
-        <CopyrightText className="mt-4" />
+        <CopyrightText className="mt-2" />
       </div>
     </div>
   );

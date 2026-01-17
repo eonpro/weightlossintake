@@ -132,10 +132,10 @@ export const translations = {
     'bmi.calculating.finalizingResults': 'Finalizing your results',
     
     // BMI result page
-    'bmi.result.header.line1': 'Based on the information',
-    'bmi.result.header.line2': 'you shared, the use of',
-    'bmi.result.header.line3': 'medication may be',
-    'bmi.result.header.line4': 'appropriate for you.',
+    'bmi.result.header.line1': 'Based on the information you',
+    'bmi.result.header.line2': 'shared, the use of medication',
+    'bmi.result.header.line3': 'may be appropriate for you.',
+    'bmi.result.header.line4': '',
     'bmi.result.yourBMI': 'your BMI',
     'bmi.result.is': 'is:',
     'bmi.result.height': 'Height',
@@ -345,10 +345,10 @@ export const translations = {
     'bmi.calculating.finalizingResults': 'Finalizando tus resultados',
     
     // BMI result page
-    'bmi.result.header.line1': 'Basado en la información',
-    'bmi.result.header.line2': 'que compartiste, el uso de',
-    'bmi.result.header.line3': 'medicamento puede ser',
-    'bmi.result.header.line4': 'apropiado para ti.',
+    'bmi.result.header.line1': 'Basado en la información que',
+    'bmi.result.header.line2': 'compartiste, el uso de medicamento',
+    'bmi.result.header.line3': 'puede ser apropiado para ti.',
+    'bmi.result.header.line4': '',
     'bmi.result.yourBMI': 'tu IMC',
     'bmi.result.is': 'es:',
     'bmi.result.height': 'Altura',

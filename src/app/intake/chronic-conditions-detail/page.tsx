@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import EonmedsLogo from '@/components/EonmedsLogo';
 import { submitCheckpoint, markCheckpointCompleted } from '@/lib/api';
+import { logger } from '@/lib/logger';
 
 export default function ChronicConditionsDetailPage() {
   const router = useRouter();
@@ -199,7 +200,7 @@ export default function ChronicConditionsDetailPage() {
     };
     
     submitCheckpoint('medical-history', checkpointData, 'partial').catch(err => {
-      console.error('Medical history checkpoint submission failed:', err);
+      logger.error('Medical history checkpoint submission failed:', err);
     });
     markCheckpointCompleted('medical-history');
     
@@ -243,7 +244,7 @@ export default function ChronicConditionsDetailPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={language === 'es' ? 'Condición cronica' : 'Chronic condition'}
-              className="w-full p-4 text-base md:text-lg border border-gray-300 rounded-2xl focus:outline-none focus:border-gray-400"
+              className="w-full p-4 text-base md:text-lg border border-gray-300 rounded-2xl focus:outline-none focus:border-[#4fa87f]"
               onFocus={() => {
                 if (filteredConditions.length > 0) {
                   setShowSuggestions(true);
@@ -255,7 +256,7 @@ export default function ChronicConditionsDetailPage() {
             {showSuggestions && (
               <div 
                 ref={suggestionsRef}
-                className="absolute z-10 w-full mt-2 bg-white border border-gray-200 rounded-2xl shadow-lg max-h-60 overflow-y-auto"
+                className="absolute z-10 w-full mt-2 bg-white border-2 border-gray-200 rounded-2xl shadow-lg max-h-60 overflow-y-auto"
               >
                 {filteredConditions.map((condition, index) => (
                   <button
@@ -311,12 +312,12 @@ export default function ChronicConditionsDetailPage() {
           <p className="copyright-text">
             {language === 'es' ? (
               <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                © 2026 EONPro, LLC. Todos los derechos reservados.<br/>
                 Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
               </>
             ) : (
               <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
+                © 2026 EONPro, LLC. All rights reserved.<br/>
                 Exclusive and protected process. Copying or reproduction without authorization is prohibited.
               </>
             )}

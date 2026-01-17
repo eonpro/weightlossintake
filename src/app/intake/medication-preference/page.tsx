@@ -48,7 +48,7 @@ export default function MedicationPreferencePage() {
               onClick={() => handleSelect('recommendation')}
               className="option-button w-full text-left p-4 rounded-2xl transition-all"
             >
-                <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                <span className="text-[16px] lg:text-lg leading-tight">
                   {t('medication.option1')}
                 </span>
             </button>
@@ -58,7 +58,7 @@ export default function MedicationPreferencePage() {
               onClick={() => handleSelect('have_in_mind')}
               className="option-button w-full text-left p-4 rounded-2xl transition-all"
             >
-                <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                <span className="text-[16px] lg:text-lg leading-tight">
                   {t('medication.option2')}
                 </span>
             </button>
@@ -71,12 +71,12 @@ export default function MedicationPreferencePage() {
         <p className="copyright-text text-center">
             {language === 'es' ? (
               <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                © 2026 EONPro, LLC. Todos los derechos reservados.<br/>
                 Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
               </>
             ) : (
               <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
+                © 2026 EONPro, LLC. All rights reserved.<br/>
                 Exclusive and protected process. Copying or reproduction without authorization is prohibited.
               </>
             )}

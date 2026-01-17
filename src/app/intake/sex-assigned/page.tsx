@@ -55,14 +55,14 @@ export default function SexAssignedPage() {
               onClick={() => handleSelect('man')}
               className="option-button w-full text-left p-4 rounded-2xl transition-all"
             >
-                <span className="text-[16px] lg:text-lg font-medium leading-tight">{t('sex.man')}</span>
+                <span className="text-[16px] lg:text-lg leading-tight">{t('sex.man')}</span>
             </button>
             
             <button
               onClick={() => handleSelect('woman')}
               className="option-button w-full text-left p-4 rounded-2xl transition-all"
             >
-                <span className="text-[16px] lg:text-lg font-medium leading-tight">{t('sex.woman')}</span>
+                <span className="text-[16px] lg:text-lg leading-tight">{t('sex.woman')}</span>
             </button>
           </div>
           
@@ -80,12 +80,12 @@ export default function SexAssignedPage() {
         <p className="copyright-text text-center">
             {language === 'es' ? (
               <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                © 2026 EONPro, LLC. Todos los derechos reservados.<br/>
                 Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
               </>
             ) : (
               <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
+                © 2026 EONPro, LLC. All rights reserved.<br/>
                 Exclusive and protected process. Copying or reproduction without authorization is prohibited.
               </>
             )}

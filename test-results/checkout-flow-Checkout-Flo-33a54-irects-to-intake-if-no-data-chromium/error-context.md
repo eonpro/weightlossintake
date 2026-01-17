@@ -1,0 +1,53 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "PEPTSCI":
+        - /url: /dashboard
+        - img "PEPTSCI"
+      - navigation [ref=e5]:
+        - link "Dashboard" [ref=e6] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e7]
+          - generic [ref=e12]: Dashboard
+        - link "Customers" [ref=e13] [cursor=pointer]:
+          - /url: /customers
+          - img [ref=e14]
+          - generic [ref=e19]: Customers
+        - link "Inventory" [ref=e20] [cursor=pointer]:
+          - /url: /inventory
+          - img [ref=e21]
+          - generic [ref=e25]: Inventory
+        - link "Pricing" [ref=e26] [cursor=pointer]:
+          - /url: /pricing
+          - img [ref=e27]
+          - generic [ref=e29]: Pricing
+        - link "Competitors" [ref=e30] [cursor=pointer]:
+          - /url: /competitors
+          - img [ref=e31]
+          - generic [ref=e34]: Competitors
+        - link "Orders/Expenses" [ref=e35] [cursor=pointer]:
+          - /url: /orders-expenses
+          - img [ref=e36]
+          - generic [ref=e39]: Orders/Expenses
+        - link "P&L" [ref=e40] [cursor=pointer]:
+          - /url: /profit-loss
+          - img [ref=e41]
+          - generic [ref=e43]: P&L
+        - link "PO Generator" [ref=e44] [cursor=pointer]:
+          - /url: /po-generator
+          - img [ref=e45]
+          - generic [ref=e48]: PO Generator
+      - generic [ref=e49]:
+        - button "Search... ⌘ K" [ref=e50] [cursor=pointer]:
+          - img [ref=e51]
+          - generic [ref=e54]: Search...
+          - generic:
+            - generic: ⌘
+            - text: K
+        - button [ref=e55] [cursor=pointer]:
+          - img [ref=e56]
+  - main [ref=e59]
+```

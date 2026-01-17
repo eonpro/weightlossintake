@@ -9,6 +9,7 @@ interface BMIWidgetProps {
 
 export default function BMIWidget({ bmi, language }: BMIWidgetProps) {
   const [indicatorPosition, setIndicatorPosition] = useState(0);
+  const [barFillWidth, setBarFillWidth] = useState(0);
   const [showIndicator, setShowIndicator] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
   const lastBMI = useRef<number | null>(null);
@@ -51,17 +52,22 @@ export default function BMIWidget({ bmi, language }: BMIWidgetProps) {
       
       const position = calculatePosition(bmi);
       
-      // Show indicator and start animation
+      // First, show indicator at position 0
+      setShowIndicator(true);
+      setIndicatorPosition(0);
+      setBarFillWidth(0);
+      
+      // Then animate both to the final position
       setTimeout(() => {
-        setShowIndicator(true);
+        setBarFillWidth(position);
         setIndicatorPosition(position);
         
-        // Show label after dot animation completes
-          setTimeout(() => {
-            setShowLabel(true);
+        // Show label after animation completes
+        setTimeout(() => {
+          setShowLabel(true);
           isAnimating.current = false;
-          }, 1200);
-      }, 300);
+        }, 1200);
+      }, 100);
     }
   }, [bmi]);
 
@@ -73,14 +79,37 @@ export default function BMIWidget({ bmi, language }: BMIWidgetProps) {
     ? (isApproved ? 'IMC Aprobado ✓' : 'IMC No Aprobado')
     : (isApproved ? 'BMI Approved ✓' : 'BMI Not Approved');
 
+  // Calculate badge position - clamp to prevent overflow
+  // When position > 70%, shift badge left; when < 30%, shift right
+  const getBadgeTransform = () => {
+    if (indicatorPosition > 75) {
+      // Near right edge - align badge to the right
+      return 'translateX(-85%)';
+    } else if (indicatorPosition < 25) {
+      // Near left edge - align badge to the left
+      return 'translateX(-15%)';
+    }
+    return 'translateX(-50%)'; // Center
+  };
+
+  // Arrow offset to keep it pointing at the indicator
+  const getArrowOffset = () => {
+    if (indicatorPosition > 75) {
+      return '75%';
+    } else if (indicatorPosition < 25) {
+      return '25%';
+    }
+    return '50%';
+  };
+
   return (
-    <div className="relative w-full max-w-[500px] mx-auto pt-10 pb-5 px-4">
+    <div className="relative w-full max-w-[500px] mx-auto pt-10 pb-5 px-4 overflow-visible">
       {/* Floating Label */}
       <div 
         className="absolute top-0 z-20 transition-all duration-400"
         style={{ 
           left: `${indicatorPosition}%`,
-          transform: 'translateX(-50%)',
+          transform: getBadgeTransform(),
           opacity: showLabel ? 1 : 0,
           transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
         }}
@@ -88,42 +117,50 @@ export default function BMIWidget({ bmi, language }: BMIWidgetProps) {
         <div 
           className="relative text-[11px] font-semibold tracking-wide px-4 py-2 rounded-full whitespace-nowrap"
           style={{
-            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-            boxShadow: '0 4px 15px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.1)',
+            background: '#7cb342',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
             color: '#ffffff'
           }}
         >
-          <span style={{ color: '#ffffff' }}>{statusText} · {getBMICategory(bmi)}</span>
-          {/* Arrow pointing down */}
+          <span className="text-white">{statusText} · {getBMICategory(bmi)}</span>
+          {/* Arrow pointing down - adjusts position based on badge alignment */}
           <div 
-            className="absolute left-1/2 -translate-x-1/2"
+            className="absolute"
             style={{
+              left: getArrowOffset(),
+              transform: 'translateX(-50%)',
               bottom: '-6px',
               borderLeft: '7px solid transparent',
               borderRight: '7px solid transparent',
-              borderTop: '7px solid #16213e'
+              borderTop: '7px solid #7cb342'
             }}
           />
         </div>
       </div>
 
-      {/* Track */}
-      <div 
-        className="relative h-3 w-full rounded-[20px] overflow-visible"
-        style={{
-          background: '#e8e8e8',
-          boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)'
-        }}
-      >
-        {/* Gradient */}
+      {/* Track Container */}
+      <div className="relative">
+        {/* Track Background */}
         <div 
-          className="absolute inset-0 rounded-[20px] opacity-90"
+          className="relative h-3 w-full rounded-[20px] overflow-hidden"
           style={{
-            background: 'linear-gradient(90deg, #ff6b6b 0%, #feca57 20%, #48dbfb 40%, #1dd1a1 60%, #feca57 80%, #ff6b6b 100%)'
+            background: '#e8e8e8',
+            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)'
           }}
-        />
+        >
+          {/* Animated Fill Gradient - animates from 0 to BMI position */}
+          <div 
+            className="absolute inset-y-0 left-0 rounded-[20px]"
+            style={{
+              width: `${barFillWidth}%`,
+              background: 'linear-gradient(90deg, #ff6b6b 0%, #feca57 25%, #48dbfb 50%, #1dd1a1 75%, #feca57 100%)',
+              transition: 'width 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
+              backgroundSize: '400% 100%',
+            }}
+          />
+        </div>
         
-        {/* Indicator Dot */}
+        {/* Indicator Dot - positioned outside track for visibility */}
         {showIndicator && bmi > 0 && (
           <>
             {/* Pulse Ring */}
@@ -134,7 +171,7 @@ export default function BMIWidget({ bmi, language }: BMIWidgetProps) {
                 transform: 'translate(-50%, -50%)',
                 width: '22px',
                 height: '22px',
-                border: '2px solid rgba(29, 209, 161, 0.6)',
+                border: '2px solid rgba(124, 179, 66, 0.6)',
                 borderRadius: '50%',
                 animation: 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite',
                 transition: 'left 1.2s cubic-bezier(0.4, 0, 0.2, 1)'
@@ -160,7 +197,7 @@ export default function BMIWidget({ bmi, language }: BMIWidgetProps) {
                 className="absolute top-1/2 left-1/2 w-[10px] h-[10px] rounded-full"
                 style={{
                   transform: 'translate(-50%, -50%)',
-                  background: 'linear-gradient(135deg, #1dd1a1, #10ac84)'
+                  background: 'linear-gradient(135deg, #7cb342, #558b2f)'
                 }}
               />
             </div>

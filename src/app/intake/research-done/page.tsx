@@ -3,46 +3,86 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useTranslation } from '@/hooks/useTranslation';
 import EonmedsLogo from '@/components/EonmedsLogo';
 import CopyrightText from '@/components/CopyrightText';
 
+// Typewriter component
+function Typewriter({ 
+  text, 
+  delay = 30, 
+  onComplete,
+  startDelay = 0,
+  className = ''
+}: { 
+  text: string; 
+  delay?: number; 
+  onComplete?: () => void;
+  startDelay?: number;
+  className?: string;
+}) {
+  const [displayedText, setDisplayedText] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+
+  useEffect(() => {
+    // Start delay before typing begins
+    const startTimer = setTimeout(() => {
+      setHasStarted(true);
+      setIsTyping(true);
+    }, startDelay);
+
+    return () => clearTimeout(startTimer);
+  }, [startDelay]);
+
+  useEffect(() => {
+    if (!hasStarted) return;
+
+    if (displayedText.length < text.length) {
+      const timer = setTimeout(() => {
+        setDisplayedText(text.slice(0, displayedText.length + 1));
+      }, delay);
+      return () => clearTimeout(timer);
+    } else {
+      setIsTyping(false);
+      onComplete?.();
+    }
+  }, [displayedText, text, delay, hasStarted, onComplete]);
+
+  return (
+    <span className={className}>
+      {displayedText}
+      {isTyping && <span className="animate-pulse">|</span>}
+    </span>
+  );
+}
+
 export default function ResearchDonePage() {
   const router = useRouter();
-  const { t } = useTranslation();
   const { language } = useLanguage();
   const [medicationPreference, setMedicationPreference] = useState<string | null>(null);
-  const [showLine1, setShowLine1] = useState(false);
-  const [showLine2, setShowLine2] = useState(false);
+  const [line1Complete, setLine1Complete] = useState(false);
+  const [line2Complete, setLine2Complete] = useState(false);
   const hasNavigated = useRef(false);
 
   useEffect(() => {
     const preference = sessionStorage.getItem('medication_preference');
     setMedicationPreference(preference);
-
-    // Trigger animations with staggered delays
-    setTimeout(() => {
-      setShowLine1(true);
-    }, 300);
-
-    setTimeout(() => {
-      setShowLine2(true);
-    }, 900);
   }, []);
 
-  // Auto-advance after 2.5 seconds
+  // Auto-advance 1 second after all text is complete
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!hasNavigated.current) {
-        hasNavigated.current = true;
-        router.push('/intake/consent');
-      }
-    }, 2500);
+    if (line2Complete && !hasNavigated.current) {
+      const timer = setTimeout(() => {
+        if (!hasNavigated.current) {
+          hasNavigated.current = true;
+          router.push('/intake/consent');
+        }
+      }, 1000);
 
-    return () => clearTimeout(timer);
-  }, [router]);
+      return () => clearTimeout(timer);
+    }
+  }, [line2Complete, router]);
 
   const handleNext = () => {
     if (!hasNavigated.current) {
@@ -50,6 +90,30 @@ export default function ResearchDonePage() {
       router.push('/intake/consent');
     }
   };
+
+  // Get the text content based on language and preference
+  const getText = () => {
+    if (medicationPreference === 'recommendation') {
+      return {
+        line1: language === 'es' 
+          ? 'Lo tienes. Comenzaremos con algunas preguntas sobre ti.' 
+          : "You've got it. We'll begin with some questions about you.",
+        line2: language === 'es' 
+          ? 'Después de eso, profundizaremos en tu historial de salud para encontrar qué opción de tratamiento coincide con tus objetivos e historial de salud.' 
+          : "After that, we'll dive into your health history to find which treatment option matches your goals and health history."
+      };
+    }
+    return {
+      line1: language === 'es' 
+        ? 'Bien, parece que ya has hecho tu investigación.' 
+        : "Nice, it sounds like you've already done your research.",
+      line2: language === 'es' 
+        ? 'Sigamos adelante para encontrar qué opción de tratamiento coincide con tus objetivos e historial de salud.' 
+        : "Let's keep going to find which treatment option matches your goals and health history."
+    };
+  };
+
+  const { line1, line2 } = getText();
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -71,67 +135,40 @@ export default function ResearchDonePage() {
       <EonmedsLogo compact={true} />
       
       {/* Main content */}
-      <div className="flex-1 flex flex-col px-6 lg:px-8 py-4 lg:py-8 pb-40 max-w-md lg:max-w-lg mx-auto w-full">
+      <div 
+        className="flex-1 flex flex-col px-6 lg:px-8 py-4 lg:py-8 pb-40 max-w-md lg:max-w-lg mx-auto w-full cursor-pointer"
+        onClick={handleNext}
+      >
         <div className="space-y-4 lg:space-y-8">
-          {medicationPreference === 'recommendation' ? (
-            <>
-              <div className="space-y-4">
-                {/* Title animated in two parts */}
-                <div>
-                  <h1 
-                    className={`text-[30px] lg:text-[34px] font-[550] leading-tight transition-all duration-800 ease-out ${
-                      showLine1 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
-                    }`}
-                    style={{ color: '#4fa87f' }}
-                  >
-                    {language === 'es' ? 
-                      'Lo tienes. Comenzaremos con algunas preguntas sobre ti.' : 
-                      'You\'ve got it. We\'ll begin with some questions about you.'}
-                  </h1>
-                </div>
-                
-                {/* Subtitle animated */}
-                <div>
-                  <p 
-                    className={`text-[30px] lg:text-[34px] font-[550] leading-tight transition-all duration-800 ease-out ${
-                      showLine2 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
-                    }`}
-                    style={{ color: '#4fa87f' }}
-                  >
-                    {language === 'es' ? 
-                      'Después de eso, profundizaremos en tu historial de salud para encontrar qué opción de tratamiento coincide con tus objetivos e historial de salud.' : 
-                      'After that, we\'ll dive into your health history to find which treatment option matches your goals and health history.'}
-                  </p>
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="space-y-4">
-                <h1 
-                  className={`text-[30px] lg:text-[34px] font-[550] leading-tight transition-all duration-800 ease-out ${
-                    showLine1 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
-                  }`}
-                  style={{ color: '#4fa87f' }}
-                >
-                  {language === 'es' ? 
-                    'Bien, parece que ya has hecho tu investigación.' : 
-                    'Nice, it sounds like you\'ve already done your research.'}
-                </h1>
-                
-                <p 
-                  className={`text-[30px] lg:text-[34px] font-[550] leading-tight transition-all duration-800 ease-out ${
-                    showLine2 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
-                  }`}
-                  style={{ color: '#4fa87f' }}
-                >
-                  {language === 'es' ? 
-                    'Sigamos adelante para encontrar qué opción de tratamiento coincide con tus objetivos e historial de salud.' : 
-                    'Let\'s keep going to find which treatment option matches your goals and health history.'}
-                </p>
-              </div>
-            </>
-          )}
+          <div className="space-y-4">
+            {/* Title with typewriter effect */}
+            <h1 
+              className="text-[30px] lg:text-[34px] font-[550] leading-tight"
+              style={{ color: '#4fa87f' }}
+            >
+              <Typewriter 
+                text={line1}
+                delay={25}
+                startDelay={300}
+                onComplete={() => setLine1Complete(true)}
+              />
+            </h1>
+            
+            {/* Subtitle with typewriter effect - starts after line1 completes */}
+            {line1Complete && (
+              <p 
+                className="text-[30px] lg:text-[34px] font-[550] leading-tight"
+                style={{ color: '#4fa87f' }}
+              >
+                <Typewriter 
+                  text={line2}
+                  delay={25}
+                  startDelay={200}
+                  onComplete={() => setLine2Complete(true)}
+                />
+              </p>
+            )}
+          </div>
         </div>
       </div>
       

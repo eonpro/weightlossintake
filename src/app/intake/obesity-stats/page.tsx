@@ -115,12 +115,12 @@ export default function ObesityStatsPage() {
             <p className="copyright-text">
               {isSpanish ? (
                 <>
-                  © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                  © 2026 EONPro, LLC. Todos los derechos reservados.<br/>
                   Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
                 </>
               ) : (
                 <>
-                  © 2025 EONPro, LLC. All rights reserved.<br/>
+                  © 2026 EONPro, LLC. All rights reserved.<br/>
                   Exclusive and protected process. Copying or reproduction without authorization is prohibited.
                 </>
               )}

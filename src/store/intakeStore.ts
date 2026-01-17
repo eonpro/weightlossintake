@@ -49,8 +49,8 @@ interface IntakeStore extends IntakeData {
   goBack: () => string | null;
   
   // Data actions
-  setResponse: (key: string, value: any) => void;
-  setResponses: (responses: Record<string, any>) => void;
+  setResponse: (key: string, value: unknown) => void;
+  setResponses: (responses: Record<string, unknown>) => void;
   setPersonalInfo: (info: Partial<PersonalInfo>) => void;
   setAddress: (address: Partial<AddressInfo>) => void;
   setMedicalProfile: (profile: Partial<MedicalProfile>) => void;
@@ -117,14 +117,14 @@ export const useIntakeStore = create<IntakeStore>()(
 
       // ========== DATA ACTIONS ==========
       
-      setResponse: (key: string, value: any) => {
+      setResponse: (key: string, value: unknown) => {
         set((state) => ({
           responses: { ...state.responses, [key]: value },
           lastUpdatedAt: new Date().toISOString()
         }));
       },
 
-      setResponses: (responses: Record<string, any>) => {
+      setResponses: (responses: Record<string, unknown>) => {
         set((state) => ({
           responses: { ...state.responses, ...responses },
           lastUpdatedAt: new Date().toISOString()
@@ -281,21 +281,57 @@ export const useQualified = () => useIntakeStore((state) => state.qualified);
 export const useResponse = (key: string) => 
   useIntakeStore((state) => state.responses[key]);
 
-// Actions (stable references, don't cause re-renders)
-export const useIntakeActions = () => useIntakeStore((state) => ({
-  setCurrentStep: state.setCurrentStep,
-  markStepCompleted: state.markStepCompleted,
-  goBack: state.goBack,
-  setResponse: state.setResponse,
-  setResponses: state.setResponses,
-  setPersonalInfo: state.setPersonalInfo,
-  setAddress: state.setAddress,
-  setMedicalProfile: state.setMedicalProfile,
-  setMedicalHistory: state.setMedicalHistory,
-  setGLP1Profile: state.setGLP1Profile,
-  setWeight: state.setWeight,
-  setQualified: state.setQualified,
-  resetIntake: state.resetIntake,
-  getIntakeData: state.getIntakeData,
-}));
+// Actions object (stable reference - use getState outside of render)
+const getActions = () => ({
+  setCurrentStep: useIntakeStore.getState().setCurrentStep,
+  markStepCompleted: useIntakeStore.getState().markStepCompleted,
+  goBack: useIntakeStore.getState().goBack,
+  setResponse: useIntakeStore.getState().setResponse,
+  setResponses: useIntakeStore.getState().setResponses,
+  setPersonalInfo: useIntakeStore.getState().setPersonalInfo,
+  setAddress: useIntakeStore.getState().setAddress,
+  setMedicalProfile: useIntakeStore.getState().setMedicalProfile,
+  setMedicalHistory: useIntakeStore.getState().setMedicalHistory,
+  setGLP1Profile: useIntakeStore.getState().setGLP1Profile,
+  setWeight: useIntakeStore.getState().setWeight,
+  setQualified: useIntakeStore.getState().setQualified,
+  resetIntake: useIntakeStore.getState().resetIntake,
+  getIntakeData: useIntakeStore.getState().getIntakeData,
+});
+
+// Actions hook - returns stable references that don't cause re-renders
+// Uses individual stable selectors instead of creating new object
+export const useIntakeActions = () => {
+  const setCurrentStep = useIntakeStore((state) => state.setCurrentStep);
+  const markStepCompleted = useIntakeStore((state) => state.markStepCompleted);
+  const goBack = useIntakeStore((state) => state.goBack);
+  const setResponse = useIntakeStore((state) => state.setResponse);
+  const setResponses = useIntakeStore((state) => state.setResponses);
+  const setPersonalInfo = useIntakeStore((state) => state.setPersonalInfo);
+  const setAddress = useIntakeStore((state) => state.setAddress);
+  const setMedicalProfile = useIntakeStore((state) => state.setMedicalProfile);
+  const setMedicalHistory = useIntakeStore((state) => state.setMedicalHistory);
+  const setGLP1Profile = useIntakeStore((state) => state.setGLP1Profile);
+  const setWeight = useIntakeStore((state) => state.setWeight);
+  const setQualified = useIntakeStore((state) => state.setQualified);
+  const resetIntake = useIntakeStore((state) => state.resetIntake);
+  const getIntakeData = useIntakeStore((state) => state.getIntakeData);
+
+  return {
+    setCurrentStep,
+    markStepCompleted,
+    goBack,
+    setResponse,
+    setResponses,
+    setPersonalInfo,
+    setAddress,
+    setMedicalProfile,
+    setMedicalHistory,
+    setGLP1Profile,
+    setWeight,
+    setQualified,
+    resetIntake,
+    getIntakeData,
+  };
+};
 

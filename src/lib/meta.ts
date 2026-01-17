@@ -153,21 +153,27 @@ export function trackMetaEvent(
 
 // ============================================================
 // BUILD CHECKOUT URL
-// Generates the checkout URL with all tracking params
+// Generates the checkout URL with tracking params
+// 
+// SECURITY APPROACH:
+// - PREFERRED: Pass only 'ref' (Airtable record ID) - checkout fetches PHI server-side
+// - FALLBACK: If no ref available, pass PHI in URL (backwards compatibility)
+//
+// When ref is used, PHI is NOT exposed in:
+//   - Browser history
+//   - Server access logs  
+//   - Referrer headers
+//   - Analytics tools
 // ============================================================
 
 export interface CheckoutParams {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phone?: string;
-  dob?: string;
-  intakeId?: string;
-  lang?: 'en' | 'es'; // Explicit language override
-}
-
-function enc(v: string | undefined | null): string {
-  return encodeURIComponent(v || '');
+  firstName?: string;   // Fallback only - passed if no intakeId
+  lastName?: string;    // Fallback only - passed if no intakeId
+  email?: string;       // Fallback only - passed if no intakeId
+  phone?: string;       // Fallback only - passed if no intakeId
+  dob?: string;         // Fallback only - passed if no intakeId
+  intakeId?: string;    // Airtable record ID - preferred secure method
+  lang?: 'en' | 'es';   // Language preference
 }
 
 export function buildCheckoutUrl(params: CheckoutParams): string {
@@ -179,17 +185,24 @@ export function buildCheckoutUrl(params: CheckoutParams): string {
   const lang = params.lang || identity.lang || 'es';
   queryParams.set('lang', lang);
 
-  // User data
+  // SECURITY: Prefer passing only the Airtable record reference
+  // Checkout will fetch user data server-side using: GET /api/airtable?ref=xxx
+  if (params.intakeId) {
+    queryParams.set('ref', params.intakeId);
+    // NOTE: PHI is NOT passed in URL when ref is available
+    // Checkout must fetch from API: https://intake.eonmeds.com/api/airtable?ref=xxx
+  } else {
+    // FALLBACK: If submission failed and no intakeId available,
+    // pass PHI in URL for backwards compatibility (less secure but functional)
+    // This ensures checkout still works even if Airtable submission failed
   if (params.firstName) queryParams.set('firstName', params.firstName);
   if (params.lastName) queryParams.set('lastName', params.lastName);
   if (params.email) queryParams.set('email', params.email);
   if (params.phone) queryParams.set('phone', params.phone);
   if (params.dob) queryParams.set('dob', params.dob);
+  }
 
-  // Airtable reference
-  if (params.intakeId) queryParams.set('ref', params.intakeId);
-
-  // Meta tracking params
+  // Meta tracking params (not PHI - always safe to pass)
   queryParams.set('lead_id', identity.lead_id);
   queryParams.set('meta_event_id', identity.meta_event_id);
   if (identity.fbp) queryParams.set('fbp', identity.fbp);

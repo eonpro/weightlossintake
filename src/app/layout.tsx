@@ -44,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-white">
       <head>
-        <link rel="stylesheet" href="https://use.typekit.net/gdk8cbv.css" />
+        <link rel="stylesheet" href="https://use.typekit.net/rbf3ldc.css" />
         <meta name="theme-color" content="#ffffff" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         {/* Preload critical landing page images */}

@@ -1,0 +1,30 @@
+// Custom step components barrel export
+export { default as InfoImageStep } from './InfoImageStep';
+export { default as TypewriterStep } from './TypewriterStep';
+export { default as BMICalculatingStep } from './BMICalculatingStep';
+export { default as FindingProviderStep } from './FindingProviderStep';
+export { default as QualifiedStep } from './QualifiedStep';
+
+// New V2 step components
+export { default as ConsentStep } from './ConsentStep';
+export { default as StateSelectStep } from './StateSelectStep';
+export { default as DateOfBirthStep } from './DateOfBirthStep';
+export { default as ContactInfoStep } from './ContactInfoStep';
+export { default as AddressStep } from './AddressStep';
+export { default as WeightInputStep } from './WeightInputStep';
+export { default as WeightHeightStep } from './WeightHeightStep';
+export { default as BMIResultStep } from './BMIResultStep';
+export { default as TestimonialsStep } from './TestimonialsStep';
+export { default as ProgramsIncludeStep } from './ProgramsIncludeStep';
+export { default as SideEffectsStep } from './SideEffectsStep';
+export { default as SafetyQualityStep } from './SafetyQualityStep';
+export { default as ReviewStep } from './ReviewStep';
+
+// Additional V2 step components for V1 content sync
+export { default as SupportInfoStep } from './SupportInfoStep';
+export { default as MedicalHistoryOverviewStep } from './MedicalHistoryOverviewStep';
+export { default as ChronicConditionsDetailStep } from './ChronicConditionsDetailStep';
+export { default as GLP1DataStep } from './GLP1DataStep';
+export { default as MedicalTeamStep } from './MedicalTeamStep';
+export { default as PersonalizedTreatmentStep } from './PersonalizedTreatmentStep';
+export { default as TreatmentBenefitsStep } from './TreatmentBenefitsStep';

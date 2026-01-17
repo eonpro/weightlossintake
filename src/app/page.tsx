@@ -16,12 +16,8 @@ const IntroLottie = dynamic(() => import('@/components/IntroLottie'), {
   ssr: false
 });
 
-// Star SVG component
-const StarIcon = () => (
-  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="#FFD700">
-    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-  </svg>
-);
+// Rating image URL
+const RATING_IMAGE_URL = 'https://static.wixstatic.com/shapes/c49a9b_ea75afc771f74c108742b781ab47157d.svg';
 
 export default function Home() {
   const { t } = useTranslation();
@@ -72,8 +68,8 @@ export default function Home() {
   // Progress bar component
   const progressBar = <div className="w-full h-1 bg-[#f0feab]"></div>;
 
-  // Logo component
-  const logo = <EonmedsLogo />;
+  // Logo component - use inline mode since ViewportAwareLayout handles the container
+  const logo = <EonmedsLogo inline />;
 
   // Button with disclaimers
   const buttonWithDisclaimer = (
@@ -89,7 +85,7 @@ export default function Home() {
 
       <button
         onClick={handleContinue}
-        className="continue-button">
+        className="continue-button shine-button">
         <span className="!text-white">{t('landing.button.start')}</span>
         <svg className="w-4 h-4 !text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
@@ -99,7 +95,7 @@ export default function Home() {
       {/* Copyright footer - matching other pages */}
       <div className="mt-6 text-center">
         <p className="copyright-text">
-          © 2025 EONPro, LLC. All rights reserved.<br/>
+          © 2026 EONPro, LLC. All rights reserved.<br/>
           Exclusive and protected process. Copying or reproduction without authorization is prohibited.
         </p>
       </div>
@@ -130,10 +126,18 @@ export default function Home() {
       {/* Title and subtitle */}
       <div className="text-left">
         <h1 className="page-title" style={{ color: '#4fa87f' }}>
-          {t('landing.title')}
+          {language === 'es' ? (
+            <>Evaluemos tus<br />opciones de tratamiento.</>
+          ) : (
+            <>Let&apos;s evaluate your<br />treatment options.</>
+          )}
         </h1>
         <p className="page-subtitle">
-          {t('landing.subtitle')}
+          {language === 'es' ? (
+            <>Descubre soluciones personalizadas basadas en<br />tus objetivos, hábitos e historial médico.</>
+          ) : (
+            <>Discover personalized solutions based on<br />your goals, habits, and health history.</>
+          )}
         </p>
       </div>
 
@@ -147,22 +151,25 @@ export default function Home() {
         {/* Patient photos */}
         <div className="flex -space-x-3">
           <Image
-            src="https://static.wixstatic.com/media/c49a9b_db8b1c89bbf14aeaa7c55037b3fd6aec~mv2.webp"
+            src="https://static.wixstatic.com/media/c49a9b_eb72f3aa74474c7bb2e447a5e852a8f7~mv2.webp"
             alt="Happy patients"
-            width={112}
-            height={32}
+            width={150}
+            height={48}
             className="rounded-lg"
             priority
           />
         </div>
 
-        {/* 5 Star rating */}
-        <div className="flex space-x-1">
-          <StarIcon />
-          <StarIcon />
-          <StarIcon />
-          <StarIcon />
-          <StarIcon />
+        {/* 5 Star rating with "rated 4.3 on 5" badge */}
+        <div className="flex items-center">
+          <Image
+            src={RATING_IMAGE_URL}
+            alt="Rated 4.3 based on 5 stars"
+            width={200}
+            height={50}
+            className="object-contain"
+            priority
+          />
         </div>
       </div>
     </ViewportAwareLayout>

@@ -104,7 +104,7 @@ export default function ViewportAwareLayout({
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col" style={{ minHeight: viewportHeight ? `${viewportHeight}px` : '100vh' }}>
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Progress bar */}
       {progressBar}
       
@@ -117,16 +117,15 @@ export default function ViewportAwareLayout({
       
       {/* Logo if provided - extra top margin if no back button to clear language selector */}
       {logo && (
-        <div className={backButton ? dynamicStyles.logoMargin : 'mt-14 lg:mt-16'}>
-          {logo}
+        <div className={`px-6 lg:px-8 ${backButton ? dynamicStyles.logoMargin : 'mt-14 lg:mt-16'}`}>
+          <div className="max-w-md lg:max-w-2xl mx-auto w-full">
+            {logo}
+          </div>
         </div>
       )}
       
-      {/* Content area - flex-1 to push button to bottom */}
-      <div 
-        className="flex-1 overflow-y-auto px-6 lg:px-8"
-        style={{ paddingBottom: `${dynamicStyles.scrollPadding}px` }}
-      >
+      {/* Content area */}
+      <div className="flex-1 px-6 lg:px-8">
         <div className={`max-w-md lg:max-w-2xl mx-auto w-full ${dynamicStyles.contentPadding} ${dynamicStyles.elementSpacing}`}>
           {compactMode ? (
             <div className={dynamicStyles.titleSpacing}>
@@ -138,8 +137,8 @@ export default function ViewportAwareLayout({
         </div>
       </div>
       
-      {/* Button area - ALWAYS at bottom on ALL screen sizes */}
-      <div className="fixed bottom-0 left-0 right-0 w-full z-10 px-6 lg:px-8 pb-6 pt-12" style={{ background: 'linear-gradient(to top, #ffffff 0%, #ffffff 50%, transparent 100%)' }}>
+      {/* Button area - flows with content, not fixed */}
+      <div className="px-6 lg:px-8 pt-6 pb-8">
         <div className="max-w-md lg:max-w-2xl mx-auto w-full">
           {button}
           {copyright && (

@@ -1,316 +1,312 @@
-# Weight Loss Intake Platform - Enterprise Upgrade
+# EONMeds Intake Platform - Comprehensive Analysis & Status
 
 ## Background and Motivation
-
-This is a **medical intake questionnaire web application** for **EONMeds/EONPro**, a telehealth platform specializing in GLP-1 weight loss medications. The application is being upgraded to enterprise-grade architecture.
-
-### Purpose
-- Collect patient demographics and contact information
-- Screen for medical eligibility (BMI, medical conditions, contraindications)
-- Gather medical history for licensed physician review
-- Qualify patients before redirecting to checkout/payment platform
-- Support bilingual experience (English/Spanish)
+Enterprise-grade medical intake platform for GLP-1 weight loss treatment. The platform must maintain HIPAA compliance, provide excellent UX, and integrate with Airtable for patient data storage and EONPRO for patient profile creation.
 
 ---
 
-## Codebase Analysis (January 4, 2026)
+## Key Challenges and Analysis
 
-### Architecture Overview
+### 1. Global UI Settings Analysis (`globals.css`)
 
-| System | Status | Description |
-|--------|--------|-------------|
-| **V1 (Legacy)** | ✅ ACTIVE | 60+ individual page files in `/intake/` using sessionStorage |
-| **V2 (Enterprise)** | ⚠️ BUILT, NOT DEPLOYED | Configuration-driven system in `/v2/` |
+#### Design System Overview
+The platform uses a modern, sophisticated design system with:
 
-### Component Usage Analysis
+**Color Palette:**
+- Primary: `#10b981` (emerald green) with light/dark variants
+- Accent: `#f0feab` (lime yellow) and `#d4f084` (darker lime)
+- Neutrals: Warm grays from `#1f2937` to `#9ca3af`
+- Semantic: Success (`#10b981`), Warning (`#f59e0b`), Error (`#ef4444`)
 
-| Component | Import Count | Status | Notes |
-|-----------|-------------|--------|-------|
-| `EonmedsLogo` | 63 | ✅ Heavily used | Core branding |
-| `CopyrightText` | ~20 | ✅ Used | Footer component |
-| `BMIWidget` | 1 | ✅ Used | BMI result page |
-| `ClientProviders` | 1 | ✅ Used | Root layout |
-| `LanguageToggle` | 1 | ✅ Used | In ClientProviders |
-| `IntroLottie` | 1 | ✅ Used | Landing page (dynamic) |
-| `IntakePageLayout` | 1 | ⚠️ Underutilized | Only contact-info |
-| `ViewportAwareLayout` | 1 | ⚠️ Underutilized | Only main page |
-| `form-engine/*` | 2 | ⚠️ V2 Only | Not in production |
+**Typography:**
+- Font: Sofia Pro (Adobe Typekit)
+- Base: 16px, line-height 1.6
+- Titles: `clamp(1.75rem, 5vw, 2.5rem)`, font-weight 600, line-height 1.15
+- Subtitles: `clamp(0.9375rem, 2vw, 1.0625rem)`, font-weight 400, line-height 1.25
+- Input text: font-weight 550, font-size 18px
+- Placeholder: font-weight 400, opacity 0.5
 
-### Store & State Management
+**Component Patterns:**
+- Border radius: Modern rounded corners (0.5rem to 2rem)
+- Shadows: Subtle layered shadows for depth
+- Transitions: Smooth 150-300ms cubic-bezier transitions
+- Buttons: Gradient backgrounds with hover lift effects
 
-| System | Usage | Notes |
-|--------|-------|-------|
-| **sessionStorage (V1)** | All 60+ pages | Direct storage access |
-| **Zustand Store (V2)** | 2 files | Only v2/page.tsx and FormStep.tsx |
-| **localStorage** | Language preference | Via LanguageContext |
+**Standardized Option Buttons:**
+- Unselected: White background, gray border (`#e5e7eb`)
+- Hover: Green border (`#4fa87f`), light background (`#fafafa`)
+- Selected: Green border (`#4fa87f`), lime background (`#f0feab`)
+- Font-weight: 550 (standardized across platform)
 
-### V2 Enterprise System Status
+**Checkboxes:**
+- Unselected: White background, gray border (`#d1d5db`)
+- Selected: Dark background (`#413d3d`), white checkmark
 
-| Module | File | Status |
-|--------|------|--------|
-| Types | `@/types/form.ts` | ✅ Complete, used by V2 |
-| Validation | `@/validation/schemas.ts` | ❌ **NOT USED ANYWHERE** |
-| Store | `@/store/intakeStore.ts` | ⚠️ Only V2 |
-| Config | `@/config/forms/weightloss-intake.ts` | ⚠️ Partial (~15 of 60+ steps) |
-| Form Engine | `@/components/form-engine/` | ⚠️ Only V2 |
+**Strengths:**
+✅ Consistent design tokens via CSS variables
+✅ Modern mobile-first responsive design
+✅ Accessible color contrast ratios
+✅ Comprehensive animation library
+✅ Dark mode preparation in place
+✅ Safe area insets for mobile devices
 
----
-
-## What's Working ✅
-
-1. **Full V1 Intake Flow** - All 60+ pages functional
-2. **Airtable Integration** - Submissions working (BMI bug fixed)
-3. **Bilingual Support** - English/Spanish translations
-4. **BMI Calculation** - Fixed string concatenation bug
-5. **Session Persistence** - Data saved across steps
-6. **Responsive Design** - Mobile/desktop layouts
-7. **Progress Tracking** - Progress bar on pages
-8. **Consent Management** - Checkbox tracking with timestamps
-9. **Conditional Navigation** - GLP-1 history branching
+**Areas for Enhancement:**
+⚠️ Consider adding focus-visible styles for keyboard navigation
+⚠️ Add reduced-motion media query for accessibility
+⚠️ Some animations could benefit from prefers-reduced-motion
 
 ---
 
-## Cleanup Completed (January 4, 2026) ✅
+### 2. API Capabilities Analysis
 
-| Action | Status | Details |
-|--------|--------|---------|
-| Remove `page-backup.tsx` | ✅ Done | Deleted duplicate file |
-| Clean console.log | ✅ Done | Reduced from 28 → 3 statements |
-| Remove Lottie packages | ✅ Done | Removed unused npm deps |
-| Protect debug endpoints | ✅ Done | Dev-only + key protection |
+#### `/api/airtable` (Primary Intake API)
+**Purpose:** PHI ingestion point for patient intake data
+
+**Security Features:**
+- ✅ Input validation via Zod schema (50+ field types)
+- ✅ XSS sanitization for string values
+- ✅ Request size limits (100KB max)
+- ✅ Optional API key verification
+- ✅ Rate limiting (configurable, 30 req/min default)
+- ✅ CORS whitelisting for allowed origins
+- ✅ Constant-time API key comparison (prevents timing attacks)
+- ✅ Audit logging without PHI
+
+**Integrations:**
+- Airtable: Primary data storage
+- EONPRO: Patient profile creation webhook (optional)
+
+**Operations:**
+- POST: Create/update intake records
+- GET: Fetch patient data by record ID (HIPAA-safe fields only)
+- OPTIONS: CORS preflight handling
+
+#### `/api/stripe/create-intent`
+**Purpose:** Create Stripe payment intents for checkout
+
+**Features:**
+- Customer creation/retrieval
+- Payment intent with automatic payment methods
+- Subscription support (setup_future_usage)
+- Meta CAPI tracking integration
+- Order metadata for fulfillment
+
+#### `/api/stripe/webhook`
+**Purpose:** Handle Stripe webhook events
+
+#### `/api/health`
+**Purpose:** Health check endpoint for monitoring
+
+#### `/api/intakeq`
+**Purpose:** IntakeQ integration (secondary)
 
 ---
 
-## Issues Found (Remaining)
+### 3. Data Persistence Strategy
 
-### 1. Unused Dependencies (package.json)
-```
-- @lottiefiles/dotlottie-react  ← ✅ REMOVED
-- lottie-react                   ← ✅ REMOVED
-- react-hook-form               ← Only in V2 (not live)
-- @hookform/resolvers           ← Only in V2 (not live)
-- zod                           ← Schemas defined but NEVER imported
-- zustand                       ← Only in V2 (not live)
-```
+**Current Implementation:**
+- SessionStorage: Primary intake data (V1 flow)
+- LocalStorage: V2 flow data, language preference
+- Zustand: Checkout state with persistence
 
-### 2. Backup/Dead Files
-```
-- src/app/intake/contact-info/page-backup.tsx  ← Duplicate backup
-```
-
-### 3. Debug/Dev Files (Consider for Production)
-```
-- src/app/api/airtable/test/route.ts  ← Test endpoint
-- src/app/intake/debug/page.tsx       ← Debug page
+**NEW: localStorage Backup Utility (`src/lib/storage.ts`)**
+```typescript
+// Features:
+- Automatic backup to localStorage for critical fields
+- Auto-restore from localStorage if sessionStorage is empty
+- 24-hour expiration for localStorage entries
+- Type-safe get/set operations
+- PHI-safe key prefixing
 ```
 
-### 4. Console.log Statements
-```
-Total: 28 console.log statements across 6 files
-- src/lib/api.ts: 1
-- src/app/intake/contact-info/page.tsx: 10
-- src/app/api/airtable/route.ts: 9
-- src/app/intake/review/page.tsx: 5
-- src/app/intake/debug/page.tsx: 2
-- src/components/IntroLottie.tsx: 1
-```
+**Backed Up Fields:**
+- Patient info (name, email, phone, DOB, sex)
+- Address and state
+- Physical measurements (weight, height, BMI)
+- Goals, activity level
+- Medication preferences and history
+- Session ID and qualification status
 
-### 5. Type Safety Issues
-- Multiple `any` types in api.ts, debug page, store
-- Loose typing in sessionStorage operations
+---
+
+### 4. E2E Testing Strategy
+
+**Playwright Configuration:**
+- Chrome, Mobile Chrome, Mobile Safari
+- Auto-start dev server
+- Screenshot/video on failure
+- Trace on retry
+
+**Test Suites:**
+1. **Intake Flow - Critical Path**
+   - Landing page loads
+   - Navigation between pages
+   - Option selection
+   - Form input validation
+   - Data persistence
+
+2. **Checkout Flow**
+   - Product selection
+   - Payment page loads
+   - Stripe integration
+
+3. **API Health Checks**
+   - Health endpoint
+   - Validation errors
+   - Security (oversized payloads, CORS)
+
+4. **Mobile Responsiveness**
+   - Content fitting
+   - Touch targets (44px minimum)
 
 ---
 
 ## High-level Task Breakdown
 
-### Phase 1: Foundation ✅ COMPLETED
-| ID | Task | Status |
-|----|------|--------|
-| 1 | Install dependencies (Zod, Zustand, React Hook Form) | ✅ Complete |
-| 2 | Create TypeScript types for form system | ✅ Complete |
-| 3 | Create Zustand store with persistence | ✅ Complete |
-| 4 | Create Zod validation schemas | ✅ Complete |
-| 5 | Create form configuration system | ✅ Complete |
-| 6 | Create reusable form field components | ✅ Complete |
-| 7 | Create dynamic FormStep renderer | ✅ Complete |
-| 8 | Create V2 test routes | ✅ Complete |
+### Completed ✅
+1. [x] Install Playwright and create E2E test configuration
+2. [x] Write E2E tests for critical intake flow
+3. [x] Create localStorage backup utility for data persistence
+4. [x] Replace console.logs with logger utility (partial)
 
-### Phase 2: Code Cleanup 🔄 IN PROGRESS
-| ID | Task | Status |
-|----|------|--------|
-| C1 | Remove backup file (page-backup.tsx) | Pending |
-| C2 | Remove/reduce console.log statements | Pending |
-| C3 | Remove unused Lottie packages | Pending |
-| C4 | Review debug/test endpoints for production | Pending |
+### In Progress 🔄
+5. [ ] Complete console.log replacement across all files
+6. [ ] Deep analysis of global UI settings (this document)
+7. [ ] Deep analysis of API capabilities (this document)
 
-### Phase 3: V2 Migration (Future)
-| ID | Task | Status |
-|----|------|--------|
-| 9 | Complete full step configuration (60+ steps) | Pending |
-| 10 | Add all conditional navigation | Pending |
-| 11 | Migrate landing page to v2 | Pending |
-| 12 | Add custom step components (consent, address, BMI) | Pending |
-| 13 | Test full flow end-to-end | Pending |
-| 14 | Connect Zod validation to form engine | Pending |
-
-### Phase 4: Quality & Testing (Future)
-| ID | Task | Status |
-|----|------|--------|
-| 15 | Add Vitest test framework | Pending |
-| 16 | Write unit tests for store | Pending |
-| 17 | Write unit tests for validation | Pending |
-| 18 | Add E2E tests with Playwright | Pending |
-
----
-
-## Safe Cleanup Actions
-
-### ✅ SAFE TO REMOVE (No Impact on V1)
-1. `page-backup.tsx` - Duplicate backup file
-2. Unused npm packages (can reinstall if needed for V2)
-3. Console.log statements (use conditional logging)
-
-### ⚠️ KEEP FOR NOW (V2 Future Use)
-1. `@/types/form.ts` - Will use when V2 goes live
-2. `@/validation/schemas.ts` - Will use when V2 goes live
-3. `@/store/intakeStore.ts` - Will use when V2 goes live
-4. `@/config/forms/` - Will use when V2 goes live
-5. `@/components/form-engine/` - Will use when V2 goes live
-
-### ⚠️ REVIEW FOR PRODUCTION
-1. `debug/page.tsx` - Remove or add auth gate
-2. `api/airtable/test/route.ts` - Remove or add auth gate
+### Pending 📋
+8. [ ] Enable rate limiting in production (set `ENABLE_RATE_LIMIT=true`)
+9. [ ] Add reduced-motion accessibility support
+10. [ ] Implement full localStorage backup integration in intake pages
 
 ---
 
 ## Project Status Board
 
-### Production (V1)
-- ✅ All intake pages working
-- ✅ Airtable integration functional
-- ✅ BMI calculation fixed
-- ✅ Bilingual support active
-- ✅ Mobile responsive
-
-### Development (V2)
-- ✅ Types defined
-- ✅ Store created
-- ✅ Validation schemas ready
-- ⚠️ Only ~15 of 60+ steps configured
-- ⚠️ Not connected to Airtable
-- ⚠️ Not deployed
-
----
-
-## Lessons
-
-1. **Zustand persist middleware** - Use `partialize` to exclude actions from storage
-2. **Configuration pattern** - Separate data from presentation completely
-3. **Conditional navigation** - Array of rules with operator-based matching
-4. **BMI Bug** - Always parseInt() height values from sessionStorage (strings!)
-5. **Lottie Libraries** - iframe embeds work better than React libraries for simple use
-6. **Unused dependencies** - Installed for V2 but V1 still in production
+| Component | Status | Notes |
+|-----------|--------|-------|
+| UI/UX Design System | ✅ Complete | Modern, consistent, accessible |
+| Intake Flow V1 | ✅ Complete | SessionStorage-based |
+| Intake Flow V2 | ✅ Complete | Form engine with localStorage |
+| Checkout Flow | ✅ Complete | Stripe integration |
+| Airtable Integration | ✅ Complete | Full PHI handling |
+| EONPRO Webhook | ✅ Complete | Optional, async |
+| E2E Tests | ✅ New | Playwright setup complete |
+| Storage Backup | ✅ New | localStorage utility created |
+| Error Boundary | ✅ New | Global error handling |
+| Logger Utility | ✅ New | PHI-safe logging |
+| Rate Limiting | ⚠️ Disabled | Enable in production |
 
 ---
 
-## SOAP Note PDF Generation Plan (January 4, 2026)
+## Executor's Feedback or Assistance Requests
 
-### Background & Motivation
+### Environment Variables Required for Production
+```env
+# Required
+AIRTABLE_PAT=your_airtable_personal_access_token
+AIRTABLE_BASE_ID=your_base_id
+STRIPE_SECRET_KEY=sk_live_xxx
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_xxx
 
-Need to generate a **second PDF document** (SOAP Note) alongside the existing Intake Form PDF. This SOAP note is a medical document that:
-- Uses the same patient data collected during intake
-- Follows a standardized SOAP (Subjective, Objective, Assessment, Plan) format
-- Includes provider attestation with electronic signature
-- Gets uploaded to IntakeQ patient profile
+# Recommended for Production
+ENABLE_RATE_LIMIT=true
+ENABLE_AUDIT_LOG=true
+API_SECRET_KEY=your_api_secret  # Optional: enable API key auth
 
-### Key Requirements
-
-1. **Same Data Source** - Uses all data from intake form (name, DOB, sex, height, weight, BMI, medical history, etc.)
-2. **SOAP Format** - Structured medical document with S/O/A/P sections
-3. **Provider Signature** - Include image: `https://static.wixstatic.com/media/c49a9b_4dc4d9fce65f4c2a94047782401ffe9a~mv2.png`
-4. **Same UI Style** - Match the existing intake form PDF styling (Poppins font, green accents, section boxes)
-5. **PDF.co Generation** - Use same API as intake form
-6. **IntakeQ Upload** - Upload to "SOAP NOTES" folder on patient profile
-
-### Implementation Plan
-
-#### Phase 1: SOAP HTML Template
-| Task | Description |
-|------|-------------|
-| Create `generateSoapNoteHtml()` | Function that builds HTML from patient data |
-| Map intake fields to SOAP sections | Correctly place data in S/O/A/P format |
-| Style matching intake form | Same CSS, fonts, colors |
-| Add provider signature image | Embed in Provider Attestation section |
-
-#### Phase 2: Airtable Script Integration
-| Task | Description |
-|------|-------------|
-| Add SOAP PDF generation | After intake PDF, generate SOAP PDF |
-| Upload to IntakeQ | Second upload call to "SOAP NOTES" folder |
-| Update Airtable status | Track both PDFs |
-
-### SOAP Note Data Mapping
-
-| SOAP Section | Source Data Fields |
-|--------------|-------------------|
-| **Patient Info** | firstName, lastName, DOB, sex, state |
-| **S - Subjective** | GLP-1 history, goals, activity level, symptoms |
-| **O - Objective** | Height, weight, BMI, blood pressure, medical history, medications, allergies |
-| **A - Assessment** | BMI classification, contraindications check, medical necessity |
-| **P - Plan** | Medication recommendation based on GLP-1 type preference |
-| **Provider** | Static provider info + signature image |
-
-### BMI Classification Logic
-```
-BMI < 18.5 → Underweight
-18.5 - 24.9 → Normal
-25.0 - 29.9 → Overweight (Class 0)
-30.0 - 34.9 → Obesity Class I
-35.0 - 39.9 → Obesity Class II
-≥ 40.0 → Obesity Class III (Morbid)
+# Optional
+EONPRO_WEBHOOK_URL=https://your-eonpro-webhook
+EONPRO_WEBHOOK_SECRET=your_secret
 ```
 
-### Provider Information (Static)
-- **Provider**: Dr. Gavin Sigle
-- **NPI**: 1497917561
-- **License**: FL ME145797
-- **Signature**: https://static.wixstatic.com/media/c49a9b_4dc4d9fce65f4c2a94047782401ffe9a~mv2.png
-
-### Files to Modify
-
-1. **Airtable Automation Script** - Add SOAP PDF generation after intake PDF
-2. **IntakeQ Upload** - Second upload to different folder
-
-### Success Criteria
-
-- [ ] SOAP PDF generates with all patient data correctly placed
-- [ ] Provider signature image renders in PDF
-- [ ] PDF uploads to IntakeQ "SOAP NOTES" folder
-- [ ] Styling matches intake form PDF
-- [ ] Both PDFs attached to same patient profile
+### Scripts Added to package.json
+```json
+{
+  "test:e2e": "playwright test",
+  "test:e2e:ui": "playwright test --ui",
+  "test:e2e:headed": "playwright test --headed",
+  "test:e2e:debug": "playwright test --debug",
+  "test:all": "npm run test:run && npm run test:e2e"
+}
+```
 
 ---
 
-## Architecture Comparison
+## Lessons Learned
 
-### V1 (Current Production)
+1. **Font Weight Standardization**: Option buttons across the platform should use `font-weight: 550` consistently. Override individual pages' custom weights.
+
+2. **Checkbox Visibility**: Always use a dark background (`#413d3d`) with white checkmark for selected state. White-on-white checkmarks are invisible.
+
+3. **SessionStorage Limitations**: Data is lost on browser clear. Use localStorage backup for critical fields.
+
+4. **API Validation**: Zod schemas don't accept `null` for optional string fields. Use empty string `''` as fallback.
+
+5. **Rate Limiting**: Disabled by default for development. Enable in production with `ENABLE_RATE_LIMIT=true`.
+
+6. **Console.log Removal**: Use centralized logger utility with environment-aware output. Never log PHI.
+
+7. **Animation Speed**: UX improves significantly with faster animations (600ms → 40ms intervals for progress bars).
+
+---
+
+## Architecture Diagram
+
 ```
-src/app/intake/goals/page.tsx
-src/app/intake/medication-preference/page.tsx
-src/app/intake/research-done/page.tsx
-... 60+ more files with some repeated patterns
+┌─────────────────────────────────────────────────────────────┐
+│                     EONMEDS INTAKE PLATFORM                  │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌──────────┐    ┌──────────┐    ┌──────────┐              │
+│  │ Landing  │───▶│  Intake  │───▶│ Checkout │              │
+│  │   Page   │    │   Flow   │    │   Flow   │              │
+│  └──────────┘    └────┬─────┘    └────┬─────┘              │
+│                       │               │                     │
+│                       ▼               ▼                     │
+│  ┌────────────────────────────────────────────────┐        │
+│  │              Client Storage Layer               │        │
+│  │  ┌─────────────┐  ┌─────────────┐              │        │
+│  │  │sessionStorage│◀▶│localStorage │ (backup)    │        │
+│  │  └─────────────┘  └─────────────┘              │        │
+│  └───────────────────────┬────────────────────────┘        │
+│                          │                                  │
+├──────────────────────────┼──────────────────────────────────┤
+│                          ▼                                  │
+│  ┌────────────────────────────────────────────────┐        │
+│  │                   API Layer                     │        │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐     │        │
+│  │  │/api/     │  │/api/stripe│  │/api/health│    │        │
+│  │  │airtable  │  │          │  │          │     │        │
+│  │  └────┬─────┘  └────┬─────┘  └──────────┘     │        │
+│  │       │             │                          │        │
+│  │       │  ┌──────────┴──────────┐              │        │
+│  │       │  │   Security Layer    │              │        │
+│  │       │  │ • Rate Limiting     │              │        │
+│  │       │  │ • Input Validation  │              │        │
+│  │       │  │ • XSS Sanitization  │              │        │
+│  │       │  │ • CORS Whitelisting │              │        │
+│  │       │  └─────────────────────┘              │        │
+│  └───────┼───────────────────────────────────────┘        │
+│          │                                                  │
+├──────────┼──────────────────────────────────────────────────┤
+│          ▼                                                  │
+│  ┌────────────────────────────────────────────────┐        │
+│  │             External Services                   │        │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐     │        │
+│  │  │ Airtable │  │  Stripe  │  │  EONPRO  │     │        │
+│  │  │  (PHI)   │  │(Payments)│  │(Webhook) │     │        │
+│  │  └──────────┘  └──────────┘  └──────────┘     │        │
+│  └────────────────────────────────────────────────┘        │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-### V2 (Future - Configuration-Driven)
-```
-src/config/forms/weightloss-intake.ts  # All steps defined here
-src/app/v2/intake/[stepId]/page.tsx    # Single dynamic route
-src/components/form-engine/FormStep.tsx # Single renderer
-```
+---
 
-**V2 Benefits:**
-- Add new steps by updating config only
-- Consistent behavior across all steps
-- Easy A/B testing
-- Reduced code duplication
-- Full type safety
+## Next Steps
+
+1. Run E2E tests: `npm run test:e2e`
+2. Enable rate limiting in production
+3. Integrate localStorage backup utility into intake pages
+4. Add accessibility improvements (reduced-motion, focus-visible)
+5. Monitor audit logs for security events

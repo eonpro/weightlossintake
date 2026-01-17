@@ -74,18 +74,18 @@ export default function GoalsPage() {
                 }`}
               >
                 <div className="flex items-center">
-                  <div className={`w-5 h-5 mr-3 rounded flex items-center justify-center flex-shrink-0 border ${
+                  <div className={`w-5 h-5 mr-3 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all ${
                     selected === option
-                      ? 'bg-white border-[#413d3d]'
-                      : 'border-[#413d3d]/40 bg-transparent'
+                      ? 'bg-[#413d3d] border-[#413d3d]'
+                      : 'border-gray-300 bg-white'
                   }`}>
                     {selected === option && (
-                      <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     )}
                   </div>
-                  <span className="text-[16px] lg:text-lg font-medium leading-tight">{t(option)}</span>
+                  <span className="text-[16px] lg:text-lg leading-tight">{t(option)}</span>
                 </div>
               </button>
             ))}
@@ -99,12 +99,12 @@ export default function GoalsPage() {
           <p className="copyright-text">
             {language === 'es' ? (
               <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                © 2026 EONPro, LLC. Todos los derechos reservados.<br/>
                 Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
               </>
             ) : (
               <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
+                © 2026 EONPro, LLC. All rights reserved.<br/>
                 Exclusive and protected process. Copying or reproduction without authorization is prohibited.
               </>
             )}

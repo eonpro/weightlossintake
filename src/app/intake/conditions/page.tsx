@@ -39,7 +39,7 @@ export default function ConditionsPage() {
   };
 
   const handleContinue = () => {
-    router.push('/intake/review');
+    router.push('/intake/finding-provider');
   };
 
   return (
@@ -83,7 +83,7 @@ export default function ConditionsPage() {
                 className={`w-full p-3 rounded-2xl border text-left transition-all ${
                   selectedConditions.includes(condition)
                     ? 'border-[#4fa87f] bg-[#e8f4eb]'
-                    : 'border-gray-200 hover:border-gray-300'
+                    : 'border-gray-200 hover:border-[#4fa87f]'
                 }`}
               >
                 <div className="flex items-center">
@@ -93,8 +93,8 @@ export default function ConditionsPage() {
                       : 'border-gray-300'
                   }`}>
                     {selectedConditions.includes(condition) && (
-                      <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     )}
                   </div>

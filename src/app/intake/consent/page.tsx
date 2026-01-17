@@ -71,38 +71,38 @@ export default function ConsentPage() {
 
           <div className="space-y-2">
             {/* Health Priority Card */}
-            <div className="bg-[#f0feab] rounded-2xl overflow-hidden flex h-20">
-              <div className="flex-shrink-0 relative w-20">
+            <div className="bg-[#f0feab] rounded-2xl overflow-hidden flex h-24 relative">
+              <div className="absolute left-0 top-0 bottom-0 w-24">
                 <Image
-                  src="https://static.wixstatic.com/media/c49a9b_8d1a5c0e8f6247ba9d79bf0abc49169a~mv2.webp"
+                  src="https://static.wixstatic.com/media/c49a9b_427c597844f246fa8df26446b6f5d59a~mv2.png"
                   alt="Healthcare professional"
                   fill
-                  sizes="(max-width: 768px) 80px, 80px"
+                  sizes="96px"
                   className="object-cover"
-                  style={{ objectPosition: 'center 20%' }}
+                  style={{ objectPosition: 'center top' }}
                 />
               </div>
-              <div className="flex-1 flex flex-col justify-center px-3 py-2">
+              <div className="flex-1 flex flex-col justify-center pl-28 pr-4 py-2">
                 <h3 className="font-bold text-[15px] leading-tight mb-0.5">{t('consent.health.title')}</h3>
-                <p className="text-[12px] leading-snug">{t('consent.health.subtitle')}</p>
+                <p className="text-[12px] leading-snug text-[#413d3d]/80">{t('consent.health.subtitle')}</p>
               </div>
             </div>
 
             {/* Doctor Review Card */}
-            <div className="bg-[#e4fb74] rounded-2xl overflow-hidden flex h-20">
-              <div className="flex-shrink-0 relative w-24">
+            <div className="bg-[#e4fb74] rounded-2xl overflow-hidden flex h-24 relative">
+              <div className="absolute left-0 top-0 bottom-0 w-24">
                 <Image
                   src="https://static.wixstatic.com/media/c49a9b_5e690e4cf43e4e769ef7d4e9f5691a5b~mv2.webp"
                   alt="Licensed medical provider"
                   fill
-                  sizes="(max-width: 768px) 96px, 96px"
+                  sizes="96px"
                   className="object-cover"
                   style={{ objectPosition: 'center 30%' }}
                 />
               </div>
-              <div className="flex-1 flex flex-col justify-center px-3 py-2">
+              <div className="flex-1 flex flex-col justify-center pl-28 pr-4 py-2">
                 <h3 className="font-bold text-[15px] leading-tight mb-0.5">{t('consent.doctor.title')}</h3>
-                <p className="text-[12px] leading-snug">{t('consent.doctor.subtitle')}</p>
+                <p className="text-[12px] leading-snug text-[#413d3d]/80">{t('consent.doctor.subtitle')}</p>
               </div>
             </div>
           </div>
@@ -113,13 +113,15 @@ export default function ConsentPage() {
               <button
                 type="button"
                 onClick={() => setAgreed(!agreed)}
-                className="mt-0.5 flex-shrink-0 w-5 h-5 rounded flex items-center justify-center bg-white cursor-pointer"
-                style={{ border: '1.5px solid #413d3d' }}
+                className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded flex items-center justify-center cursor-pointer transition-all ${
+                  agreed ? 'bg-[#413d3d] border-[#413d3d]' : 'bg-white border-gray-300'
+                }`}
+                style={{ border: agreed ? '2px solid #413d3d' : '2px solid #d1d5db' }}
                 aria-label="Accept terms and conditions"
               >
                 {agreed && (
-                  <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 )}
               </button>
@@ -158,12 +160,12 @@ export default function ConsentPage() {
           <p className="copyright-text">
             {language === 'es' ? (
               <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                © 2026 EONPro, LLC. Todos los derechos reservados.<br/>
                 Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
               </>
             ) : (
               <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
+                © 2026 EONPro, LLC. All rights reserved.<br/>
                 Exclusive and protected process. Copying or reproduction without authorization is prohibited.
               </>
             )}

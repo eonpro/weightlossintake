@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { collectIntakeData, submitIntake } from '@/lib/api';
+import { logger } from '@/lib/logger';
 
 export default function DebugPage() {
   const router = useRouter();
@@ -12,13 +13,13 @@ export default function DebugPage() {
   const [loading, setLoading] = useState(false);
   const [isAllowed, setIsAllowed] = useState(false);
 
-  // Check if debug is allowed (dev mode only)
+  // Check if debug is allowed (dev mode only - no production access)
   useEffect(() => {
-    // Only allow in development or with special query param
+    // Only allow in development - completely blocked in production
     const isDev = process.env.NODE_ENV === 'development';
-    const hasDebugKey = new URLSearchParams(window.location.search).get('key') === 'eon-debug-2025';
 
-    if (!isDev && !hasDebugKey) {
+    if (!isDev) {
+      // Redirect away in production - no debug access allowed
       router.push('/');
       return;
     }
@@ -84,10 +85,10 @@ export default function DebugPage() {
     setLoading(true);
     try {
       const intakeData = collectIntakeData();
-      console.log('Collected intake data:', intakeData);
+      logger.log('Collected intake data:', intakeData);
       
       const result = await submitIntake(intakeData);
-      console.log('Submission result:', result);
+      logger.log('Submission result:', result);
       
       setTestStatus({
         type: 'submission',

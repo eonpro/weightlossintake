@@ -2,6 +2,7 @@
 // Note: These functions use browser APIs (localStorage, sessionStorage)
 // and should only be called from client-side code
 import { translations } from '@/translations';
+import { logger } from './logger';
 
 // Helper to check if we're in a browser environment
 const isBrowser = typeof window !== 'undefined';
@@ -105,6 +106,33 @@ export interface CheckpointData {
   status: 'partial' | 'complete' | 'qualified';
 }
 
+// Date of birth type
+interface DOBInfo {
+  month?: string;
+  day?: string;
+  year?: string;
+  formatted?: string;
+}
+
+// Address info type
+interface AddressInfo {
+  street?: string;
+  apartment?: string;
+  unit?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  fullAddress?: string;
+}
+
+// Weight info type
+interface WeightData {
+  currentWeight?: number;
+  idealWeight?: number;
+  heightFeet?: number;
+  heightInches?: number;
+}
+
 export interface IntakeSubmission {
   sessionId: string;
   personalInfo?: {
@@ -112,14 +140,14 @@ export interface IntakeSubmission {
     lastName?: string;
     email?: string;
     phone?: string;
-    dob?: any;
+    dob?: DOBInfo | string;
     sex?: string;
     bloodPressure?: string;
     pregnancyBreastfeeding?: string;
   };
-  address?: any;
+  address?: AddressInfo;
   medicalProfile?: {
-    weight?: any;
+    weight?: WeightData;
     bmi?: number;
     goals?: string[];
     activityLevel?: string;
@@ -205,7 +233,7 @@ export function getSessionId(): string {
 // Submit checkpoint data
 export async function submitCheckpoint(
   checkpointName: string,
-  data: any,
+  data: Record<string, unknown>,
   status: 'partial' | 'complete' | 'qualified' = 'partial'
 ): Promise<boolean> {
   try {
@@ -238,7 +266,7 @@ export async function submitCheckpoint(
     // return response.ok;
     return true; // Return true for now since data is saved locally
   } catch (error) {
-    console.error('Checkpoint submission failed:', error);
+    logger.error('Checkpoint submission failed:', error);
     // Data is still saved locally
     return false;
   }
@@ -382,7 +410,7 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
       error: result.error
     };
   } catch (error) {
-    console.error('Intake submission failed:', error);
+    logger.error('Intake submission failed:', error);
     
     // Fallback: save locally even if API fails - but report as failure
     const fallbackId = `LOCAL-${Date.now()}`;
@@ -503,11 +531,11 @@ export function collectIntakeData(): IntakeSubmission {
 
   // Build weight object from separate keys
   const parsedHeight = heightData ? JSON.parse(heightData) : {};
-  const weightObject = {
-    currentWeight: currentWeight ? parseInt(currentWeight) : null,
-    idealWeight: idealWeight ? parseInt(idealWeight) : null,
-    heightFeet: parsedHeight.feet ? parseInt(parsedHeight.feet) : null,
-    heightInches: parsedHeight.inches !== undefined && parsedHeight.inches !== '' ? parseInt(parsedHeight.inches) : null
+  const weightObject: WeightData = {
+    currentWeight: currentWeight ? parseInt(currentWeight) : undefined,
+    idealWeight: idealWeight ? parseInt(idealWeight) : undefined,
+    heightFeet: parsedHeight.feet ? parseInt(parsedHeight.feet) : undefined,
+    heightInches: parsedHeight.inches !== undefined && parsedHeight.inches !== '' ? parseInt(parsedHeight.inches) : undefined
   };
 
   const intakeData: IntakeSubmission = {
@@ -599,7 +627,7 @@ export function collectIntakeData(): IntakeSubmission {
 }
 
 // Helper function to calculate BMI from weight object
-function calculateBMIFromObject(weightData: { currentWeight: number | null; heightFeet: number | null; heightInches: number | null }): number | null {
+function calculateBMIFromObject(weightData: WeightData | undefined): number | null {
   if (!weightData) return null;
   
   try {
@@ -611,7 +639,7 @@ function calculateBMIFromObject(weightData: { currentWeight: number | null; heig
       return Math.round(bmi * 10) / 10;
     }
   } catch (e) {
-    console.error('BMI calculation error:', e);
+    logger.error('BMI calculation error:', e);
   }
   
   return null;
@@ -727,7 +755,8 @@ export async function sendToIntakeQ(): Promise<IntakeQResult> {
       language: sessionStorage.getItem('preferred_language') || 'en',
     };
 
-    console.log('[IntakeQ] Sending data to IntakeQ...');
+    // Only log in development (no PHI logged - just status messages)
+    logger.log('[IntakeQ] Sending data to IntakeQ...');
 
     const response = await fetch('/api/intakeq', {
       method: 'POST',
@@ -738,7 +767,7 @@ export async function sendToIntakeQ(): Promise<IntakeQResult> {
     const result = await response.json();
 
     if (result.success) {
-      console.log('[IntakeQ] Success:', result.clientId);
+      logger.log('[IntakeQ] Success:', result.clientId);
       // Store the IntakeQ client ID
       sessionStorage.setItem('intakeq_client_id', result.clientId);
       return {
@@ -749,11 +778,11 @@ export async function sendToIntakeQ(): Promise<IntakeQResult> {
         pdfUrl: result.pdfUrl,
       };
     } else {
-      console.error('[IntakeQ] Failed:', result.error);
+      logger.error('[IntakeQ] Failed:', result.error);
       return { success: false, error: result.error };
     }
   } catch (error) {
-    console.error('[IntakeQ] Error:', error);
+    logger.error('[IntakeQ] Error:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'IntakeQ integration failed',

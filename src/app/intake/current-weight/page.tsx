@@ -131,7 +131,7 @@ export default function CurrentWeightPage() {
         {/* Copyright footer */}
         <div className="mt-6 text-center">
           <p className="copyright-text">
-            © 2025 EONPro, LLC. All rights reserved.<br/>
+            © 2026 EONPro, LLC. All rights reserved.<br/>
             Exclusive and protected process. Copying or reproduction without authorization is prohibited.
           </p>
         </div>

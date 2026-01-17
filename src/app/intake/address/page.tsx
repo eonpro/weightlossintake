@@ -7,9 +7,12 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useEnterNavigation } from '@/hooks/useEnterNavigation';
 import EonmedsLogo from '@/components/EonmedsLogo';
+import { logger } from '@/lib/logger';
 
+// Google Maps types - use any for external library
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     google: any;
     initGmaps: () => void;
   }
@@ -98,7 +101,7 @@ export default function AddressPage() {
     };
     
     script.onerror = () => {
-      console.error('Failed to load Google Maps');
+      logger.error('Failed to load Google Maps');
       setMapError(true);
     };
     
@@ -123,7 +126,8 @@ export default function AddressPage() {
           
           // Parse address components for better storage
           if (place.address_components) {
-            const components: any = {};
+            const components: Record<string, string> = {};
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             place.address_components.forEach((component: any) => {
               const types = component.types;
               if (types.includes('locality')) components.city = component.long_name;
@@ -151,7 +155,7 @@ export default function AddressPage() {
         }
       });
     } catch (error) {
-      console.error('Error initializing autocomplete:', error);
+      logger.error('Error initializing autocomplete:', error);
       setMapError(true);
     }
   };
@@ -199,11 +203,12 @@ export default function AddressPage() {
         }
       });
     } catch (error) {
-      console.error('Error initializing Google Map:', error);
+      logger.error('Error initializing Google Map:', error);
       setMapError(true);
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateMapLocation = (location: any) => {
     if (!mapInstanceRef.current || !location) return;
 
@@ -260,9 +265,15 @@ export default function AddressPage() {
       {/* Cold Shipping Banner */}
       <div className="px-6 mt-3 max-w-md lg:max-w-lg mx-auto w-full">
         <div className="bg-[#f0feab] rounded-3xl overflow-hidden flex items-stretch">
-          <div className="flex-1 px-5 py-3 flex flex-col justify-center">
-            <h3 className="font-semibold text-base text-black">{t('address.shipping.title')}</h3>
-            <p className="text-xs text-gray-600 font-normal mt-0.5">{t('address.shipping.subtitle')}</p>
+          <div className="flex-1 px-5 py-3 flex flex-col justify-center leading-tight">
+            <h3 className="font-semibold text-base text-black leading-tight">{t('address.shipping.title')}</h3>
+            <p className="text-xs text-gray-600 font-normal leading-tight">
+              {language === 'es' ? (
+                <>Enviado en un paquete especial<br/>para mantener tu entrega fría.</>
+              ) : (
+                <>Shipped in a special package<br/>to keep your delivery cold.</>
+              )}
+            </p>
           </div>
           <div className="flex-shrink-0 bg-gray-200 rounded-r-3xl">
             <img 
@@ -366,12 +377,12 @@ export default function AddressPage() {
           <p className="copyright-text">
             {language === 'es' ? (
               <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                © 2026 EONPro, LLC. Todos los derechos reservados.<br/>
                 Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
               </>
             ) : (
               <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
+                © 2026 EONPro, LLC. All rights reserved.<br/>
                 Exclusive and protected process. Copying or reproduction without authorization is prohibited.
               </>
             )}

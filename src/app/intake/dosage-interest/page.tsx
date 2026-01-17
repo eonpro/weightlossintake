@@ -66,20 +66,20 @@ export default function DosageInterestPage() {
               <button
                 key={option.id}
                 onClick={() => setSelected(option.id)}
-                className={`w-full p-4 rounded-2xl border transition-all flex items-center justify-between text-left ${
+                className={`w-full p-4 rounded-2xl border-2 transition-all flex items-center justify-between text-left hover:border-[#4fa87f] ${
                   selected === option.id
-                    ? 'bg-gray-200 border-gray-400'
+                    ? 'border-[#4fa87f] bg-[#f0feab]'
                     : 'bg-white border-gray-200'
                 }`}
               >
-                <span className="text-base lg:text-lg">{option.label}</span>
-                <div className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all ${
+                <span className="text-base lg:text-lg text-[#413d3d]">{option.label}</span>
+                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                   selected === option.id
-                    ? 'bg-gray-200 border-gray-400'
+                    ? 'bg-[#413d3d] border-[#413d3d]'
                     : 'bg-white border-gray-300'
                 }`}>
                   {selected === option.id && (
-                    <div className="w-3 h-3 rounded-full bg-black" />
+                    <div className="w-3 h-3 rounded-full bg-white" />
                   )}
                 </div>
               </button>
@@ -109,11 +109,11 @@ export default function DosageInterestPage() {
         {/* Copyright text */}
         <p className="copyright-text text-center mt-4">
           {isSpanish ? (
-            <>© 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+            <>© 2026 EONPro, LLC. Todos los derechos reservados.<br/>
             Proceso exclusivo y protegido. Copiar o reproducir<br/>
             sin autorización está prohibido.</>
           ) : (
-            <>© 2025 EONPro, LLC. All rights reserved.<br/>
+            <>© 2026 EONPro, LLC. All rights reserved.<br/>
             Exclusive and protected process. Copying or reproduction<br/>
             without authorization is prohibited.</>
           )}

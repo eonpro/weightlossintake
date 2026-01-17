@@ -48,7 +48,7 @@ export default function OptionButton({
           </div>
         )}
         <div className="flex-1">
-          <span className="text-[16px] lg:text-lg font-medium leading-tight block">
+          <span className="text-[16px] lg:text-lg leading-tight block">
             {label}
           </span>
           {description && (

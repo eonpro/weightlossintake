@@ -101,15 +101,15 @@ export default function BloodPressurePage() {
               <button
                 key={option.id}
                 onClick={() => handleSelect(option.id)}
-                className="option-button w-full p-4 text-left rounded-2xl transition-all"
+                className="option-button w-full text-left transition-all"
               >
-                <div>
-                  <span className="text-base lg:text-lg block">
+                <div className="flex flex-col leading-tight">
+                  <span className="text-base lg:text-lg">
                     {language === 'es' ? option.es : option.en}
                   </span>
                   {option.subLabel && (
-                    <span className="text-sm opacity-60">
-                      ({language === 'es' ? option.subLabel.es : option.subLabel.en})
+                    <span className="text-sm text-gray-400 font-normal">
+                      {language === 'es' ? option.subLabel.es : option.subLabel.en}
                     </span>
                   )}
                 </div>
@@ -124,12 +124,12 @@ export default function BloodPressurePage() {
         <p className="copyright-text text-center">
           {language === 'es' ? (
             <>
-              © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+              © 2026 EONPro, LLC. Todos los derechos reservados.<br/>
               Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
             </>
           ) : (
             <>
-              © 2025 EONPro, LLC. All rights reserved.<br/>
+              © 2026 EONPro, LLC. All rights reserved.<br/>
               Exclusive and protected process. Copying or reproduction without authorization is prohibited.
             </>
           )}

@@ -186,14 +186,14 @@ export default function DOBPage() {
             
             <label className="flex items-center space-x-3 cursor-pointer" onClick={() => setCertified(!certified)}>
               <div 
-                className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 cursor-pointer ${
-                  certified ? 'bg-[#f0feab]' : 'bg-white'
+                className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 cursor-pointer transition-all ${
+                  certified ? 'bg-[#413d3d] border-[#413d3d]' : 'bg-white border-gray-300'
                 }`}
-                style={{ border: '1.5px solid #413d3d' }}
+                style={{ border: certified ? '2px solid #413d3d' : '2px solid #d1d5db' }}
               >
                 {certified && (
-                  <svg className="w-3 h-3 text-[#413d3d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 )}
               </div>
@@ -225,12 +225,12 @@ export default function DOBPage() {
           <p className="copyright-text">
             {language === 'es' ? (
               <>
-                © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+                © 2026 EONPro, LLC. Todos los derechos reservados.<br/>
                 Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
               </>
             ) : (
               <>
-                © 2025 EONPro, LLC. All rights reserved.<br/>
+                © 2026 EONPro, LLC. All rights reserved.<br/>
                 Exclusive and protected process. Copying or reproduction without authorization is prohibited.
               </>
             )}

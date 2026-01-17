@@ -72,7 +72,7 @@ export default function PregnancyPage() {
               onClick={() => handleSelect('yes')}
               className="option-button w-full text-left p-4 rounded-2xl transition-all"
             >
-              <span className="text-[16px] lg:text-lg font-medium leading-tight">
+              <span className="text-[16px] lg:text-lg leading-tight">
                 {language === 'es' ? 'Sí' : 'Yes'}
               </span>
             </button>
@@ -81,7 +81,7 @@ export default function PregnancyPage() {
               onClick={() => handleSelect('no')}
               className="option-button w-full text-left p-4 rounded-2xl transition-all"
             >
-              <span className="text-[16px] lg:text-lg font-medium leading-tight">
+              <span className="text-[16px] lg:text-lg leading-tight">
                 No
               </span>
             </button>
@@ -94,12 +94,12 @@ export default function PregnancyPage() {
         <p className="copyright-text text-center">
           {language === 'es' ? (
             <>
-              © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+              © 2026 EONPro, LLC. Todos los derechos reservados.<br/>
               Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
             </>
           ) : (
             <>
-              © 2025 EONPro, LLC. All rights reserved.<br/>
+              © 2026 EONPro, LLC. All rights reserved.<br/>
               Exclusive and protected process. Copying or reproduction without authorization is prohibited.
             </>
           )}

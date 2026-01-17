@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         hostname: 'static.wixstatic.com',
         pathname: '/media/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'static.wixstatic.com',
+        pathname: '/shapes/**',
+      },
     ],
   },
 };

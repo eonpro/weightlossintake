@@ -64,8 +64,8 @@ export interface FormField {
   validation?: ValidationRule[];
   conditionalDisplay?: ConditionalRule[];  // Show field only if conditions met
   storageKey: string;               // Key for storing in state
-  defaultValue?: any;
-  props?: Record<string, any>;      // Additional field-specific props
+  defaultValue?: string | number | boolean | string[];
+  props?: Record<string, unknown>;  // Additional field-specific props
 }
 
 // ============================================================
@@ -79,8 +79,8 @@ export type StepType =
   | 'info'            // Information display only
   | 'custom';         // Custom component
 
-// Navigation can be static or conditional
-export type StepNavigation = string | ConditionalNavigation[];
+// Navigation can be static, conditional, or null (for final step)
+export type StepNavigation = string | ConditionalNavigation[] | null;
 
 export interface ConditionalNavigation {
   conditions: ConditionalRule[];
@@ -107,6 +107,9 @@ export interface FormStep {
   
   // Custom component for 'custom' type steps
   component?: string;
+  
+  // Additional props passed to custom components
+  props?: Record<string, unknown>;
 }
 
 // ============================================================

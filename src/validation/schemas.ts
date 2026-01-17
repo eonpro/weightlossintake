@@ -236,11 +236,11 @@ export function getSchemaForStep(schemaType: SchemaType): z.ZodSchema {
 
 export interface ValidationResult {
   success: boolean;
-  data?: any;
+  data?: unknown;
   errors?: Record<string, string>;
 }
 
-export function validateStep(schemaType: SchemaType, data: any): ValidationResult {
+export function validateStep(schemaType: SchemaType, data: unknown): ValidationResult {
   const schema = getSchemaForStep(schemaType);
   const result = schema.safeParse(data);
 
@@ -257,7 +257,7 @@ export function validateStep(schemaType: SchemaType, data: any): ValidationResul
   return { success: false, errors };
 }
 
-export function validateField(schema: z.ZodSchema, value: any): string | null {
+export function validateField(schema: z.ZodSchema, value: unknown): string | null {
   const result = schema.safeParse(value);
   if (result.success) return null;
   return result.error.issues[0]?.message || 'Invalid value';

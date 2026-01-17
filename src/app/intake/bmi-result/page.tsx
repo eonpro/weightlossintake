@@ -8,6 +8,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import EonmedsLogo from '@/components/EonmedsLogo';
 import BMIWidget from '@/components/BMIWidget';
 import { submitCheckpoint, markCheckpointCompleted } from '@/lib/api';
+import { logger } from '@/lib/logger';
 
 export default function BMIResultPage() {
   const router = useRouter();
@@ -19,8 +20,12 @@ export default function BMIResultPage() {
   const [heightStr, setHeightStr] = useState('');
   const [firstName, setFirstName] = useState('');
   const [showBmiInfo, setShowBmiInfo] = useState(false);
+  const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
+    // Trigger animations
+    setTimeout(() => setAnimate(true), 100);
+    
     // Get data from session storage
     const nameData = sessionStorage.getItem('intake_name');
     const weightData = sessionStorage.getItem('intake_current_weight');
@@ -54,7 +59,7 @@ export default function BMIResultPage() {
       };
       
       submitCheckpoint('bmi-calculation', checkpointData, 'partial').catch(err => {
-        console.error('BMI checkpoint submission failed:', err);
+        logger.error('BMI checkpoint submission failed:', err);
       });
       markCheckpointCompleted('bmi-calculation');
     }
@@ -87,20 +92,24 @@ export default function BMIResultPage() {
       {/* EONMeds Logo */}
       <EonmedsLogo compact={true} />
       
-      <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6 pb-40 max-w-md lg:max-w-lg mx-auto w-full">
+      <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
         <div className="space-y-5">
-          {/* Header Text */}
-          <div className="text-left mb-5">
+          {/* Header Text - reduced line gap */}
+          <div 
+            className={`text-left mb-5 transform transition-all duration-700 ease-out ${animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+          >
             <h2 className="text-[22px] md:text-[26px] font-semibold text-[#413d3d] leading-tight">
               {t('bmi.result.header.line1')}<br/>
               {t('bmi.result.header.line2')}<br/>
-              {t('bmi.result.header.line3')}<br/>
-              {t('bmi.result.header.line4')}
+              {t('bmi.result.header.line3')}
             </h2>
           </div>
           
           {/* BMI Result Card */}
-          <div className="bg-[#f0feab] rounded-3xl p-5 space-y-3">
+          <div 
+            className={`bg-[#f5ffd9] rounded-3xl p-5 space-y-3 overflow-visible transform transition-all duration-700 ease-out ${animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+            style={{ transitionDelay: '150ms' }}
+          >
             <h1 className="text-[22px] font-semibold text-black">
               <span className="text-[#4fa87f]">{firstName || 'firstname'}</span>, {t('bmi.result.yourBMI')} {t('bmi.result.is')}
             </h1>
@@ -120,7 +129,7 @@ export default function BMIResultPage() {
             <BMIWidget bmi={bmi} language={language as 'en' | 'es'} />
             
             {/* Approval Message */}
-            <div className="bg-[#e4fb74] rounded-2xl p-4 flex items-start space-x-3">
+            <div className="bg-[#eaffa3] rounded-2xl p-4 flex items-start space-x-3">
               <div className="w-8 h-8 bg-[#4fa87f] rounded-full flex items-center justify-center flex-shrink-0">
                 <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -133,7 +142,10 @@ export default function BMIResultPage() {
           </div>
 
           {/* Goal Card */}
-          <div className="bg-[#d4f084] rounded-3xl p-5 space-y-3">
+          <div 
+            className={`bg-[#e8ffa8] rounded-3xl p-5 space-y-3 transform transition-all duration-700 ease-out ${animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+            style={{ transitionDelay: '300ms' }}
+          >
             <h2 className="text-lg font-semibold text-black">{t('bmi.result.yourGoal')}</h2>
             <div className="text-5xl font-bold text-[#4fa87f]">{weightToLose ? `${Math.abs(weightToLose).toFixed(2)}` : '0.00'} {t('common.lbs')}</div>
             <p className="text-sm text-black font-normal">{t('bmi.result.averageLoss')}</p>
@@ -172,7 +184,7 @@ export default function BMIResultPage() {
             </div>
 
             {/* Doctor Image */}
-            <div className="flex items-center space-x-4 bg-[#f0feab] rounded-2xl p-4 mt-3">
+            <div className="flex items-center space-x-4 bg-[#f5ffd9] rounded-2xl p-4 mt-3">
               <img 
                 src="https://static.wixstatic.com/media/c49a9b_60e51d36e98e4128a6edb7987a3d6b8b~mv2.webp"
                 alt="Doctor"
@@ -187,7 +199,7 @@ export default function BMIResultPage() {
         </div>
       </div>
       
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
+      <div className="px-6 lg:px-8 pb-8 pt-4 max-w-md lg:max-w-lg mx-auto w-full">
         <button 
           onClick={() => router.push('/intake/testimonials')}
           className="continue-button"
@@ -200,7 +212,7 @@ export default function BMIResultPage() {
         
         {/* Copyright text */}
         <p className="copyright-text text-center mt-4">
-          © 2025 EONPro, LLC. All rights reserved.
+          © 2026 EONPro, LLC. All rights reserved.
           Exclusive and protected process.
         </p>
       </div>

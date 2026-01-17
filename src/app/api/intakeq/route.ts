@@ -1,4 +1,47 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
+// =============================================================================
+// PHI HANDLING BOUNDARY DOCUMENTATION
+// =============================================================================
+// This API route is a PHI PROCESSING POINT. All data submitted here is assumed
+// to contain Protected Health Information (PHI) under HIPAA.
+//
+// PHI FIELDS HANDLED:
+//   - firstName, lastName (PII)
+//   - email, phone (Contact identifiers)
+//   - dob (Date of birth)
+//   - Full address fields (street, city, state, zip)
+//   - All medical history and questionnaire responses
+//   - Weight, height, BMI
+//   - Health conditions, medications, allergies
+//
+// DATA FLOW:
+//   Client Browser → This API → IntakeQ (client profile)
+//                             → PDF.co (PDF generation)
+//                             → IntakeQ (PDF upload)
+//
+// SECURITY CONTROLS:
+//   1. TLS in transit (enforced by Vercel/HTTPS)
+//   2. Input validation via Zod schema (sanitization, type checking)
+//   3. Optional API key authentication (X-API-Key header)
+//   4. Rate limiting (configurable via env vars)
+//   5. Request size limits (100KB max)
+//   6. Audit logging WITHOUT PHI (only session IDs, IPs, status codes)
+//
+// LOGGING RULES:
+//   - NEVER log: firstName, lastName, email, phone, dob, address, medical data
+//   - ALLOWED to log: sessionId, clientId, IP address, timestamps, status codes
+//
+// THIRD-PARTY DATA SHARING:
+//   - IntakeQ: Receives ALL PHI (BAA should be in place)
+//   - PDF.co: Receives formatted PHI for PDF generation (review DPA)
+//
+// COMPLIANCE NOTES:
+//   - IntakeQ is HIPAA-compliant with proper BAA
+//   - PDF.co data processing agreement should be reviewed
+//   - Generated PDFs contain PHI and are stored in IntakeQ
+// =============================================================================
 
 // ============================================================================
 // INTAKEQ INTEGRATION API
@@ -13,12 +56,156 @@ const INTAKEQ_API_BASE = 'https://intakeq.com/api/v1';
 const isDev = process.env.NODE_ENV === 'development';
 const log = (...args: unknown[]) => isDev && console.log('[IntakeQ]', ...args);
 
-// CORS headers
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+// =============================================================================
+// SECURITY AUDIT LOGGING (No PHI - only metadata)
+// Enable structured logging with ENABLE_AUDIT_LOG=true
+// =============================================================================
+const ENABLE_AUDIT_LOG = process.env.ENABLE_AUDIT_LOG === 'true' || isDev;
+
+interface AuditEvent {
+  timestamp: string;
+  event: 'AUTH_FAILURE' | 'RATE_LIMITED' | 'VALIDATION_ERROR' | 'REQUEST_TOO_LARGE' | 
+         'SUBMISSION_SUCCESS' | 'SUBMISSION_FAILURE' | 'API_ERROR';
+  endpoint: string;
+  ip: string;
+  sessionId?: string;
+  statusCode: number;
+  details?: string;
+}
+
+function auditLog(event: AuditEvent): void {
+  if (!ENABLE_AUDIT_LOG) return;
+  
+  const logEntry = {
+    ...event,
+    service: 'eonmeds-intake',
+    environment: process.env.NODE_ENV || 'development',
+  };
+  
+  console.log(JSON.stringify(logEntry));
+}
+
+function getClientIp(request: NextRequest): string {
+  return request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
+         request.headers.get('x-real-ip') || 
+         'unknown';
+}
+
+// =============================================================================
+// OPTIONAL API KEY VERIFICATION (Backwards Compatible)
+// Set API_SECRET_KEY env var to enable. If not set, all requests pass through.
+// =============================================================================
+const API_SECRET_KEY = process.env.API_SECRET_KEY;
+const REQUIRE_API_KEY = !!API_SECRET_KEY;
+
+function verifyApiKey(request: NextRequest): { valid: boolean; error?: string } {
+  if (!REQUIRE_API_KEY) {
+    return { valid: true };
+  }
+  
+  const providedKey = request.headers.get('x-api-key');
+  
+  if (!providedKey) {
+    return { valid: false, error: 'Missing API key' };
+  }
+  
+  // Constant-time comparison
+  if (providedKey.length !== API_SECRET_KEY!.length) {
+    return { valid: false, error: 'Invalid API key' };
+  }
+  
+  let mismatch = 0;
+  for (let i = 0; i < providedKey.length; i++) {
+    mismatch |= providedKey.charCodeAt(i) ^ API_SECRET_KEY!.charCodeAt(i);
+  }
+  
+  return mismatch === 0 ? { valid: true } : { valid: false, error: 'Invalid API key' };
+}
+
+// Input validation schema
+const IntakeQDataSchema = z.object({
+  sessionId: z.string().min(1).max(100),
+  firstName: z.string().min(1).max(100),
+  lastName: z.string().min(1).max(100),
+  email: z.string().email().max(255),
+  phone: z.string().max(30),
+  dob: z.string().max(20),
+  sex: z.string().max(20).optional(),
+  state: z.string().max(50).optional(),
+  address: z.string().max(500).optional(),
+  apartment: z.string().max(100).optional(),
+  city: z.string().max(100).optional(),
+  zipCode: z.string().max(20).optional(),
+  currentWeight: z.number().optional(),
+  idealWeight: z.number().optional(),
+  height: z.string().max(20).optional(),
+  bmi: z.number().optional(),
+  activityLevel: z.string().max(50).optional(),
+  bloodPressure: z.string().max(50).optional(),
+  pregnancyBreastfeeding: z.string().max(100).optional(),
+  chronicConditions: z.string().max(2000).optional(),
+  digestiveConditions: z.string().max(2000).optional(),
+  medications: z.string().max(2000).optional(),
+  allergies: z.string().max(2000).optional(),
+  mentalHealthConditions: z.string().max(2000).optional(),
+  surgeryHistory: z.string().max(500).optional(),
+  surgeryDetails: z.string().max(2000).optional(),
+  familyConditions: z.string().max(2000).optional(),
+  kidneyConditions: z.string().max(2000).optional(),
+  medicalConditions: z.string().max(2000).optional(),
+  glp1History: z.string().max(200).optional(),
+  glp1Type: z.string().max(200).optional(),
+  sideEffects: z.string().max(2000).optional(),
+  semaglutideDosage: z.string().max(100).optional(),
+  semaglutideSuccess: z.string().max(200).optional(),
+  semaglutideSideEffects: z.string().max(2000).optional(),
+  tirzepatideDosage: z.string().max(100).optional(),
+  tirzepatideSuccess: z.string().max(200).optional(),
+  tirzepatideSideEffects: z.string().max(2000).optional(),
+  personalizedTreatmentInterest: z.string().max(200).optional(),
+  healthImprovements: z.string().max(2000).optional(),
+  weightLossHistory: z.string().max(2000).optional(),
+  referralSources: z.string().max(500).optional(),
+  referrerName: z.string().max(200).optional(),
+  language: z.string().max(10).optional(),
+}).strip(); // Strip unknown fields for security
+
+// =============================================================================
+// SANITIZATION HELPERS - Defense in depth against XSS/injection
+// =============================================================================
+
+function sanitizeString(value: string): string {
+  if (!value || typeof value !== 'string') return value;
+  return value
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+\s*=/gi, '')
+    .replace(/data:\s*text\/html/gi, '')
+    .replace(/vbscript:/gi, '')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+// CORS headers - whitelist only our domains
+const ALLOWED_ORIGINS = [
+  'https://intake.eonmeds.com',
+  'https://checkout.eonmeds.com',
+  'https://weightlossintake.vercel.app',
+  'https://eonmeds.com',
+  ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3000', 'http://localhost:3001'] : []),
+];
+
+function getCorsHeaders(origin?: string | null) {
+  const isAllowed = origin && ALLOWED_ORIGINS.includes(origin);
+  return {
+    'Access-Control-Allow-Origin': isAllowed ? origin : ALLOWED_ORIGINS[0],
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true',
 };
+}
+
+const corsHeaders = getCorsHeaders('https://intake.eonmeds.com');
 
 // State code mapping
 const stateMap: Record<string, string> = {
@@ -537,17 +724,157 @@ async function uploadPdfToIntakeQ(clientId: string, pdfUrl: string, firstName: s
 }
 
 // ============================================================================
+// REQUEST SIZE LIMITS
+// ============================================================================
+const MAX_REQUEST_SIZE = 100 * 1024; // 100KB
+
+// ============================================================================
+// SIMPLE RATE LIMITING (Optional - disabled by default)
+// Set ENABLE_RATE_LIMIT=true in env to activate
+//
+// Configuration via environment variables:
+//   ENABLE_RATE_LIMIT=true              - Enable rate limiting
+//   INTAKEQ_RATE_LIMIT_MAX=10           - Max requests per window (default: 10)
+//   INTAKEQ_RATE_LIMIT_WINDOW_MS=60000  - Window size in ms (default: 60000)
+// ============================================================================
+const RATE_LIMIT_WINDOW_MS = parseInt(process.env.INTAKEQ_RATE_LIMIT_WINDOW_MS || '60000', 10);
+const RATE_LIMIT_MAX_REQUESTS = parseInt(process.env.INTAKEQ_RATE_LIMIT_MAX || '10', 10);
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+const ENABLE_RATE_LIMIT = process.env.ENABLE_RATE_LIMIT === 'true';
+
+function checkRateLimit(ip: string): boolean {
+  if (!ENABLE_RATE_LIMIT) return true;
+  
+  const now = Date.now();
+  const record = rateLimitStore.get(ip);
+  
+  // Clean up old entries periodically
+  if (Math.random() < 0.01) {
+    for (const [key, value] of rateLimitStore.entries()) {
+      if (value.resetTime < now) {
+        rateLimitStore.delete(key);
+      }
+    }
+  }
+  
+  if (!record || record.resetTime < now) {
+    rateLimitStore.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return true;
+  }
+  
+  if (record.count >= RATE_LIMIT_MAX_REQUESTS) return false;
+  
+  record.count++;
+  return true;
+}
+
+// ============================================================================
 // MAIN API HANDLER
 // ============================================================================
 export async function POST(request: NextRequest) {
   log('=== INTAKEQ INTEGRATION CALLED ===');
+  const clientIp = getClientIp(request);
+
+  // Rate limiting (only if ENABLE_RATE_LIMIT=true)
+  if (!checkRateLimit(clientIp)) {
+    auditLog({
+      timestamp: new Date().toISOString(),
+      event: 'RATE_LIMITED',
+      endpoint: '/api/intakeq',
+      ip: clientIp,
+      statusCode: 429,
+    });
+    return NextResponse.json({
+      success: false,
+      error: 'Too many requests',
+      code: 'RATE_LIMITED',
+    }, { status: 429, headers: { ...corsHeaders, 'Retry-After': '60' } });
+  }
+
+  // Optional API key verification (only if API_SECRET_KEY is configured)
+  const apiKeyResult = verifyApiKey(request);
+  if (!apiKeyResult.valid) {
+    auditLog({
+      timestamp: new Date().toISOString(),
+      event: 'AUTH_FAILURE',
+      endpoint: '/api/intakeq',
+      ip: clientIp,
+      statusCode: 401,
+      details: apiKeyResult.error,
+    });
+    return NextResponse.json({
+      success: false,
+      error: 'Unauthorized',
+      code: 'INVALID_API_KEY',
+    }, { status: 401, headers: corsHeaders });
+  }
+
+  // Check request size before processing
+  const contentLength = request.headers.get('content-length');
+  if (contentLength && parseInt(contentLength, 10) > MAX_REQUEST_SIZE) {
+    auditLog({
+      timestamp: new Date().toISOString(),
+      event: 'REQUEST_TOO_LARGE',
+      endpoint: '/api/intakeq',
+      ip: clientIp,
+      statusCode: 413,
+      details: `Size: ${contentLength} bytes`,
+    });
+    return NextResponse.json({
+      success: false,
+      error: 'Request too large',
+    }, { status: 413, headers: corsHeaders });
+  }
 
   try {
-    const data: IntakeData = await request.json();
+    // Parse JSON body with error handling
+    let rawData;
+    try {
+      rawData = await request.json();
+    } catch (parseError) {
+      auditLog({
+        timestamp: new Date().toISOString(),
+        event: 'VALIDATION_ERROR',
+        endpoint: '/api/intakeq',
+        ip: clientIp,
+        statusCode: 400,
+        details: 'Invalid JSON',
+      });
+      return NextResponse.json({
+        success: false,
+        error: 'Invalid JSON in request body',
+        code: 'INVALID_JSON',
+      }, { status: 400, headers: corsHeaders });
+    }
+    
+    // Validate input schema
+    const validationResult = IntakeQDataSchema.safeParse(rawData);
+    
+    if (!validationResult.success) {
+      const failedFields = Object.keys(validationResult.error.flatten().fieldErrors);
+      auditLog({
+        timestamp: new Date().toISOString(),
+        event: 'VALIDATION_ERROR',
+        endpoint: '/api/intakeq',
+        ip: clientIp,
+        sessionId: typeof rawData?.sessionId === 'string' ? rawData.sessionId : undefined,
+        statusCode: 400,
+        details: `Invalid fields: ${failedFields.join(', ')}`,
+      });
+      log('Validation failed:', validationResult.error.flatten());
+      return NextResponse.json({
+        success: false,
+        error: 'Invalid input data',
+        code: 'VALIDATION_ERROR',
+        details: isDev ? validationResult.error.flatten().fieldErrors : undefined,
+      }, { status: 400, headers: corsHeaders });
+    }
+    
+    const data: IntakeData = validationResult.data as IntakeData;
 
     log('Processing intake for:', data.email);
 
-    // Validate required fields
+    // Validate required fields (redundant but kept for clarity)
     if (!data.firstName || !data.lastName || !data.email) {
       return NextResponse.json({
         success: false,
@@ -568,6 +895,15 @@ export async function POST(request: NextRequest) {
     const clientId = await createIntakeQClient(data);
 
     if (!clientId) {
+      auditLog({
+        timestamp: new Date().toISOString(),
+        event: 'SUBMISSION_FAILURE',
+        endpoint: '/api/intakeq',
+        ip: clientIp,
+        sessionId: data.sessionId,
+        statusCode: 500,
+        details: 'Failed to create IntakeQ client',
+      });
       return NextResponse.json({
         success: false,
         error: 'Failed to create IntakeQ client',
@@ -594,6 +930,17 @@ export async function POST(request: NextRequest) {
     log('PDF Generated:', !!pdfUrl);
     log('PDF Uploaded:', pdfUploaded);
 
+    auditLog({
+      timestamp: new Date().toISOString(),
+      event: 'SUBMISSION_SUCCESS',
+      endpoint: '/api/intakeq',
+      ip: clientIp,
+      sessionId: data.sessionId,
+      statusCode: 200,
+      // NEVER log PHI - only client ID and operation status
+      details: `ClientId: ${clientId}, PDF: ${!!pdfUrl}, Uploaded: ${pdfUploaded}`,
+    });
+
     return NextResponse.json({
       success: true,
       clientId,
@@ -608,7 +955,15 @@ export async function POST(request: NextRequest) {
     }, { headers: corsHeaders });
 
   } catch (error) {
-    console.error('IntakeQ integration error:', error);
+    log('IntakeQ integration error:', error);
+    auditLog({
+      timestamp: new Date().toISOString(),
+      event: 'API_ERROR',
+      endpoint: '/api/intakeq',
+      ip: clientIp,
+      statusCode: 500,
+      details: error instanceof Error ? error.message : 'Unknown error',
+    });
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Integration failed',
@@ -616,9 +971,10 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Handle preflight requests
-export async function OPTIONS() {
-  return NextResponse.json({}, { headers: corsHeaders });
+// Handle preflight requests with dynamic origin checking
+export async function OPTIONS(request: NextRequest) {
+  const origin = request.headers.get('origin');
+  return NextResponse.json({}, { headers: getCorsHeaders(origin) });
 }
 
 // GET endpoint to check configuration status

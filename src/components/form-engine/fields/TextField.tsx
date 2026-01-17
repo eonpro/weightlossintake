@@ -14,6 +14,7 @@ interface TextFieldProps {
   disabled?: boolean;
   autoFocus?: boolean;
   maxLength?: number;
+  showLabel?: boolean; // Explicitly control label visibility
 }
 
 export default function TextField({
@@ -28,10 +29,11 @@ export default function TextField({
   disabled = false,
   autoFocus = false,
   maxLength,
+  showLabel = false, // Default to NOT showing label (placeholder-only style)
 }: TextFieldProps) {
   return (
     <div className="w-full">
-      {label && (
+      {showLabel && label && (
         <label htmlFor={id} className="block text-sm text-gray-600 mb-2">
           {label}
         </label>
@@ -42,7 +44,7 @@ export default function TextField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
-        placeholder={placeholder}
+        placeholder={placeholder || label}
         disabled={disabled}
         autoFocus={autoFocus}
         maxLength={maxLength}
@@ -53,7 +55,7 @@ export default function TextField({
         `}
       />
       {error && (
-        <p className="mt-2 text-sm text-red-500">{error}</p>
+        <p className="mt-2 text-sm font-medium" style={{ color: '#ef4444' }}>{error}</p>
       )}
     </div>
   );

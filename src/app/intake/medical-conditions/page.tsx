@@ -103,28 +103,28 @@ export default function MedicalConditionsPage() {
                 onClick={() => handleToggleCondition(condition.id)}
                 className={`w-full text-left p-3 rounded-2xl border transition-all ${
                   selectedConditions.includes(condition.id)
-                    ? 'border-[#f0feab] bg-[#f0feab]'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-[#4fa87f] bg-[#f0feab]'
+                    : 'border-gray-200 hover:border-[#4fa87f]'
                 }`}
               >
                 <div className="flex items-start">
                   <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center flex-shrink-0 mt-0.5 ${
                     selectedConditions.includes(condition.id)
-                      ? 'border-[#f0feab] bg-[#f0feab]'
+                      ? 'border-[#4fa87f] bg-[#f0feab]'
                       : 'border-gray-300'
                   }`}>
                     {selectedConditions.includes(condition.id) && (
-                      <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     )}
                   </div>
                   <div>
-                    <span className="text-[16px] lg:text-lg font-medium leading-tight">
+                    <span className="text-[16px] lg:text-lg leading-tight">
                       {condition.label}
                     </span>
                     {condition.sublabel && (
-                      <span className="text-sm text-gray-500 block">
+                      <span className="text-sm text-gray-500 block leading-tight">
                         {condition.sublabel}
                       </span>
                     )}
@@ -141,12 +141,12 @@ export default function MedicalConditionsPage() {
         <p className="copyright-text text-center">
           {language === 'es' ? (
             <>
-              © 2025 EONPro, LLC. Todos los derechos reservados.<br/>
+              © 2026 EONPro, LLC. Todos los derechos reservados.<br/>
               Proceso exclusivo y protegido. Copiar o reproducir sin autorización está prohibido.
             </>
           ) : (
             <>
-              © 2025 EONPro, LLC. All rights reserved.<br/>
+              © 2026 EONPro, LLC. All rights reserved.<br/>
               Exclusive and protected process. Copying or reproduction without authorization is prohibited.
             </>
           )}
