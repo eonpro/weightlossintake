@@ -1,7 +1,7 @@
 'use client';
 
-import { Elements } from '@stripe/react-stripe-js';
-import { getStripe } from '@/lib/stripe';
+import { LanguageProvider } from '@/contexts/LanguageContext';
+import LanguageToggle from '@/components/LanguageToggle';
 
 export default function CheckoutLayout({
   children,
@@ -9,8 +9,14 @@ export default function CheckoutLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Elements stripe={getStripe()}>
-      {children}
-    </Elements>
+    <LanguageProvider>
+      <div className="relative min-h-screen">
+        {/* Language Toggle */}
+        <div className="fixed top-4 right-4 z-50">
+          <LanguageToggle />
+        </div>
+        {children}
+      </div>
+    </LanguageProvider>
   );
 }

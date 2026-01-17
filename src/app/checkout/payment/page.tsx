@@ -3,12 +3,16 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import EonmedsLogo from '@/components/EonmedsLogo';
 import CopyrightText from '@/components/CopyrightText';
 import { useCheckoutStore, getPatientInfoFromIntake, loadShippingFromIntake } from '@/store/checkoutStore';
 import { ADDONS, EXPEDITED_SHIPPING_PRICE, formatPrice } from '@/lib/stripe';
 import { logger } from '@/lib/logger';
+
+// Initialize Stripe outside component to avoid recreation
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 
 const translations = {
   en: {
@@ -35,6 +39,11 @@ const translations = {
     limitedOffer: 'Limited Time',
     spotsRemaining: 'Only 3 spots left at this price',
     expeditedShipping: 'Expedited Shipping',
+    initError: 'Failed to create payment intent',
+    tryAgain: 'Try again',
+    reloadPage: 'Reload page',
+    unableToInit: 'Unable to initialize payment. Please try again.',
+    stripeNotConfigured: 'Payment system is not configured. Please contact support.',
   },
   es: {
     title: 'Paso Final',
@@ -60,6 +69,11 @@ const translations = {
     limitedOffer: 'Tiempo Limitado',
     spotsRemaining: 'Solo quedan 3 lugares a este precio',
     expeditedShipping: 'Envío Expedito',
+    initError: 'Error al crear intención de pago',
+    tryAgain: 'Intentar de nuevo',
+    reloadPage: 'Recargar página',
+    unableToInit: 'No se pudo inicializar el pago. Por favor, intente de nuevo.',
+    stripeNotConfigured: 'El sistema de pago no está configurado. Por favor contacte soporte.',
   },
 };
 
@@ -72,10 +86,140 @@ interface ProductInfo {
   price: number;
 }
 
-export default function PaymentPage() {
+// Checkout form component that uses Stripe hooks
+function CheckoutForm({ 
+  productInfo, 
+  patientInfo, 
+  total 
+}: { 
+  productInfo: ProductInfo;
+  patientInfo: { firstName: string; lastName: string; email: string; phone: string; dob: string };
+  total: number;
+}) {
   const router = useRouter();
   const stripe = useStripe();
   const elements = useElements();
+  const { language } = useLanguage();
+  const t = translations[language as keyof typeof translations] || translations.en;
+  
+  const { setPaymentStatus, setPaymentIntentId } = useCheckoutStore();
+  
+  const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setProcessing(true);
+    setError(null);
+    setPaymentStatus('processing');
+
+    try {
+      const { error: submitError } = await elements.submit();
+      if (submitError) {
+        throw submitError;
+      }
+
+      const { error: paymentError, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/checkout/confirmation`,
+          payment_method_data: {
+            billing_details: {
+              name: `${patientInfo.firstName} ${patientInfo.lastName}`,
+              email: patientInfo.email,
+            },
+          },
+        },
+        redirect: 'if_required',
+      });
+
+      if (paymentError) {
+        throw paymentError;
+      }
+
+      if (paymentIntent?.status === 'succeeded') {
+        setPaymentStatus('succeeded');
+        setPaymentIntentId(paymentIntent.id);
+        
+        // Store payment info in session for confirmation page
+        sessionStorage.setItem('payment_success', JSON.stringify({
+          paymentIntentId: paymentIntent.id,
+          amount: paymentIntent.amount,
+          medication: productInfo.medication,
+          dose: productInfo.tierDose,
+        }));
+        
+        // Clear checkout product
+        sessionStorage.removeItem('checkout_product');
+        
+        router.push('/checkout/confirmation');
+      }
+    } catch (err) {
+      setPaymentStatus('failed');
+      setError(err instanceof Error ? err.message : t.paymentError);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="bg-white rounded-2xl border-2 border-gray-100 p-4">
+        <PaymentElement
+          options={{
+            layout: {
+              type: 'accordion',
+              defaultCollapsed: false,
+              radios: true,
+              spacedAccordionItems: true,
+            },
+          }}
+        />
+      </div>
+
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
+          <p className="text-sm text-red-600">{error}</p>
+        </div>
+      )}
+
+      {/* Secure payment badge */}
+      <div className="flex items-center justify-center text-sm text-[#413d3d]/60">
+        <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+        </svg>
+        {t.securePayment}
+      </div>
+
+      {/* Submit Button */}
+      <button 
+        type="submit"
+        disabled={!stripe || processing}
+        className="continue-button w-full"
+      >
+        {processing ? (
+          <>
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+            <span>{t.processing}</span>
+          </>
+        ) : (
+          <>
+            <span>{t.payNow}</span>
+            <span className="ml-2">({formatPrice(total)})</span>
+          </>
+        )}
+      </button>
+    </form>
+  );
+}
+
+export default function PaymentPage() {
+  const router = useRouter();
   const { language } = useLanguage();
   const t = translations[language as keyof typeof translations] || translations.en;
   const isSpanish = language === 'es';
@@ -85,18 +229,32 @@ export default function PaymentPage() {
     expeditedShipping,
     shippingAddress,
     setShippingAddress,
-    setPaymentStatus, 
-    setPaymentIntentId 
   } = useCheckoutStore();
   
   const [productInfo, setProductInfo] = useState<ProductInfo | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [patientInfo, setPatientInfo] = useState({ firstName: '', lastName: '', email: '', phone: '', dob: '' });
 
-  // Load patient info, shipping address, and product info
+  // Calculate total
+  const calculateTotal = () => {
+    let total = productInfo?.price || 0;
+    
+    if (selectedAddons.includes('nausea_relief')) {
+      total += ADDONS.nauseaRelief.price;
+    }
+    if (selectedAddons.includes('fat_burner')) {
+      total += ADDONS.fatBurner.price;
+    }
+    if (expeditedShipping) {
+      total += EXPEDITED_SHIPPING_PRICE;
+    }
+    
+    return total;
+  };
+
+  // Load patient info and product info
   useEffect(() => {
     const info = getPatientInfoFromIntake();
     setPatientInfo(info);
@@ -113,46 +271,28 @@ export default function PaymentPage() {
     const storedProduct = sessionStorage.getItem('checkout_product');
     if (storedProduct) {
       try {
-        setProductInfo(JSON.parse(storedProduct));
+        const parsed = JSON.parse(storedProduct);
+        setProductInfo(parsed);
       } catch {
-        // Silent fail - invalid product data in session
+        logger.error('Failed to parse checkout product');
       }
+    } else {
+      setLoading(false);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Calculate total
-  const calculateTotal = () => {
-    let total = productInfo?.price || 0;
-    
-    // Add addons
-    if (selectedAddons.includes('nausea_relief')) {
-      total += ADDONS.nauseaRelief.price;
-    }
-    if (selectedAddons.includes('fat_burner')) {
-      total += ADDONS.fatBurner.price;
-    }
-    
-    // Add expedited shipping
-    if (expeditedShipping) {
-      total += EXPEDITED_SHIPPING_PRICE;
-    }
-    
-    return total;
-  };
-
-  // Create PaymentIntent when component loads
+  // Create PaymentIntent when product info is ready
   useEffect(() => {
-    if (!productInfo) {
-      setLoading(false);
-      return;
-    }
+    if (!productInfo) return;
 
     async function createPaymentIntent() {
       try {
         setLoading(true);
+        setError(null);
+        
         const totalAmount = calculateTotal();
         
-        // Get Meta tracking data from session
+        // Get Meta tracking data
         const metaEventId = sessionStorage.getItem('meta_event_id') || '';
         const fbp = document.cookie.match(/_fbp=([^;]+)/)?.[1] || '';
         const fbc = document.cookie.match(/_fbc=([^;]+)/)?.[1] || '';
@@ -175,7 +315,7 @@ export default function PaymentPage() {
             amount: totalAmount,
             currency: 'usd',
             customer_email: patientInfo.email,
-            customer_name: `${patientInfo.firstName} ${patientInfo.lastName}`,
+            customer_name: `${patientInfo.firstName} ${patientInfo.lastName}`.trim(),
             customer_phone: patientInfo.phone,
             shipping_address: shippingAddress ? {
               addressLine1: shippingAddress.street,
@@ -202,7 +342,6 @@ export default function PaymentPage() {
               total: totalAmount,
             },
             language: language,
-            // Meta CAPI tracking
             meta_event_id: metaEventId,
             fbp: fbp,
             fbc: fbc,
@@ -213,88 +352,25 @@ export default function PaymentPage() {
 
         const data = await response.json();
         
-        if (data.error) {
-          throw new Error(data.error);
+        if (!response.ok || data.error) {
+          throw new Error(data.message || data.error || 'Failed to create payment intent');
+        }
+
+        if (!data.clientSecret) {
+          throw new Error('No client secret returned');
         }
 
         setClientSecret(data.clientSecret);
-        if (data.paymentIntentId) {
-          setPaymentIntentId(data.paymentIntentId);
-        }
       } catch (err) {
-        // Payment initialization error - display to user
         logger.error('Payment initialization failed', { error: err });
-        setError(err instanceof Error ? err.message : 'Failed to initialize payment');
+        setError(err instanceof Error ? err.message : t.initError);
       } finally {
         setLoading(false);
       }
     }
 
-    if (patientInfo.email && productInfo) {
-      createPaymentIntent();
-    }
-  }, [productInfo, patientInfo.email, expeditedShipping, selectedAddons, shippingAddress, language, setPaymentIntentId]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!stripe || !elements || !clientSecret) {
-      return;
-    }
-
-    setProcessing(true);
-    setError(null);
-    setPaymentStatus('processing');
-
-    try {
-      const { error: submitError } = await elements.submit();
-      if (submitError) {
-        throw submitError;
-      }
-
-      const { error: paymentError, paymentIntent } = await stripe.confirmPayment({
-        elements,
-        clientSecret,
-        confirmParams: {
-          return_url: `${window.location.origin}/checkout/confirmation`,
-          payment_method_data: {
-            billing_details: {
-              name: `${patientInfo.firstName} ${patientInfo.lastName}`,
-              email: patientInfo.email,
-            },
-          },
-        },
-        redirect: 'if_required',
-      });
-
-      if (paymentError) {
-        throw paymentError;
-      }
-
-      if (paymentIntent?.status === 'succeeded') {
-        setPaymentStatus('succeeded');
-        
-        // Store payment info in session for confirmation page
-        sessionStorage.setItem('payment_success', JSON.stringify({
-          paymentIntentId: paymentIntent.id,
-          amount: paymentIntent.amount,
-          medication: productInfo?.medication,
-          dose: productInfo?.tierDose,
-        }));
-        
-        // Clear checkout product
-        sessionStorage.removeItem('checkout_product');
-        
-        router.push('/checkout/confirmation');
-      }
-    } catch (err) {
-      // Payment failed - display error to user
-      setPaymentStatus('failed');
-      setError(err instanceof Error ? err.message : t.paymentError);
-    } finally {
-      setProcessing(false);
-    }
-  };
+    createPaymentIntent();
+  }, [productInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // No product selected
   if (!productInfo && !loading) {
@@ -455,92 +531,57 @@ export default function PaymentPage() {
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#b8e64a]"></div>
             </div>
-          ) : clientSecret ? (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="bg-white rounded-2xl border-2 border-gray-100 p-2">
-                <PaymentElement
-                  options={{
-                    layout: {
-                      type: 'accordion',
-                      defaultCollapsed: false,
-                      radios: true,
-                      spacedAccordionItems: true,
-                    },
-                  }}
-                />
-              </div>
-
-              {/* Error message */}
-              {error && (
-                <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
-                  <p className="text-sm text-red-600">{error}</p>
-                </div>
-              )}
-
-              {/* Secure payment badge */}
-              <div className="flex items-center justify-center text-sm text-[#413d3d]/60">
-                <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                </svg>
-                {t.securePayment}
-              </div>
-            </form>
+          ) : clientSecret && productInfo ? (
+            <Elements 
+              stripe={stripePromise} 
+              options={{
+                clientSecret,
+                appearance: {
+                  theme: 'stripe',
+                  variables: {
+                    colorPrimary: '#b8e64a',
+                    colorBackground: '#ffffff',
+                    colorText: '#413d3d',
+                    fontFamily: 'sofia-pro, system-ui, sans-serif',
+                    borderRadius: '12px',
+                  },
+                },
+              }}
+            >
+              <CheckoutForm 
+                productInfo={productInfo} 
+                patientInfo={patientInfo}
+                total={calculateTotal()}
+              />
+            </Elements>
           ) : error ? (
             <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
-              <p className="text-sm text-red-600">{error}</p>
+              <p className="text-sm text-red-600 font-medium">{t.initError}</p>
+              <p className="text-sm text-red-500 mt-1">{error}</p>
               <button
                 onClick={() => window.location.reload()}
-                className="mt-2 text-sm text-red-600 underline"
+                className="mt-3 text-sm text-red-600 underline font-medium"
               >
-                {language === 'es' ? 'Intentar de nuevo' : 'Try again'}
+                {t.tryAgain}
               </button>
             </div>
           ) : (
             <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
-              <p className="text-sm text-yellow-700">
-                {language === 'es' 
-                  ? 'No se pudo inicializar el pago. Por favor, intente de nuevo.'
-                  : 'Unable to initialize payment. Please try again.'}
-              </p>
+              <p className="text-sm text-yellow-700">{t.unableToInit}</p>
               <button
                 onClick={() => window.location.reload()}
                 className="mt-2 text-sm text-yellow-700 underline"
               >
-                {language === 'es' ? 'Recargar página' : 'Reload page'}
+                {t.reloadPage}
               </button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Bottom button */}
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
-        <button 
-          onClick={handleSubmit}
-          disabled={!stripe || !clientSecret || processing}
-          className="continue-button"
-        >
-          {processing ? (
-            <>
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div>
-              <span>{t.processing}</span>
-            </>
-          ) : (
-            <>
-              <span>{t.payNow}</span>
-              {productInfo && (
-                <span className="ml-2">
-                  ({formatPrice(calculateTotal())})
-                </span>
-              )}
-            </>
-          )}
-        </button>
-        
-        {/* Copyright footer */}
-        <div className="mt-6 text-center">
-          <CopyrightText />
-        </div>
+      {/* Copyright footer */}
+      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full text-center">
+        <CopyrightText />
       </div>
     </div>
   );

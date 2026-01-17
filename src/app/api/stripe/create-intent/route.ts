@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { logger } from '@/lib/logger';
 
 // ============================================================================
 // STRIPE CONFIGURATION
@@ -7,32 +8,13 @@ import Stripe from 'stripe';
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
-// Note: STRIPE_SECRET_KEY should be configured in environment variables
-
+// Initialize Stripe with the secret key
 const stripe = stripeSecretKey 
-  ? new Stripe(stripeSecretKey, { apiVersion: '2024-06-20' as Stripe.LatestApiVersion })
+  ? new Stripe(stripeSecretKey, { 
+      apiVersion: '2024-06-20' as Stripe.LatestApiVersion,
+      typescript: true,
+    })
   : null;
-
-// Price IDs from environment variables
-const STRIPE_PRICES = {
-  semaglutide: {
-    monthly: process.env.STRIPE_PRICE_SEMAGLUTIDE_MONTHLY || '',
-    threeMonth: process.env.STRIPE_PRICE_SEMAGLUTIDE_3MONTH || '',
-    sixMonth: process.env.STRIPE_PRICE_SEMAGLUTIDE_6MONTH || '',
-  },
-  tirzepatide: {
-    monthly: process.env.STRIPE_PRICE_TIRZEPATIDE_MONTHLY || '',
-    threeMonth: process.env.STRIPE_PRICE_TIRZEPATIDE_3MONTH || '',
-    sixMonth: process.env.STRIPE_PRICE_TIRZEPATIDE_6MONTH || '',
-  },
-  addons: {
-    nauseaRelief: process.env.STRIPE_PRICE_NAUSEA_RELIEF || '',
-    fatBurner: process.env.STRIPE_PRICE_FAT_BURNER || '',
-  },
-  shipping: {
-    expedited: process.env.STRIPE_PRICE_EXPEDITED_SHIPPING || '',
-  },
-};
 
 // ============================================================================
 // HELPER FUNCTIONS
@@ -88,33 +70,16 @@ async function getOrCreateCustomer(
   });
 }
 
-function getPriceId(medication: string, planType: string): string | null {
-  if (!medication || !planType) return null;
-
-  const med = medication.toLowerCase().replace(/\s+/g, '');
-  const medKey = med.includes('semaglutide') ? 'semaglutide' : 'tirzepatide';
-  
-  const planLower = planType.toLowerCase();
-  let mappedPlan: 'monthly' | 'threeMonth' | 'sixMonth' = 'monthly';
-  
-  if (planLower.includes('6') || planLower.includes('six')) {
-    mappedPlan = 'sixMonth';
-  } else if (planLower.includes('3') || planLower.includes('three')) {
-    mappedPlan = 'threeMonth';
-  }
-  
-  const medProducts = STRIPE_PRICES[medKey];
-  return medProducts[mappedPlan] || null;
-}
-
 // ============================================================================
 // API HANDLER
 // ============================================================================
 
 export async function POST(request: NextRequest) {
+  // Check if Stripe is configured
   if (!stripe) {
+    logger.error('Stripe not configured - missing STRIPE_SECRET_KEY');
     return NextResponse.json(
-      { error: 'Stripe not configured' },
+      { error: 'Stripe not configured', message: 'Payment system is not configured. Please contact support.' },
       { status: 500 }
     );
   }
@@ -143,14 +108,14 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Validate amount
-    if (!amount || amount < 50) {
+    if (!amount || typeof amount !== 'number' || amount < 50) {
       return NextResponse.json(
-        { error: 'Invalid amount' },
+        { error: 'Invalid amount', message: 'Amount must be at least $0.50' },
         { status: 400 }
       );
     }
 
-    // Normalize shipping address (optional - can be added later)
+    // Normalize shipping address (optional)
     const normalizedShippingAddress = shipping_address?.addressLine1?.trim?.() ? {
       line1: String(shipping_address.addressLine1 || '').trim(),
       line2: String(shipping_address.addressLine2 || '').trim() || undefined,
@@ -177,16 +142,13 @@ export async function POST(request: NextRequest) {
     const planType = order_data?.plan || '';
     const isSubscription = planType && planType.toLowerCase().includes('monthly');
 
-    // Get product price ID
-    const mainPriceId = getPriceId(order_data?.medication || '', planType);
-
-    // Normalize plan name to English
+    // Normalize plan name
     const normalizedPlanName = (() => {
       const p = (order_data?.plan || '').toLowerCase();
       if (p.includes('monthly')) return 'Monthly Recurring';
       if (p.includes('3')) return '3-Month Plan';
       if (p.includes('6')) return '6-Month Plan';
-      return order_data?.plan || 'Monthly Recurring';
+      return order_data?.plan || 'One-Time Purchase';
     })();
 
     // Build description
@@ -227,7 +189,6 @@ export async function POST(request: NextRequest) {
       medication: order_data?.medication || '',
       plan: normalizedPlanName,
       is_subscription: isSubscription ? 'true' : 'false',
-      main_price_id: mainPriceId || '',
       addons: JSON.stringify(order_data?.addons || []),
       expedited_shipping: order_data?.expeditedShipping ? 'yes' : 'no',
       total: order_data?.total?.toString() || '',
@@ -236,7 +197,7 @@ export async function POST(request: NextRequest) {
     const isValidEmail = customer_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer_email);
 
     // Create payment intent
-    const paymentIntent = await stripe.paymentIntents.create({
+    const paymentIntentParams: Stripe.PaymentIntentCreateParams = {
       amount: amount,
       currency: currency,
       customer: customer.id,
@@ -247,13 +208,22 @@ export async function POST(request: NextRequest) {
       setup_future_usage: isSubscription ? 'off_session' : undefined,
       receipt_email: isValidEmail ? customer_email : undefined,
       metadata: orderMetadata,
-      // Only include shipping if we have an address
-      ...(normalizedShippingAddress && {
-        shipping: {
-          name: customer_name || (isValidEmail ? customer_email : 'Customer'),
-          address: normalizedShippingAddress,
-        },
-      }),
+    };
+
+    // Only include shipping if we have an address
+    if (normalizedShippingAddress) {
+      paymentIntentParams.shipping = {
+        name: customer_name || (isValidEmail ? customer_email : 'Customer'),
+        address: normalizedShippingAddress,
+      };
+    }
+
+    const paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
+
+    logger.info('Payment intent created', { 
+      paymentIntentId: paymentIntent.id, 
+      amount: paymentIntent.amount,
+      customerId: customer.id 
     });
 
     return NextResponse.json({
@@ -265,19 +235,42 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    // Payment intent creation failed - return safe error message
+    logger.error('Payment intent creation failed', { error });
+    
+    // Handle Stripe-specific errors
+    if (error instanceof Stripe.errors.StripeError) {
+      return NextResponse.json(
+        { 
+          error: 'Stripe error', 
+          message: error.message,
+          code: error.code 
+        },
+        { status: 400 }
+      );
+    }
+    
+    // Generic error
     return NextResponse.json(
-      { error: 'Failed to create payment intent', message: error instanceof Error ? error.message : 'Unknown error' },
+      { 
+        error: 'Failed to create payment intent', 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      },
       { status: 500 }
     );
   }
 }
 
-// Health check
+// Health check endpoint
 export async function GET() {
+  const isConfigured = !!stripe;
+  const hasPublicKey = !!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  
   return NextResponse.json({
-    status: 'healthy',
+    status: isConfigured ? 'healthy' : 'not_configured',
     endpoint: '/api/stripe/create-intent',
-    stripeConfigured: !!stripe,
+    stripeConfigured: isConfigured,
+    publicKeyConfigured: hasPublicKey,
+    // Don't expose the actual key, just if it exists and starts with expected prefix
+    secretKeyPrefix: stripeSecretKey ? stripeSecretKey.substring(0, 7) : null,
   });
 }
