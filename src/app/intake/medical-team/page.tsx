@@ -65,31 +65,17 @@ export default function MedicalTeamPage() {
 
           {/* Title and content */}
           <div className="space-y-3">
-            <h1 className="text-[22px] lg:text-[26px] font-bold text-[#413d3d] leading-tight">
+            <h1 className="text-[26px] lg:text-[30px] font-bold text-[#413d3d] leading-tight">
               {language === 'es' 
-                ? 'Mensaje de nuestro equipo médico'
-                : 'Message from our medical team'}
+                ? '¿Efectos secundarios? Te tenemos cubierto.'
+                : 'Side effects? We\'ve got you covered.'}
             </h1>
 
-            <div className="space-y-3 text-[#413d3d]">
-              <p className="text-[15px] leading-snug">
-                {language === 'es'
-                  ? 'Si bien los medicamentos para perder peso son altamente efectivos, es común experimentar efectos secundarios como náuseas.'
-                  : 'While weight loss medications are highly effective, it\'s common to experience side effects like nausea.'}
-              </p>
-
-              <p className="text-[15px] leading-snug">
-                {language === 'es'
-                  ? 'En EONMeds, un médico licenciado puede personalizar tu plan de tratamiento para ayudarte a alcanzar tus objetivos sin tener que lidiar con esos efectos.'
-                  : 'At EONMeds, a licensed physician can customize your treatment plan to help you achieve your goals without having to deal with those effects.'}
-              </p>
-
-              <p className="text-[15px] leading-snug">
-                {language === 'es'
-                  ? 'Las siguientes preguntas permitirán a tu proveedor determinar el mejor enfoque clínico para ti.'
-                  : 'The following questions will allow your provider to determine the best clinical approach for you.'}
-              </p>
-            </div>
+            <p className="text-[16px] leading-snug text-[#413d3d]">
+              {language === 'es'
+                ? 'Nuestros médicos personalizan tu tratamiento para minimizar efectos secundarios. Las siguientes preguntas nos ayudarán a crear el mejor plan para ti.'
+                : 'Our doctors personalize your treatment to minimize side effects. The following questions will help us create the best plan for you.'}
+            </p>
           </div>
         </div>
       </div>
