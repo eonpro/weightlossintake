@@ -296,6 +296,21 @@ textarea::placeholder {
   background: var(--color-bg-muted);
 }
 
+/* Sticky bottom button container */
+.sticky-bottom-button {
+  padding-left: 35px;
+  padding-right: 35px;
+  padding-top: 1rem;
+  padding-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .sticky-bottom-button {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
 /* Continue button - Legacy support */
 .continue-button {
   width: 100%;
@@ -755,6 +770,21 @@ input[type="number"] {
     padding-left: 35px !important;
     padding-right: 35px !important;
   }
+  
+  /* Fix button container - ensure proper margins */
+  .continue-button {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  
+  /* Reduce excessive bottom padding on mobile */
+  .pb-8 {
+    padding-bottom: 1.5rem !important;
+  }
+  
+  .pt-6 {
+    padding-top: 1rem !important;
+  }
 }
 
 /* =============================================================================
@@ -785,13 +815,13 @@ input[type="number"] {
   color: var(--color-text);
   outline: none;
   line-height: 1.2;
-  font-weight: 550;
+  font-weight: 520;
 }
 
 /* Ensure consistent font weight for all text inside option buttons */
 .option-button span,
 .option-button .option-text {
-  font-weight: 550 !important;
+  font-weight: 520 !important;
 }
 
 /* Hover state - green border */
