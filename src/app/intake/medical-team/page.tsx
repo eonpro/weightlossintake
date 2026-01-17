@@ -4,13 +4,11 @@ import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useTranslation } from '@/hooks/useTranslation';
 import EonmedsLogo from '@/components/EonmedsLogo';
 import CopyrightText from '@/components/CopyrightText';
 
 export default function MedicalTeamPage() {
   const router = useRouter();
-  const { t } = useTranslation();
   const { language } = useLanguage();
   const [showContainer, setShowContainer] = useState(false);
   const hasNavigated = useRef(false);
@@ -18,13 +16,13 @@ export default function MedicalTeamPage() {
   useEffect(() => {
     const timer = setTimeout(() => setShowContainer(true), 100);
 
-    // Auto-advance after 3 seconds
+    // Auto-advance after 4 seconds (slightly longer to read content)
     const navigationTimer = setTimeout(() => {
       if (!hasNavigated.current) {
         hasNavigated.current = true;
         router.push('/intake/common-side-effects');
       }
-    }, 3000);
+    }, 4000);
 
     return () => {
       clearTimeout(timer);
@@ -52,41 +50,41 @@ export default function MedicalTeamPage() {
       <EonmedsLogo compact={true} />
       
       {/* Main content */}
-      <div className={`flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-lg mx-auto w-full transition-all duration-1000 ease-out transform ${
+      <div className={`flex-1 flex flex-col px-6 lg:px-8 py-4 max-w-md lg:max-w-lg mx-auto w-full transition-all duration-1000 ease-out transform ${
         showContainer ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}>
-        <div className="space-y-6">
-          {/* Doctor images */}
+        <div className="space-y-5">
+          {/* Doctor images - 3 photos in a row */}
           <div className="flex justify-center">
             <img 
-              src="https://static.wixstatic.com/media/c49a9b_e3b5b1388aab4fb4b005bf6f54a54df4~mv2.webp"
-              alt={language === 'es' ? 'Equipo médico' : 'Medical team'}
-              className="w-full max-w-md h-auto rounded-2xl"
+              src="https://static.wixstatic.com/media/c49a9b_9897c419e55b402395e6dbdd20fa589d~mv2.webp"
+              alt={language === 'es' ? 'Equipo médico de EONMeds' : 'EONMeds Medical Team'}
+              className="w-full max-w-md h-auto rounded-xl"
             />
           </div>
 
           {/* Title and content */}
-          <div className="space-y-4">
-            <h1 className="page-title text-[#4ea77d]">
+          <div className="space-y-3">
+            <h1 className="text-[22px] lg:text-[26px] font-bold text-[#413d3d] leading-tight">
               {language === 'es' 
                 ? 'Mensaje de nuestro equipo médico'
                 : 'Message from our medical team'}
             </h1>
 
-            <div className="space-y-4 text-gray-700">
-              <p className="text-lg">
+            <div className="space-y-3 text-[#413d3d]">
+              <p className="text-[15px] leading-snug">
                 {language === 'es'
                   ? 'Si bien los medicamentos para perder peso son altamente efectivos, es común experimentar efectos secundarios como náuseas.'
                   : 'While weight loss medications are highly effective, it\'s common to experience side effects like nausea.'}
               </p>
 
-              <p>
+              <p className="text-[15px] leading-snug">
                 {language === 'es'
                   ? 'En EONMeds, un médico licenciado puede personalizar tu plan de tratamiento para ayudarte a alcanzar tus objetivos sin tener que lidiar con esos efectos.'
                   : 'At EONMeds, a licensed physician can customize your treatment plan to help you achieve your goals without having to deal with those effects.'}
               </p>
 
-              <p>
+              <p className="text-[15px] leading-snug">
                 {language === 'es'
                   ? 'Las siguientes preguntas permitirán a tu proveedor determinar el mejor enfoque clínico para ti.'
                   : 'The following questions will allow your provider to determine the best clinical approach for you.'}
