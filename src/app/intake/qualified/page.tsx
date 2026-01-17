@@ -112,6 +112,9 @@ export default function QualifiedPage() {
     router.push('/checkout');
   };
 
+  // Remove unused variables warning
+  void firstName;
+
   return (
     <div className="min-h-screen bg-white flex flex-col relative overflow-hidden">
       {/* Progress bar */}

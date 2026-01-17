@@ -6,7 +6,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import EonmedsLogo from '@/components/EonmedsLogo';
 import CopyrightText from '@/components/CopyrightText';
-import { useCheckoutStore, getPatientInfoFromIntake } from '@/store/checkoutStore';
+import { useCheckoutStore, getPatientInfoFromIntake, loadShippingFromIntake } from '@/store/checkoutStore';
 import { ADDONS, EXPEDITED_SHIPPING_PRICE, formatPrice } from '@/lib/stripe';
 
 const translations = {
@@ -83,6 +83,7 @@ export default function PaymentPage() {
     selectedAddons,
     expeditedShipping,
     shippingAddress,
+    setShippingAddress,
     setPaymentStatus, 
     setPaymentIntentId 
   } = useCheckoutStore();
@@ -94,10 +95,18 @@ export default function PaymentPage() {
   const [error, setError] = useState<string | null>(null);
   const [patientInfo, setPatientInfo] = useState({ firstName: '', lastName: '', email: '', phone: '', dob: '' });
 
-  // Load patient info and product info
+  // Load patient info, shipping address, and product info
   useEffect(() => {
     const info = getPatientInfoFromIntake();
     setPatientInfo(info);
+    
+    // Load shipping address if not in store
+    if (!shippingAddress) {
+      const address = loadShippingFromIntake();
+      if (address) {
+        setShippingAddress(address);
+      }
+    }
     
     // Get product info from session
     const storedProduct = sessionStorage.getItem('checkout_product');
@@ -108,7 +117,7 @@ export default function PaymentPage() {
         // Silent fail - invalid product data in session
       }
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Calculate total
   const calculateTotal = () => {

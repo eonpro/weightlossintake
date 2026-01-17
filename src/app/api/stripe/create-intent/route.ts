@@ -150,29 +150,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate shipping address
-    if (!shipping_address || !shipping_address.addressLine1?.trim?.()) {
-      return NextResponse.json({
-        error: 'Shipping address required',
-        message: 'Please enter a complete shipping address.',
-      }, { status: 400 });
-    }
-
-    const normalizedShippingAddress = {
+    // Normalize shipping address (optional - can be added later)
+    const normalizedShippingAddress = shipping_address?.addressLine1?.trim?.() ? {
       line1: String(shipping_address.addressLine1 || '').trim(),
       line2: String(shipping_address.addressLine2 || '').trim() || undefined,
       city: String(shipping_address.city || '').trim(),
       state: String(shipping_address.state || '').trim().toUpperCase(),
       postal_code: String(shipping_address.zipCode || '').trim(),
       country: String(shipping_address.country || 'US').trim().toUpperCase(),
-    };
+    } : null;
 
     // Create or retrieve customer
     const customer = await getOrCreateCustomer(
       customer_email,
       customer_name,
       customer_phone,
-      normalizedShippingAddress,
+      normalizedShippingAddress || undefined,
       {
         medication: order_data?.medication || '',
         plan: order_data?.plan || '',
@@ -224,11 +217,11 @@ export async function POST(request: NextRequest) {
       page_url: page_url || '',
       user_agent: user_agent || '',
       source: 'intake.eonmeds.com',
-      // Shipping
-      shipping_line1: normalizedShippingAddress.line1,
-      shipping_city: normalizedShippingAddress.city,
-      shipping_state: normalizedShippingAddress.state,
-      shipping_zip: normalizedShippingAddress.postal_code,
+      // Shipping (optional)
+      shipping_line1: normalizedShippingAddress?.line1 || '',
+      shipping_city: normalizedShippingAddress?.city || '',
+      shipping_state: normalizedShippingAddress?.state || '',
+      shipping_zip: normalizedShippingAddress?.postal_code || '',
       // Order
       timestamp: new Date().toISOString(),
       medication: order_data?.medication || '',
@@ -254,10 +247,13 @@ export async function POST(request: NextRequest) {
       setup_future_usage: isSubscription ? 'off_session' : undefined,
       receipt_email: isValidEmail ? customer_email : undefined,
       metadata: orderMetadata,
-      shipping: {
-        name: customer_name || (isValidEmail ? customer_email : 'Customer'),
-        address: normalizedShippingAddress,
-      },
+      // Only include shipping if we have an address
+      ...(normalizedShippingAddress && {
+        shipping: {
+          name: customer_name || (isValidEmail ? customer_email : 'Customer'),
+          address: normalizedShippingAddress,
+        },
+      }),
     });
 
     return NextResponse.json({
