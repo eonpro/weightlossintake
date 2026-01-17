@@ -23,17 +23,40 @@ export default function BMIResultPage() {
   const [animate, setAnimate] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
 
+  // Custom slow scroll function
+  const slowScrollTo = (element: HTMLElement, duration: number = 2000) => {
+    const targetPosition = element.getBoundingClientRect().top + window.pageYOffset - 100;
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    let startTime: number | null = null;
+
+    const animation = (currentTime: number) => {
+      if (startTime === null) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+      
+      // Ease-out cubic for smooth deceleration
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      
+      window.scrollTo(0, startPosition + distance * easeOut);
+      
+      if (timeElapsed < duration) {
+        requestAnimationFrame(animation);
+      }
+    };
+
+    requestAnimationFrame(animation);
+  };
+
   useEffect(() => {
     // Trigger animations
     setTimeout(() => setAnimate(true), 100);
     
     // Auto-scroll to button after BMI bar animation completes (2.5s delay)
+    // Uses custom slow scroll that takes 2 seconds
     setTimeout(() => {
       if (buttonRef.current) {
-        buttonRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end'
-        });
+        slowScrollTo(buttonRef.current, 2000); // 2 second scroll duration
       }
     }, 2500);
     
