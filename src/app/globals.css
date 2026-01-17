@@ -296,18 +296,25 @@ textarea::placeholder {
   background: var(--color-bg-muted);
 }
 
-/* Sticky bottom button container */
+/* Sticky bottom button container - matches OTMens checkout padding */
 .sticky-bottom-button {
-  padding-left: 35px;
-  padding-right: 35px;
+  padding-left: 26px;
+  padding-right: 26px;
   padding-top: 1rem;
   padding-bottom: 1.5rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
   .sticky-bottom-button {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sticky-bottom-button {
+    padding-left: 32px;
+    padding-right: 32px;
   }
 }
 
@@ -743,20 +750,20 @@ input[type="number"] {
 .shadow-glow { box-shadow: var(--shadow-glow); }
 
 /* =============================================================================
-   RESPONSIVE ADJUSTMENTS - Mobile 35px Side Margins
+   RESPONSIVE ADJUSTMENTS - Matching OTMens Checkout Padding
+   Mobile: 26px | Tablet (sm): 24px | Desktop (lg): 32px
    ============================================================================= */
 
-@media (max-width: 767px) {
-  /* Override px-6 (24px) to use 35px on mobile for all screens */
+@media (max-width: 639px) {
+  /* Mobile screens: 26px horizontal padding (matching otmens-checkout) */
   .px-6 {
-    padding-left: 35px !important;
-    padding-right: 35px !important;
+    padding-left: 26px !important;
+    padding-right: 26px !important;
   }
   
-  /* Also apply to lg:px-8 on mobile */
   .lg\:px-8 {
-    padding-left: 35px !important;
-    padding-right: 35px !important;
+    padding-left: 26px !important;
+    padding-right: 26px !important;
   }
   
   /* Prevent zoom on iOS */
@@ -764,26 +771,36 @@ input[type="number"] {
     font-size: 16px !important;
   }
   
-  /* Ensure min margins on any full-width containers */
-  .min-h-screen > .px-6,
-  .min-h-screen > div > .px-6 {
-    padding-left: 35px !important;
-    padding-right: 35px !important;
-  }
-  
-  /* Fix button container - ensure proper margins */
+  /* Fix button container */
   .continue-button {
     margin-left: 0;
     margin-right: 0;
   }
   
-  /* Reduce excessive bottom padding on mobile */
+  /* Vertical spacing adjustments */
   .pb-8 {
-    padding-bottom: 1.5rem !important;
+    padding-bottom: 2rem !important;
   }
   
   .pt-6 {
     padding-top: 1rem !important;
+  }
+}
+
+/* Tablet screens (640px - 1023px): 24px horizontal padding */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .px-6,
+  .sm\:px-6 {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+}
+
+/* Desktop screens (1024px+): 32px horizontal padding */
+@media (min-width: 1024px) {
+  .lg\:px-8 {
+    padding-left: 32px !important;
+    padding-right: 32px !important;
   }
 }
 
