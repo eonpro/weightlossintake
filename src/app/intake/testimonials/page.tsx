@@ -83,7 +83,7 @@ export default function TestimonialsPage() {
               className="w-12 h-12"
             />
           </div>
-          <h1 className="text-[26px] lg:text-[30px] leading-tight text-[#413d3d]">
+          <h1 className="text-[26px] lg:text-[30px] font-bold leading-tight text-[#413d3d]">
             {language === 'es' 
               ? 'Únete a los miles de transformaciones que hemos ayudado a lograr.'
               : 'Join the thousands of transformations we\'ve helped achieve.'}

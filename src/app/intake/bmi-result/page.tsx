@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -21,10 +21,21 @@ export default function BMIResultPage() {
   const [firstName, setFirstName] = useState('');
   const [showBmiInfo, setShowBmiInfo] = useState(false);
   const [animate, setAnimate] = useState(false);
+  const buttonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Trigger animations
     setTimeout(() => setAnimate(true), 100);
+    
+    // Auto-scroll to button after BMI bar animation completes (2.5s delay)
+    setTimeout(() => {
+      if (buttonRef.current) {
+        buttonRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end'
+        });
+      }
+    }, 2500);
     
     // Get data from session storage
     const nameData = sessionStorage.getItem('intake_name');
@@ -199,7 +210,7 @@ export default function BMIResultPage() {
         </div>
       </div>
       
-      <div className="px-6 lg:px-8 pb-8 pt-4 max-w-md lg:max-w-lg mx-auto w-full">
+      <div ref={buttonRef} className="px-6 lg:px-8 pb-8 pt-4 max-w-md lg:max-w-lg mx-auto w-full">
         <button 
           onClick={() => router.push('/intake/testimonials')}
           className="continue-button"
