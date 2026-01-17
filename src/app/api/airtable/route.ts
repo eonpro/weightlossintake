@@ -96,6 +96,7 @@ const EONPRO_ENABLED = !!(EONPRO_WEBHOOK_URL && EONPRO_WEBHOOK_SECRET);
 interface EonproIntakeData {
   submissionId: string;
   submittedAt: string;
+  source: string;
   data: Record<string, string | number | boolean | undefined>;
 }
 
@@ -131,7 +132,7 @@ async function sendToEonpro(intakeData: EonproIntakeData): Promise<EonproRespons
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Webhook-Secret': EONPRO_WEBHOOK_SECRET!,
+        'x-webhook-secret': EONPRO_WEBHOOK_SECRET!,
       },
       body: JSON.stringify(intakeData),
     });
@@ -169,8 +170,9 @@ function mapToEonproFormat(data: IntakeRecord, airtableRecordId: string): Eonpro
   const addressParts = data.address?.split(',').map(s => s.trim()) || [];
   
   return {
-    submissionId: `eonmeds-${data.sessionId}-${airtableRecordId}`,
+    submissionId: `wli-${Date.now()}`,
     submittedAt: new Date().toISOString(),
+    source: 'weightlossintake',
     data: {
       // Patient identifiers
       firstName: data.firstName || '',
