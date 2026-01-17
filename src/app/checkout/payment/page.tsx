@@ -396,11 +396,11 @@ export default function PaymentPage() {
     <div className="min-h-screen bg-white flex flex-col">
       {/* Progress bar */}
       <div className="w-full h-1 bg-gray-100">
-        <div className="h-full w-2/3 bg-[#b8e64a] transition-all duration-300"></div>
+        <div className="h-full w-2/3 bg-[#f0feab] transition-all duration-300"></div>
       </div>
 
       {/* Back button */}
-      <div className="px-6 lg:px-8 pt-6 max-w-md lg:max-w-lg mx-auto w-full">
+      <div className="px-4 pt-6">
         <button 
           onClick={() => router.back()}
           className="inline-block p-2 -ml-2 hover:bg-gray-100 rounded-lg"
@@ -414,17 +414,17 @@ export default function PaymentPage() {
       {/* Logo */}
       <EonmedsLogo />
 
-      {/* Main content */}
-      <div className="flex-1 px-6 lg:px-8 py-4 pb-8 max-w-md lg:max-w-lg mx-auto w-full">
+      {/* Main content - wider margins for Stripe */}
+      <div className="flex-1 px-4 py-4 pb-8 max-w-lg mx-auto w-full">
         <div className="space-y-5">
           {/* Title */}
           <div className="text-center">
             <h1 className="text-2xl font-bold text-[#413d3d] mb-1">{t.title}</h1>
-            <p className="text-[#b8e64a] font-medium">{t.subtitle}</p>
+            <p className="text-[#4fa87f] font-medium">{t.subtitle}</p>
           </div>
 
           {/* Limited Offer Banner */}
-          <div className="bg-gradient-to-r from-[#b8e64a] to-[#9ad436] rounded-xl p-3 flex items-center justify-center gap-2">
+          <div className="bg-gradient-to-r from-[#4fa87f] to-[#3d9470] rounded-xl p-3 flex items-center justify-center gap-2">
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -433,7 +433,7 @@ export default function PaymentPage() {
 
           {/* Order Summary */}
           {productInfo && (
-            <div className="bg-[#f0f9e0] rounded-2xl p-4">
+            <div className="bg-[#f0feab]/30 rounded-2xl p-4 border border-[#4fa87f]/20">
               <h3 className="font-semibold text-[#413d3d] mb-3">{t.orderSummary}</h3>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
@@ -460,10 +460,10 @@ export default function PaymentPage() {
                     <span className="text-[#413d3d]">{formatPrice(EXPEDITED_SHIPPING_PRICE)}</span>
                   </div>
                 )}
-                <div className="border-t border-[#b8e64a]/30 pt-2 mt-2">
+                <div className="border-t border-[#4fa87f]/30 pt-2 mt-2">
                   <div className="flex justify-between font-bold text-lg">
                     <span className="text-[#413d3d]">{t.total}</span>
-                    <span className="text-[#b8e64a]">
+                    <span className="text-[#4fa87f]">
                       {formatPrice(calculateTotal())}
                       {productInfo.billingType === 'monthly' && (
                         <span className="text-xs text-[#413d3d]/60 font-normal ml-1">{t.perMonth}</span>
@@ -480,8 +480,8 @@ export default function PaymentPage() {
             <h3 className="font-semibold text-[#413d3d] text-center">{t.whyStartNow}</h3>
             <div className="grid gap-3">
               <div className="flex items-start gap-3 bg-white rounded-xl p-3 border border-gray-100 shadow-sm">
-                <div className="w-10 h-10 bg-[#f0f9e0] rounded-full flex items-center justify-center flex-shrink-0">
-                  <svg className="w-5 h-5 text-[#b8e64a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-[#f0feab]/50 rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-[#4fa87f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
@@ -491,8 +491,8 @@ export default function PaymentPage() {
                 </div>
               </div>
               <div className="flex items-start gap-3 bg-white rounded-xl p-3 border border-gray-100 shadow-sm">
-                <div className="w-10 h-10 bg-[#f0f9e0] rounded-full flex items-center justify-center flex-shrink-0">
-                  <svg className="w-5 h-5 text-[#b8e64a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-[#f0feab]/50 rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-[#4fa87f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
@@ -502,8 +502,8 @@ export default function PaymentPage() {
                 </div>
               </div>
               <div className="flex items-start gap-3 bg-white rounded-xl p-3 border border-gray-100 shadow-sm">
-                <div className="w-10 h-10 bg-[#f0f9e0] rounded-full flex items-center justify-center flex-shrink-0">
-                  <svg className="w-5 h-5 text-[#b8e64a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-[#f0feab]/50 rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-[#4fa87f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                   </svg>
                 </div>
@@ -517,7 +517,7 @@ export default function PaymentPage() {
 
           {/* Billing Info - Compact */}
           <div className="bg-gray-50 rounded-xl p-3 flex items-center gap-3">
-            <div className="w-8 h-8 bg-[#b8e64a] rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 bg-[#4fa87f] rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-white text-sm font-bold">{patientInfo.firstName?.charAt(0)}{patientInfo.lastName?.charAt(0)}</span>
             </div>
             <div className="text-sm text-[#413d3d]/80 overflow-hidden">
@@ -529,7 +529,7 @@ export default function PaymentPage() {
           {/* Payment Form */}
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#b8e64a]"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#4fa87f]"></div>
             </div>
           ) : clientSecret && productInfo ? (
             <Elements 
@@ -539,11 +539,11 @@ export default function PaymentPage() {
                 appearance: {
                   theme: 'stripe',
                   variables: {
-                    colorPrimary: '#b8e64a',
+                    colorPrimary: '#4fa87f',
                     colorBackground: '#ffffff',
                     colorText: '#413d3d',
                     fontFamily: 'sofia-pro, system-ui, sans-serif',
-                    borderRadius: '12px',
+                    borderRadius: '7px',
                   },
                 },
               }}
@@ -580,7 +580,7 @@ export default function PaymentPage() {
       </div>
 
       {/* Copyright footer */}
-      <div className="px-6 lg:px-8 pb-8 max-w-md lg:max-w-lg mx-auto w-full text-center">
+      <div className="px-4 pb-8 max-w-lg mx-auto w-full text-center">
         <CopyrightText />
       </div>
     </div>

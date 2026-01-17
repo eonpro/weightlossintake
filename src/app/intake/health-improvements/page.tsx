@@ -16,14 +16,24 @@ export default function HealthImprovementsPage() {
 
   const improvements = [
     {
-      id: 'better_sex',
-      es: 'Mejor sexo',
-      en: 'Better sex'
+      id: 'belly_fat',
+      es: 'Reducción de grasa abdominal',
+      en: 'Belly fat reduction'
     },
     {
-      id: 'meal_replacements',
-      es: 'Reemplazos de comidas',
-      en: 'Meal replacements'
+      id: 'menopause_support',
+      es: 'Apoyo durante la menopausia',
+      en: 'Menopause support'
+    },
+    {
+      id: 'better_sleep',
+      es: 'Dormir mejor',
+      en: 'Better sleep'
+    },
+    {
+      id: 'focus_energy',
+      es: 'Mejorar concentración y energía',
+      en: 'Improve focus and energy'
     },
     {
       id: 'hair_regrowth',
@@ -31,29 +41,9 @@ export default function HealthImprovementsPage() {
       en: 'Hair regrowth'
     },
     {
-      id: 'heart_health',
-      es: 'Salud del corazón',
-      en: 'Heart health'
-    },
-    {
-      id: 'nutrition_coaching',
-      es: 'Asesoramiento nutricional',
-      en: 'Nutrition coaching'
-    },
-    {
-      id: 'testosterone_support',
-      es: 'Soporte de testosterona',
-      en: 'Testosterone support'
-    },
-    {
-      id: 'vitamins_supplements',
-      es: 'Vitaminas y suplementos',
-      en: 'Vitamins & supplements'
-    },
-    {
-      id: 'sleep',
-      es: 'Sueño',
-      en: 'Sleep'
+      id: 'better_sex',
+      es: 'Mejorar la vida sexual',
+      en: 'Improve sex life'
     },
     {
       id: 'none',
