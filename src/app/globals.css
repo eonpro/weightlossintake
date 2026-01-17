@@ -815,13 +815,15 @@ input[type="number"] {
   color: var(--color-text);
   outline: none;
   line-height: 1.2;
-  font-weight: 520;
+  font-size: 16px;
+  font-weight: 500;
 }
 
-/* Ensure consistent font weight for all text inside option buttons */
+/* Ensure consistent font size and weight for all text inside option buttons */
 .option-button span,
 .option-button .option-text {
-  font-weight: 520 !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
 }
 
 /* Hover state - green border */
