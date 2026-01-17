@@ -156,9 +156,24 @@ async function sendToEonpro(intakeData: EonproIntakeData): Promise<EonproRespons
 }
 
 /**
- * Map intake form data to EONPRO webhook format
+ * Check if we have minimum required fields for EONPRO submission
+ * Required: firstName, lastName, dob, email, phone, address (or state)
  */
-function mapToEonproFormat(data: IntakeRecord, airtableRecordId: string): EonproIntakeData {
+function hasMinimumRequiredFields(data: IntakeRecord): boolean {
+  const hasName = !!(data.firstName && data.lastName);
+  const hasDob = !!data.dob;
+  const hasEmail = !!data.email;
+  const hasPhone = !!data.phone;
+  const hasAddress = !!(data.address || data.state);
+  
+  return hasName && hasDob && hasEmail && hasPhone && hasAddress;
+}
+
+/**
+ * Map intake form data to EONPRO webhook format
+ * @param isPartial - true if this is a partial/midpoint submission
+ */
+function mapToEonproFormat(data: IntakeRecord, airtableRecordId: string, isPartial: boolean = false): EonproIntakeData {
   // Parse height if available (format: "5'10\"")
   let heightFormatted = '';
   if (data.height) {
@@ -168,6 +183,15 @@ function mapToEonproFormat(data: IntakeRecord, airtableRecordId: string): Eonpro
   // Parse address components from the combined address field
   // Address is stored as a combined string, we'll pass it as streetAddress
   const addressParts = data.address?.split(',').map(s => s.trim()) || [];
+  
+  // Build notes about submission
+  let intakeNotes = '';
+  if (isPartial) {
+    intakeNotes = 'PARTIAL SUBMISSION - User dropped off before checkout. ';
+    if (!data.qualified) {
+      intakeNotes += 'Qualification status: Not yet determined. ';
+    }
+  }
   
   return {
     submissionId: `wli-${Date.now()}`,
@@ -244,7 +268,9 @@ function mapToEonproFormat(data: IntakeRecord, airtableRecordId: string): Eonpro
       referredBy: data.referrerName || '',
       
       // Metadata
-      qualified: data.qualified ? 'Yes' : 'No',
+      qualified: data.qualified ? 'Yes' : (isPartial ? 'Pending' : 'No'),
+      submissionType: isPartial ? 'Partial' : 'Complete',
+      intakeNotes: intakeNotes,
       language: data.flowLanguage || 'en',
       intakeSource: 'eonmeds-intake',
       airtableRecordId: airtableRecordId,
@@ -411,7 +437,8 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Phone',
   'State',
   'Language',
-  'Type',
+  'Type',  // 'Complete' or 'Partial - Dropped before checkout'
+  'Notes', // Additional notes about the submission
   // Medical data fields
   'Date of Birth',
   'Sex',
@@ -831,6 +858,17 @@ export async function POST(request: NextRequest) {
       return sanitizeString(String(val));
     };
 
+    // Determine if this is a partial or complete submission
+    const isQualified = data.qualified === true;
+    const hasRequiredFields = hasMinimumRequiredFields(data);
+    const submissionType = isQualified ? 'Complete' : (hasRequiredFields ? 'Partial - Dropped before checkout' : 'Incomplete');
+    
+    // Build notes for partial submissions
+    let submissionNotes = '';
+    if (!isQualified && hasRequiredFields) {
+      submissionNotes = 'User dropped off before completing checkout. Has basic info - consider follow-up.';
+    }
+
     // Build fields object - ALL fields from Airtable
     const allFields: Record<string, string | boolean | number> = {
       // Core identification
@@ -841,6 +879,8 @@ export async function POST(request: NextRequest) {
       'Phone': toString(data.phone),
       'State': toString(data.state),
       'Language': toString(data.flowLanguage),
+      'Type': submissionType,
+      'Notes': submissionNotes,
       // Medical data
       'Date of Birth': toString(data.dob),
       'Sex': toString(data.sex),
@@ -1042,31 +1082,47 @@ export async function POST(request: NextRequest) {
 
     // ==========================================================================
     // EONPRO WEBHOOK: Create patient profile in EONPRO
-    // Only send when this is a qualified final submission (not midpoint update)
+    // Sends for ANY submission with minimum required fields (name, DOB, email, phone, address)
+    // This ensures we capture leads even if they drop off before checkout
     // Runs asynchronously - doesn't block the response to the client
     // ==========================================================================
-    let eonproResult: EonproResponse | null = null;
+    let eonproTriggered = false;
     
-    if (EONPRO_ENABLED && data.qualified === true) {
+    // Check if we should send to EONPRO
+    // - Must have EONPRO configured
+    // - Must have minimum required fields (name, DOB, email, phone, address)
+    // - Check if already sent for this session to avoid duplicates
+    const sessionEonproKey = `eonpro_sent_${data.sessionId}`;
+    const alreadySentToEonpro = isUpdate && data.updateRecordId; // Don't resend on updates
+    
+    if (EONPRO_ENABLED && hasRequiredFields && !alreadySentToEonpro) {
+      // Determine if this is a partial or complete submission
+      const isPartialSubmission = data.qualified !== true;
+      
       // Send to EONPRO in the background (don't await to avoid blocking)
       // This creates a patient profile with all intake data
-      const eonproData = mapToEonproFormat(data, result.id);
+      const eonproData = mapToEonproFormat(data, result.id, isPartialSubmission);
+      
+      log(`📤 Sending to EONPRO (${isPartialSubmission ? 'PARTIAL' : 'COMPLETE'} submission)...`);
       
       // Fire and forget - we don't want to fail the intake if EONPRO is down
       sendToEonpro(eonproData)
         .then((res) => {
           if (res?.success) {
-            log('EONPRO patient profile created:', res.data?.patientId);
+            log('✅ EONPRO patient profile created:', res.data?.patientId);
           } else {
-            log('EONPRO webhook returned error:', res?.error);
+            log('❌ EONPRO webhook returned error:', res?.error);
           }
         })
         .catch((err) => {
-          log('EONPRO webhook exception:', err);
+          log('❌ EONPRO webhook exception:', err);
         });
       
-      // For logging purposes, note that EONPRO was triggered
-      eonproResult = { success: true, message: 'EONPRO webhook triggered' };
+      eonproTriggered = true;
+    } else if (EONPRO_ENABLED && !hasRequiredFields) {
+      log('⏭️ Skipping EONPRO - missing required fields (need name, DOB, email, phone, address)');
+    } else if (alreadySentToEonpro) {
+      log('⏭️ Skipping EONPRO - this is an update to existing record');
     }
 
     return NextResponse.json({
@@ -1074,7 +1130,8 @@ export async function POST(request: NextRequest) {
       recordId: result.id,
       message: 'Successfully saved to Airtable',
       fieldsSaved: Object.keys(fields).length,
-      eonproTriggered: EONPRO_ENABLED && data.qualified === true,
+      submissionType: submissionType,
+      eonproTriggered: eonproTriggered,
     }, { headers: corsHeaders });
 
   } catch (error) {
