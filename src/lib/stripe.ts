@@ -17,10 +17,11 @@ export const getStripe = () => {
 
 // ============================================================
 // PRICING CONFIGURATION - Based on Stripe Products
+// Updated: January 2026 with exact price IDs
 // ============================================================
 
 export const EXPEDITED_SHIPPING_PRICE = 1500; // $15 in cents
-export const EXPEDITED_SHIPPING_PRICE_ID = 'price_1SpOiHGzKhM7cZeGgAOX6ikc';
+export const EXPEDITED_SHIPPING_PRICE_ID = 'price_1Sp0iHGzKhM7cZeGgAOX6ikc';
 
 // Plan type definition
 export interface PlanConfig {
@@ -58,7 +59,7 @@ export interface MedicationConfig {
 const SEMAGLUTIDE_TIERS: DoseTier[] = [
   {
     id: 'semaglutide-default',
-    dose: '2.5mg/2mL',
+    dose: '2.5mg/1mL or 2.5mg/2mL',
     description: { 
       en: 'Standard dose - Perfect for starting or maintaining', 
       es: 'Dosis estándar - Perfecta para comenzar o mantener' 
@@ -66,13 +67,13 @@ const SEMAGLUTIDE_TIERS: DoseTier[] = [
     minDoseThreshold: 0,
     plans: {
       label: { en: 'Semaglutide 2.5mg/2mL', es: 'Semaglutida 2.5mg/2mL' },
-      monthlyRecurring: 22900,
+      monthlyRecurring: 22900,       // $229
       monthlyRecurringPriceId: 'price_1S9XKOGzKhM7cZeGkV0VrEVc',
-      singleMonth: 29900,
-      singleMonthPriceId: 'price_1S9XKOGzKhM7cZeGtMz5kzYG',
-      threeMonth: 54900,
-      threeMonthPriceId: 'price_1S9XKOGzKhM7cZeGIraKvRpX',
-      sixMonth: 99900,
+      singleMonth: 29900,            // $299
+      singleMonthPriceId: 'price_1S9XK0GzKhM7cZeGtMz5kzYG',
+      threeMonth: 54900,             // $549
+      threeMonthPriceId: 'price_1S9XKOGzKhM7cZeGlraKvRpX',
+      sixMonth: 99900,               // $999
       sixMonthPriceId: 'price_1S9XKOGzKhM7cZeGeDXQVFvg',
     },
   },
@@ -86,14 +87,14 @@ const SEMAGLUTIDE_TIERS: DoseTier[] = [
     minDoseThreshold: 1, // > 1mg/week
     plans: {
       label: { en: 'Semaglutide 2.5mg/3mL', es: 'Semaglutida 2.5mg/3mL' },
-      monthlyRecurring: 32900,
-      monthlyRecurringPriceId: 'price_1SpO1UGzKhM7cZeGeTm4hTXB',
-      singleMonth: 37900,
-      singleMonthPriceId: 'price_1SpO3wGzKhM7cZeGlpg5rKpC',
-      threeMonth: 77500,
-      threeMonthPriceId: 'price_1SpOEOGzKhM7cZeGXKKRkMRd',
-      sixMonth: 134900,
-      sixMonthPriceId: 'price_1SpOEIGzKhM7cZeGebLpFHVL',
+      monthlyRecurring: 32900,       // $329
+      monthlyRecurringPriceId: 'price_1Sp01UGzKhM7cZeGeTm4hTXB',
+      singleMonth: 37900,            // $379
+      singleMonthPriceId: 'price_1Sp03wGzKhM7cZeGlpg5rKpC',
+      threeMonth: 77500,             // $775
+      threeMonthPriceId: 'price_1Sp0EOGzKhM7cZeGXKKRkMRd',
+      sixMonth: 134900,              // $1,349
+      sixMonthPriceId: 'price_1Sp0ElGzKhM7cZeGebLpFHVL',
     },
   },
   {
@@ -106,14 +107,14 @@ const SEMAGLUTIDE_TIERS: DoseTier[] = [
     minDoseThreshold: 1.75, // > 1.75mg/week
     plans: {
       label: { en: 'Semaglutide 2.5mg/4mL', es: 'Semaglutida 2.5mg/4mL' },
-      monthlyRecurring: 39900,
-      monthlyRecurringPriceId: 'price_1SpOH3GzKhM7cZeGlkhMbhkh',
-      singleMonth: 44900,
-      singleMonthPriceId: 'price_1SpOHKGzKhM7cZeGALI3jQjM',
-      threeMonth: 89900,
-      threeMonthPriceId: 'price_1SpOHXGzKhM7cZeGyQMakaZg',
-      sixMonth: 149900,
-      sixMonthPriceId: 'price_1SpOHkGzKhM7cZeGyE7ogS8A',
+      monthlyRecurring: 39900,       // $399
+      monthlyRecurringPriceId: 'price_1Sp0H3GzKhM7cZeGlkhMbhkh',
+      singleMonth: 44900,            // $449
+      singleMonthPriceId: 'price_1Sp0HKGzKhM7cZeGALl3jQjM',
+      threeMonth: 89900,             // $899
+      threeMonthPriceId: 'price_1Sp0HXGzKhM7cZeGyQMakaZg',
+      sixMonth: 149900,              // $1,499
+      sixMonthPriceId: 'price_1Sp0HkGzKhM7cZeGyE7ogS8A',
     },
   },
 ];
@@ -125,7 +126,7 @@ const SEMAGLUTIDE_TIERS: DoseTier[] = [
 const TIRZEPATIDE_TIERS: DoseTier[] = [
   {
     id: 'tirzepatide-default',
-    dose: '10mg/2mL',
+    dose: '10mg/1mL or 10mg/2mL',
     description: { 
       en: 'Standard dose - Perfect for starting or maintaining', 
       es: 'Dosis estándar - Perfecta para comenzar o mantener' 
@@ -133,14 +134,14 @@ const TIRZEPATIDE_TIERS: DoseTier[] = [
     minDoseThreshold: 0,
     plans: {
       label: { en: 'Tirzepatide 10mg/2mL', es: 'Tirzepatida 10mg/2mL' },
-      monthlyRecurring: 32900,
+      monthlyRecurring: 32900,       // $329
       monthlyRecurringPriceId: 'price_1S9XT6GzKhM7cZeGYAluSrLk',
-      singleMonth: 39900,
+      singleMonth: 39900,            // $399
       singleMonthPriceId: 'price_1S9XT6GzKhM7cZeGHp6wzVHJ',
-      threeMonth: 89900,
+      threeMonth: 89900,             // $899
       threeMonthPriceId: 'price_1S9XT6GzKhM7cZeGCpXjW8UI',
-      sixMonth: 159900,
-      sixMonthPriceId: 'price_1S9XT6GzKhM7cZeGnbOeIbb2',
+      sixMonth: 159900,              // $1,599
+      sixMonthPriceId: 'price_1S9XT6GzKhM7cZeGnbOelbb2',
     },
   },
   {
@@ -153,14 +154,14 @@ const TIRZEPATIDE_TIERS: DoseTier[] = [
     minDoseThreshold: 5, // > 5mg/week
     plans: {
       label: { en: 'Tirzepatide 10mg/3mL', es: 'Tirzepatida 10mg/3mL' },
-      monthlyRecurring: 42900,
-      monthlyRecurringPriceId: 'price_1SpOVhGzKhM7cZeGKXlbR5zS',
-      singleMonth: 49900,
-      singleMonthPriceId: 'price_1SpOWfGzKhM7cZeGU6B2b4jL',
-      threeMonth: 112500,
-      threeMonthPriceId: 'price_1SpOXNGzKhM7cZeGlnMB4car',
-      sixMonth: 209900,
-      sixMonthPriceId: 'price_1SpOXaGzKhM7cZeGZFe54LJc',
+      monthlyRecurring: 42900,       // $429
+      monthlyRecurringPriceId: 'price_1Sp0VhGzKhM7cZeGKXIbR5zS',
+      singleMonth: 49900,            // $499
+      singleMonthPriceId: 'price_1Sp0WfGzKhM7cZeGU6B2b4jL',
+      threeMonth: 112500,            // $1,125
+      threeMonthPriceId: 'price_1Sp0XNGzKhM7cZeGlnMB4car',
+      sixMonth: 209900,              // $2,099
+      sixMonthPriceId: 'price_1Sp0XaGzKhM7cZeGZFe54LJc',
     },
   },
   {
@@ -173,14 +174,14 @@ const TIRZEPATIDE_TIERS: DoseTier[] = [
     minDoseThreshold: 7.5, // > 7.5mg/week
     plans: {
       label: { en: 'Tirzepatide 10mg/4mL', es: 'Tirzepatida 10mg/4mL' },
-      monthlyRecurring: 49900,
-      monthlyRecurringPriceId: 'price_1SpOYbGzKhM7cZeGBOmzf6fN',
-      singleMonth: 59900,
-      singleMonthPriceId: 'price_1SpOYtGzKhM7cZeGpralXDeU',
-      threeMonth: 120000,
-      threeMonthPriceId: 'price_1SpOZFGzKhM7cZeG3Z5MxcfY',
-      sixMonth: 219900,
-      sixMonthPriceId: 'price_1SpOZSGzKhM7cZeGSgYaUzYk',
+      monthlyRecurring: 49900,       // $499
+      monthlyRecurringPriceId: 'price_1Sp0YbGzKhM7cZeGBOmzf6fN',
+      singleMonth: 59900,            // $599
+      singleMonthPriceId: 'price_1Sp0YtGzKhM7cZeGpralXDeU',
+      threeMonth: 120000,            // $1,200
+      threeMonthPriceId: 'price_1Sp0ZFGzKhM7cZeG3Z5MxcfY',
+      sixMonth: 219900,              // $2,199
+      sixMonthPriceId: 'price_1Sp0ZSGzKhM7cZeGSgYaUzYk',
     },
   },
   {
@@ -193,14 +194,14 @@ const TIRZEPATIDE_TIERS: DoseTier[] = [
     minDoseThreshold: 10, // > 10mg/week
     plans: {
       label: { en: 'Tirzepatide 30mg/2mL', es: 'Tirzepatida 30mg/2mL' },
-      monthlyRecurring: 59900,
-      monthlyRecurringPriceId: 'price_1SpOcIGzKhM7cZeGGXcFNrJU',
-      singleMonth: 69900,
-      singleMonthPriceId: 'price_1SpOcrGzKhM7cZeGxPYrlWmE',
-      threeMonth: 149900,
-      threeMonthPriceId: 'price_1SpOd8GzKhM7cZeGWQR4CRZz',
-      sixMonth: 249900,
-      sixMonthPriceId: 'price_1SpOdiGzKhM7cZeGyMEBemxu',
+      monthlyRecurring: 59900,       // $599
+      monthlyRecurringPriceId: 'price_1Sp0clGzKhM7cZeGGXcFNrJU',
+      singleMonth: 69900,            // $699
+      singleMonthPriceId: 'price_1Sp0crGzKhM7cZeGxPYrlWmE',
+      threeMonth: 149900,            // $1,499
+      threeMonthPriceId: 'price_1Sp0d8GzKhM7cZeGWQR4CRZz',
+      sixMonth: 249900,              // $2,499
+      sixMonthPriceId: 'price_1Sp0diGzKhM7cZeGyMEBemxu',
     },
   },
 ];
@@ -216,7 +217,7 @@ export const MEDICATIONS: Record<'semaglutide' | 'tirzepatide', MedicationConfig
       en: 'GLP-1 weight loss medication', 
       es: 'Medicamento GLP-1 para pérdida de peso' 
     },
-    image: 'https://static.wixstatic.com/media/c49a9b_b87d0b24fd2c46a4817d308db9b8122c~mv2.webp',
+    image: 'https://static.wixstatic.com/media/c49a9b_7adb19325cea4ad8b15d6845977fc42a~mv2.png',
     defaultTierId: 'semaglutide-default',
     doseTiers: SEMAGLUTIDE_TIERS,
   },
@@ -226,7 +227,7 @@ export const MEDICATIONS: Record<'semaglutide' | 'tirzepatide', MedicationConfig
       en: 'Dual GIP/GLP-1 - More powerful weight loss', 
       es: 'GIP/GLP-1 dual - Pérdida de peso más potente' 
     },
-    image: 'https://static.wixstatic.com/media/c49a9b_b87d0b24fd2c46a4817d308db9b8122c~mv2.webp',
+    image: 'https://static.wixstatic.com/media/c49a9b_00c1ff5076814c8e93e3c53a132b962e~mv2.png',
     defaultTierId: 'tirzepatide-default',
     doseTiers: TIRZEPATIDE_TIERS,
   },
@@ -252,25 +253,25 @@ export const TIRZEPATIDE_UPGRADE_BENEFITS = {
 };
 
 // ============================================================
-// ADD-ON PRODUCTS
+// ADD-ON PRODUCTS (Upsales)
 // ============================================================
 
 export const ADDONS = {
   nauseaRelief: {
     id: 'nausea_relief',
     name: { en: 'Nausea Relief (Ondansetron)', es: 'Alivio de Náuseas (Ondansetrón)' },
-    description: { en: 'Anti-nausea medication to ease side effects', es: 'Medicamento anti-náuseas para aliviar efectos secundarios' },
+    description: { en: 'Prescription medication to manage GLP-1 side effects', es: 'Medicamento recetado para manejar efectos secundarios de GLP-1' },
     price: 3999, // $39.99
     priceId: 'price_1S9dxiGzKhM7cZeGkRO7PxC4',
-    image: 'https://static.wixstatic.com/media/c49a9b_45dbc9caf94447b587c2e999b7a8027c~mv2.png',
+    image: 'https://static.wixstatic.com/media/c49a9b_6388967b1dfa4b25a1a08bf235023e66~mv2.webp',
   },
   fatBurner: {
     id: 'fat_burner',
     name: { en: 'Fat Burner (L-Carnitine + B Complex)', es: 'Quemador de Grasa (L-Carnitina + Complejo B)' },
-    description: { en: 'Boost metabolism and energy levels', es: 'Aumenta el metabolismo y los niveles de energía' },
+    description: { en: 'Boost metabolism and energy during weight loss', es: 'Aumenta el metabolismo y energía durante la pérdida de peso' },
     price: 9999, // $99.99
     priceId: 'price_1S9dyqGzKhM7cZeGYNqYGR55',
-    image: 'https://static.wixstatic.com/media/c49a9b_87a5fa7b71ea4594939f319dcbaefd49~mv2.webp',
+    image: 'https://static.wixstatic.com/media/c49a9b_603d154460b44f4197168694262a2605~mv2.png',
   },
 };
 
