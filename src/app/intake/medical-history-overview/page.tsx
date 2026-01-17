@@ -139,8 +139,8 @@ export default function MedicalHistoryOverviewPage() {
               </div>
               {/* Medical History Card */}
               <div className="flex-1 bg-[#f0feab] rounded-2xl p-5 shadow-lg shadow-[#f0feab]/30 transform hover:scale-[1.02] transition-transform">
-                <h2 className="text-lg font-semibold text-[#413d3d] mb-2">{t('medical.history.title')}</h2>
-                <p className="text-sm text-[#413d3d]/70 leading-relaxed">
+                <h2 className="text-lg font-semibold text-[#413d3d] mb-1">{t('medical.history.title')}</h2>
+                <p className="text-sm text-[#413d3d]/70 leading-snug">
                   {t('medical.history.subtitle.line1')} {t('medical.history.subtitle.line2')} {t('medical.history.subtitle.line3')}
                 </p>
               </div>

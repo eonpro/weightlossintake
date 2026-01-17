@@ -70,34 +70,34 @@ export default function SupportInfoPage() {
         }`}>
 
           {/* "Did you know that" - animated */}
-          <h2 className={`text-[20px] lg:text-[22px] font-semibold text-[#413d3d] mb-1 transition-all duration-500 ease-out ${
+          <h2 className={`text-[24px] lg:text-[26px] font-semibold text-[#413d3d] mb-0 transition-all duration-500 ease-out ${
             showTitle ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
           }`}>
             {language === 'es' ? '¿Sabías que' : 'Did you know that'}
           </h2>
 
           {/* EONMeds logo - animated */}
-          <div className={`flex justify-start mb-2 transition-all duration-500 ease-out ${
+          <div className={`flex justify-start mb-1 transition-all duration-500 ease-out ${
             showLogo ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
           }`}>
             <img
               src="https://static.wixstatic.com/media/c49a9b_60568a55413d471ba85d995d7da0d0f2~mv2.png"
               alt="EONMeds"
-              className="h-10 w-auto"
+              className="h-12 w-auto"
             />
           </div>
 
           {/* Main text - animated */}
-          <div className={`space-y-2 transition-all duration-500 ease-out ${
+          <div className={`space-y-1 transition-all duration-500 ease-out ${
             showText ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}>
-            <h3 className="text-[18px] lg:text-[20px] font-semibold text-[#413d3d] leading-tight">
+            <h3 className="text-[20px] lg:text-[22px] font-semibold text-[#413d3d] leading-snug">
               {language === 'es'
                 ? 'Te asigna un representante para guiarte y apoyarte en cada paso del camino.'
                 : 'Assigns a representative to your case to guide and support you every step of the way.'}
             </h3>
 
-            <p className="text-[14px] text-[#413d3d]/70 leading-snug">
+            <p className="text-[15px] text-[#413d3d]/70 leading-tight">
               {language === 'es'
                 ? 'Sabemos que las cosas pueden ser confusas a veces, por eso estamos aquí para guiarte y apoyarte.'
                 : "We know things can sometimes be confusing, which is why we're here to guide and support you."}
