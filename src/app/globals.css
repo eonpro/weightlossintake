@@ -728,18 +728,32 @@ input[type="number"] {
 .shadow-glow { box-shadow: var(--shadow-glow); }
 
 /* =============================================================================
-   RESPONSIVE ADJUSTMENTS
+   RESPONSIVE ADJUSTMENTS - Mobile 35px Side Margins
    ============================================================================= */
 
 @media (max-width: 767px) {
+  /* Override px-6 (24px) to use 35px on mobile for all screens */
   .px-6 {
-    padding-left: 1.5rem !important;
-    padding-right: 1.5rem !important;
+    padding-left: 35px !important;
+    padding-right: 35px !important;
+  }
+  
+  /* Also apply to lg:px-8 on mobile */
+  .lg\:px-8 {
+    padding-left: 35px !important;
+    padding-right: 35px !important;
   }
   
   /* Prevent zoom on iOS */
   input, textarea, select {
     font-size: 16px !important;
+  }
+  
+  /* Ensure min margins on any full-width containers */
+  .min-h-screen > .px-6,
+  .min-h-screen > div > .px-6 {
+    padding-left: 35px !important;
+    padding-right: 35px !important;
   }
 }
 
