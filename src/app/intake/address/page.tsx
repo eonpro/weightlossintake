@@ -90,9 +90,9 @@ export default function AddressPage() {
       return;
     }
 
-    // Load the Google Maps script
+    // Load the Google Maps script with all needed libraries
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places,marker`;
     script.async = true;
     script.defer = true;
     
@@ -168,7 +168,14 @@ export default function AddressPage() {
   }, [showMap]);
 
   const initializeMap = () => {
-    if (!mapRef.current || !window.google?.maps) return;
+    if (!mapRef.current) {
+      logger.warn('Map ref not available');
+      return;
+    }
+    if (!window.google?.maps) {
+      logger.warn('Google Maps not loaded yet');
+      return;
+    }
 
     try {
       // Default to Tampa, FL
@@ -202,8 +209,10 @@ export default function AddressPage() {
           strokeWeight: 2,
         }
       });
+      
+      logger.info('Google Map initialized successfully');
     } catch (error) {
-      logger.error('Error initializing Google Map:', error);
+      logger.error('Error initializing Google Map', { error });
       setMapError(true);
     }
   };
