@@ -108,9 +108,11 @@ input[type="tel"],
 input[type="number"],
 input[type="password"],
 input:not([type]),
-textarea {
+textarea,
+select {
   font-weight: 550 !important;
   font-size: 18px !important;
+  border-radius: 7px !important; /* Standardized corner radius */
 }
 
 /* Lighter placeholder text */
@@ -366,7 +368,7 @@ textarea::placeholder {
   color: var(--color-text);
   background: var(--color-bg);
   border: 2px solid var(--color-border);
-  border-radius: var(--radius-xl);
+  border-radius: 7px; /* Standardized corner radius */
   outline: none;
   transition: all var(--transition-base);
 }
@@ -401,7 +403,7 @@ textarea::placeholder {
   color: var(--color-text);
   background: var(--color-bg);
   border: 2px solid var(--color-border);
-  border-radius: var(--radius-xl);
+  border-radius: 7px; /* Standardized corner radius */
   outline: none;
   appearance: none;
   cursor: pointer;
