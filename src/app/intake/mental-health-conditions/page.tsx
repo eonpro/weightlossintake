@@ -82,18 +82,10 @@ export default function MentalHealthConditionsPage() {
               <button
                 key={condition.value}
                 onClick={() => handleSelect(condition.value)}
-                className={`w-full text-left p-4 rounded-2xl border transition-all ${
-                  selected.includes(condition.value)
-                    ? 'border-[#4fa87f] bg-[#f0feab]'
-                    : 'border-gray-200 hover:border-[#4fa87f]'
-                }`}
+                className={`option-button ${selected.includes(condition.value) ? 'selected' : ''}`}
               >
                 <div className="flex items-start">
-                  <div className={`w-5 h-5 rounded border-2 mr-3 mt-0.5 flex items-center justify-center flex-shrink-0 ${
-                    selected.includes(condition.value)
-                      ? 'border-[#4fa87f] bg-[#f0feab]'
-                      : 'border-gray-300'
-                  }`}>
+                  <div className={`option-checkbox ${selected.includes(condition.value) ? 'checked' : ''}`}>
                     {selected.includes(condition.value) && (
                       <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />

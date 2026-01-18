@@ -118,11 +118,7 @@ export default function TirzepatideSideEffectsPage() {
               <button
                 key={effect.id}
                 onClick={() => handleToggle(effect.id)}
-                className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
-                  selectedItems.includes(effect.id)
-                    ? 'bg-[#f0feab] border-2 border-[#4fa87f]'
-                    : 'bg-white border-2 border-gray-200 hover:border-[#4fa87f]'
-                }`}
+                className={`option-button flex items-center ${selectedItems.includes(effect.id) ? 'selected' : ''}`}
               >
                 <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center mr-3 transition-all ${
                   selectedItems.includes(effect.id) ? 'bg-[#413d3d] border-[#413d3d]' : 'bg-white border-gray-300'

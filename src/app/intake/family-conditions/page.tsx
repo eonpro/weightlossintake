@@ -14,21 +14,21 @@ export default function FamilyConditionsPage() {
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
 
   const conditions = language === 'es' ? [
+    { id: 'none', label: 'No, ninguna de estas' },
     { id: 'thyroid_cancer', label: 'Cáncer medular de tiroides' },
     { id: 'men', label: 'Neoplasia endocrina múltiple' },
     { id: 'pancreatitis', label: 'Pancreatitis' },
     { id: 'gastroparesis', label: 'Gastroparesia', sublabel: 'vaciamiento gástrico retardado' },
     { id: 'diabetes_t2', label: 'Diabetes tipo 2' },
-    { id: 'long_qt', label: 'Síndrome de QT largo' },
-    { id: 'none', label: 'No, ninguna de estas' }
+    { id: 'long_qt', label: 'Síndrome de QT largo' }
   ] : [
+    { id: 'none', label: 'No, none of these' },
     { id: 'thyroid_cancer', label: 'Medullary thyroid cancer' },
     { id: 'men', label: 'Multiple endocrine neoplasia' },
     { id: 'pancreatitis', label: 'Pancreatitis' },
     { id: 'gastroparesis', label: 'Gastroparesis', sublabel: 'delayed gastric emptying' },
     { id: 'diabetes_t2', label: 'Type 2 diabetes' },
-    { id: 'long_qt', label: 'Long QT syndrome' },
-    { id: 'none', label: 'No, none of these' }
+    { id: 'long_qt', label: 'Long QT syndrome' }
   ];
 
   const handleSelect = (conditionId: string) => {
@@ -97,18 +97,10 @@ export default function FamilyConditionsPage() {
               <button
                 key={condition.id}
                 onClick={() => handleSelect(condition.id)}
-                className={`w-full text-left p-4 rounded-2xl border transition-all ${
-                  selectedConditions.includes(condition.id)
-                    ? 'border-[#4fa87f] bg-[#f0feab]'
-                    : 'border-gray-200 hover:border-[#4fa87f]'
-                }`}
+                className={`option-button ${selectedConditions.includes(condition.id) ? 'selected' : ''}`}
               >
                 <div className="flex items-start">
-                  <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                    selectedConditions.includes(condition.id)
-                      ? 'border-[#4fa87f] bg-[#f0feab]'
-                      : 'border-gray-300'
-                  }`}>
+                  <div className={`option-checkbox ${selectedConditions.includes(condition.id) ? 'checked' : ''}`}>
                     {selectedConditions.includes(condition.id) && (
                       <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
