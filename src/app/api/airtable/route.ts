@@ -117,42 +117,132 @@ interface EonproResponse {
 
 /**
  * Send intake data to EONPRO webhook to create patient profile
+ * Includes retry logic with exponential backoff for resilience
  * This runs asynchronously and doesn't block the main response
  */
-async function sendToEonpro(intakeData: EonproIntakeData): Promise<EonproResponse | null> {
+async function sendToEonpro(
+  intakeData: EonproIntakeData, 
+  maxRetries: number = 3
+): Promise<EonproResponse | null> {
   if (!EONPRO_ENABLED) {
-    log('EONPRO webhook not configured, skipping');
+    log('⏭️ EONPRO webhook not configured, skipping');
     return null;
   }
 
-  try {
-    log('Sending intake to EONPRO:', intakeData.submissionId);
-    
-    const response = await fetch(EONPRO_WEBHOOK_URL!, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-webhook-secret': EONPRO_WEBHOOK_SECRET!,
-      },
-      body: JSON.stringify(intakeData),
-    });
+  // Verbose logging - show what we're sending (safe fields only)
+  const logSafeData = {
+    submissionId: intakeData.submissionId,
+    submittedAt: intakeData.submittedAt,
+    source: intakeData.source,
+    hasFirstName: !!intakeData.data.firstName,
+    hasLastName: !!intakeData.data.lastName,
+    hasEmail: !!intakeData.data.email,
+    hasPhone: !!intakeData.data.phone,
+    hasDob: !!intakeData.data.dateOfBirth,
+    hasAddress: !!(intakeData.data.streetAddress || intakeData.data.state),
+    submissionType: intakeData.data.submissionType,
+    qualified: intakeData.data.qualified,
+    totalFields: Object.keys(intakeData.data).filter(k => intakeData.data[k]).length,
+  };
+  
+  log('📤 EONPRO Webhook Request:', JSON.stringify(logSafeData, null, 2));
 
-    const result: EonproResponse = await response.json();
+  let lastError: string | null = null;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      log(`🔄 EONPRO attempt ${attempt}/${maxRetries}...`);
+      
+      const startTime = Date.now();
+      
+      const response = await fetch(EONPRO_WEBHOOK_URL!, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-webhook-secret': EONPRO_WEBHOOK_SECRET!,
+        },
+        body: JSON.stringify(intakeData),
+      });
 
-    if (response.ok && result.success) {
-      log('EONPRO patient created:', result.data?.patientId);
-      return result;
-    } else {
-      log('EONPRO webhook error:', result.error || response.status);
-      return result;
+      const responseTime = Date.now() - startTime;
+      
+      // Log response details
+      log(`📥 EONPRO Response: status=${response.status}, time=${responseTime}ms`);
+
+      let result: EonproResponse;
+      try {
+        result = await response.json();
+      } catch (parseError) {
+        log(`⚠️ EONPRO response not JSON: ${await response.text().catch(() => 'unable to read')}`);
+        result = { success: false, error: 'Invalid JSON response' };
+      }
+
+      if (response.ok && result.success) {
+        log(`✅ EONPRO SUCCESS: patientId=${result.data?.patientId}, requestId=${result.requestId}`);
+        
+        // Audit log for successful webhook
+        auditLog({
+          timestamp: new Date().toISOString(),
+          event: 'SUBMISSION_SUCCESS',
+          endpoint: '/api/airtable -> EONPRO',
+          ip: 'server',
+          sessionId: intakeData.submissionId,
+          statusCode: response.status,
+          details: `EONPRO patient created: ${result.data?.patientId || 'unknown'}`,
+        });
+        
+        return result;
+      } else {
+        lastError = result.error || result.message || `HTTP ${response.status}`;
+        log(`❌ EONPRO attempt ${attempt} failed: ${lastError}`);
+        
+        // Don't retry on 4xx errors (client errors)
+        if (response.status >= 400 && response.status < 500) {
+          log(`⛔ Not retrying - client error (${response.status})`);
+          
+          auditLog({
+            timestamp: new Date().toISOString(),
+            event: 'SUBMISSION_FAILURE',
+            endpoint: '/api/airtable -> EONPRO',
+            ip: 'server',
+            sessionId: intakeData.submissionId,
+            statusCode: response.status,
+            details: `EONPRO rejected: ${lastError}`,
+          });
+          
+          return result;
+        }
+      }
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : 'Network error';
+      log(`❌ EONPRO attempt ${attempt} exception: ${lastError}`);
     }
-  } catch (error) {
-    log('EONPRO webhook failed:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Network error',
-    };
+    
+    // Exponential backoff before retry (1s, 2s, 4s)
+    if (attempt < maxRetries) {
+      const backoffMs = Math.pow(2, attempt - 1) * 1000;
+      log(`⏳ Waiting ${backoffMs}ms before retry...`);
+      await new Promise(resolve => setTimeout(resolve, backoffMs));
+    }
   }
+
+  // All retries exhausted
+  log(`💀 EONPRO FAILED after ${maxRetries} attempts: ${lastError}`);
+  
+  auditLog({
+    timestamp: new Date().toISOString(),
+    event: 'SUBMISSION_FAILURE',
+    endpoint: '/api/airtable -> EONPRO',
+    ip: 'server',
+    sessionId: intakeData.submissionId,
+    statusCode: 500,
+    details: `EONPRO failed after ${maxRetries} retries: ${lastError}`,
+  });
+
+  return {
+    success: false,
+    error: `Failed after ${maxRetries} attempts: ${lastError}`,
+  };
 }
 
 /**
