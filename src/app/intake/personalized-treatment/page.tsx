@@ -43,7 +43,7 @@ export default function PersonalizedTreatmentPage() {
       <EonmedsLogo />
       
       {/* Main content */}
-      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <h1 className="page-title" style={{ lineHeight: '1.25' }}>
             {language === 'es' 
@@ -55,46 +55,30 @@ export default function PersonalizedTreatmentPage() {
           <div className="space-y-3">
             <button
               onClick={() => handleSelect('yes')}
-              className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
-                selected === 'yes'
-                  ? 'bg-[#f0feab] border-2 border-[#4fa87f]'
-                  : 'bg-white border-2 border-gray-200 hover:border-[#4fa87f]'
-              }`}
+              className={`option-button ${selected === 'yes' ? 'selected' : ''}`}
             >
-              <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center mr-3 transition-all ${
-                selected === 'yes' ? 'bg-[#413d3d] border-[#413d3d]' : 'bg-white border-gray-300'
-              }`}>
+              <div className={`option-checkbox ${selected === 'yes' ? 'checked' : ''}`}>
                 {selected === 'yes' && (
                   <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 )}
               </div>
-              <span className="text-base lg:text-lg">
-                {language === 'es' ? 'Sí, por favor' : 'Yes, please'}
-              </span>
+              <span>{language === 'es' ? 'Sí, por favor' : 'Yes, please'}</span>
             </button>
 
             <button
               onClick={() => handleSelect('no')}
-              className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
-                selected === 'no'
-                  ? 'bg-[#f0feab] border-2 border-[#4fa87f]'
-                  : 'bg-white border-2 border-gray-200 hover:border-[#4fa87f]'
-              }`}
+              className={`option-button ${selected === 'no' ? 'selected' : ''}`}
             >
-              <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center mr-3 transition-all ${
-                selected === 'no' ? 'bg-[#413d3d] border-[#413d3d]' : 'bg-white border-gray-300'
-              }`}>
+              <div className={`option-checkbox ${selected === 'no' ? 'checked' : ''}`}>
                 {selected === 'no' && (
                   <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 )}
               </div>
-              <span className="text-base lg:text-lg">
-                {language === 'es' ? 'No, estoy bien' : "No, I'm ok"}
-              </span>
+              <span>{language === 'es' ? 'No, estoy bien' : "No, I'm ok"}</span>
             </button>
           </div>
         </div>

@@ -80,7 +80,7 @@ export default function MedicalConditionsPage() {
       <EonmedsLogo />
       
       {/* Main content */}
-      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-6">
           <div>
             <h1 className="page-title">
@@ -101,34 +101,22 @@ export default function MedicalConditionsPage() {
               <button
                 key={condition.id}
                 onClick={() => handleToggleCondition(condition.id)}
-                className={`w-full text-left p-3 rounded-2xl border transition-all ${
-                  selectedConditions.includes(condition.id)
-                    ? 'border-[#4fa87f] bg-[#f0feab]'
-                    : 'border-gray-200 hover:border-[#4fa87f]'
-                }`}
+                className={`option-button ${selectedConditions.includes(condition.id) ? 'selected' : ''}`}
               >
-                <div className="flex items-start">
-                  <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                    selectedConditions.includes(condition.id)
-                      ? 'border-[#4fa87f] bg-[#f0feab]'
-                      : 'border-gray-300'
-                  }`}>
-                    {selectedConditions.includes(condition.id) && (
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    )}
-                  </div>
-                  <div>
-                    <span className="text-[16px] lg:text-lg leading-tight">
-                      {condition.label}
+                <div className={`option-checkbox ${selectedConditions.includes(condition.id) ? 'checked' : ''}`}>
+                  {selectedConditions.includes(condition.id) && (
+                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </div>
+                <div>
+                  <span>{condition.label}</span>
+                  {condition.sublabel && (
+                    <span className="text-sm text-gray-500 block leading-tight">
+                      {condition.sublabel}
                     </span>
-                    {condition.sublabel && (
-                      <span className="text-sm text-gray-500 block leading-tight">
-                        {condition.sublabel}
-                      </span>
-                    )}
-                  </div>
+                  )}
                 </div>
               </button>
             ))}

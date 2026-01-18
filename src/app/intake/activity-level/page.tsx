@@ -84,7 +84,7 @@ export default function ActivityLevelPage() {
               <button
                 key={level.value}
                 onClick={() => handleSelect(level.value)}
-                className="w-full text-left p-4 rounded-2xl border-2 border-gray-200 bg-white hover:border-gray-300 transition-all min-h-[60px] flex items-center"
+                className="option-button min-h-[60px]"
               >
                 <div>
                   <div className="text-[16px] lg:text-lg leading-tight text-[#413d3d]">{level.label}</div>

@@ -67,6 +67,11 @@ const translations = {
     trusted: 'Trusted by 20,000+ patients nationwide',
     fastDelivery: 'Fast and discreet delivery to your home',
     moreEffective: 'More Effective',
+    recommendedForYou: 'Recommended for you',
+    basedOnHistory: 'Based on your history taking {medication} at {dose}, we recommend continuing at this dose for best results.',
+    wantLowerDose: 'Want to start with a lower dose?',
+    standardDose: 'Standard Dose',
+    yourDose: 'Your Current Dose',
   },
   es: {
     greeting: 'Selecciona Tu Plan y Complementos',
@@ -109,6 +114,11 @@ const translations = {
     trusted: 'Confiado por más de 20,000 pacientes',
     fastDelivery: 'Entrega rápida y discreta a tu hogar',
     moreEffective: 'Más Efectivo',
+    recommendedForYou: 'Recomendado para ti',
+    basedOnHistory: 'Basado en tu historial tomando {medication} a {dose}, te recomendamos continuar con esta dosis para mejores resultados.',
+    wantLowerDose: '¿Prefieres empezar con una dosis más baja?',
+    standardDose: 'Dosis Estándar',
+    yourDose: 'Tu Dosis Actual',
   },
 };
 
@@ -346,8 +356,87 @@ export default function CheckoutPage() {
           <h2 className="text-2xl font-bold text-[#413d3d] mb-1">
             {t.compounded} {medicationConfig.name}
           </h2>
-          <p className="text-[#413d3d]/70 text-sm">{t.description}</p>
+          <p className="text-[#413d3d]/70 text-sm mb-1">{t.description}</p>
+          {/* Show current dose tier */}
+          {currentTier && (
+            <p className="text-[#00a67c] font-semibold text-sm">
+              {currentTier.dose}
+            </p>
+          )}
         </div>
+
+        {/* Personalized Recommendation Banner - Show if user has GLP-1 experience with higher dose */}
+        {intakeData.hasGlp1Experience && intakeData.currentDoseMg > 0 && currentTier && currentTier.id !== defaultTier.id && (
+          <div className="px-6 max-w-md mx-auto mb-6">
+            <div className="bg-[#e8f5e9] border border-[#00a67c] rounded-xl p-4">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-[#00a67c] flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-[#00a67c] font-semibold text-sm mb-1">
+                    {t.recommendedForYou}
+                  </p>
+                  <p className="text-[#413d3d] text-sm">
+                    {t.basedOnHistory
+                      .replace('{medication}', intakeData.previousMedication === 'tirzepatide' ? 'Tirzepatide' : 'Semaglutide')
+                      .replace('{dose}', `${intakeData.currentDoseMg}mg`)}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Downgrade Option - Show if not on default tier */}
+        {currentTier && currentTier.id !== defaultTier.id && (
+          <div className="px-6 max-w-md mx-auto mb-4">
+            <button
+              onClick={() => setSelectedTier(defaultTier)}
+              className="w-full text-left p-3 rounded-xl border border-gray-200 bg-white hover:border-[#00a67c] transition-all"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-[#413d3d]/70">{t.wantLowerDose}</p>
+                  <p className="text-[#413d3d] font-medium">
+                    {t.standardDose}: {defaultTier.dose}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[#00a67c] font-bold">
+                    {formatPrice(defaultTier.plans.monthlyRecurring)}/mo
+                  </p>
+                </div>
+              </div>
+            </button>
+          </div>
+        )}
+
+        {/* Show if user selected downgrade - option to go back to recommended */}
+        {currentTier && currentTier.id === defaultTier.id && intakeData.hasGlp1Experience && intakeData.currentDoseMg > 0 && recommendedTier && recommendedTier.id !== defaultTier.id && (
+          <div className="px-6 max-w-md mx-auto mb-4">
+            <button
+              onClick={() => setSelectedTier(recommendedTier)}
+              className="w-full text-left p-3 rounded-xl border border-[#00a67c] bg-[#e8f5e9] hover:bg-[#d4edda] transition-all"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-[#00a67c] font-medium">{t.yourDose}: {recommendedTier.dose}</p>
+                  <p className="text-xs text-[#413d3d]/70">
+                    {isSpanish ? 'Basado en tu historial' : 'Based on your history'}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[#00a67c] font-bold">
+                    {formatPrice(recommendedTier.plans.monthlyRecurring)}/mo
+                  </p>
+                </div>
+              </div>
+            </button>
+          </div>
+        )}
 
         {/* Plan Selection */}
         <div className="px-6 max-w-md mx-auto mb-6">
@@ -565,7 +654,7 @@ export default function CheckoutPage() {
               <div className="flex justify-between">
                 <div>
                   <p className="font-semibold text-[#413d3d]">{medicationConfig.name}</p>
-                  <p className="text-sm text-[#413d3d]/60">{getPlanLabel(billingType)}</p>
+                  <p className="text-sm text-[#413d3d]/60">{currentTier.dose} • {getPlanLabel(billingType)}</p>
                 </div>
                 <span className="font-semibold text-[#413d3d]">{formatPrice(getPrice(currentTier, billingType))}</span>
               </div>

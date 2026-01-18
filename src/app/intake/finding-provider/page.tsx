@@ -73,50 +73,50 @@ export default function FindingProviderPage() {
     submitToAirtable();
   }, [submitToAirtable]);
 
-  // Animate progress bar (faster)
+  // Animate progress bar (slower to match 5s duration)
   useEffect(() => {
     const progressInterval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) return 100;
-        return prev + 2.5;
+        return prev + 1.25;
       });
-    }, 40);
+    }, 50);
 
     return () => clearInterval(progressInterval);
   }, []);
 
-  // Cycle through steps (faster)
+  // Cycle through steps (slower to match 5s duration)
   useEffect(() => {
     const stepInterval = setInterval(() => {
       setCurrentStep(prev => {
         if (prev < steps.length - 1) return prev + 1;
         return prev;
       });
-    }, 600);
+    }, 1200);
 
     return () => clearInterval(stepInterval);
   }, [steps.length]);
 
-  // Animate providers found counter (faster)
+  // Animate providers found counter (slower to match 5s duration)
   useEffect(() => {
     const counterInterval = setInterval(() => {
       setProvidersFound(prev => {
         if (prev >= 12) return 12;
         return prev + 1;
       });
-    }, 150);
+    }, 350);
 
     return () => clearInterval(counterInterval);
   }, []);
 
-  // Handle navigation after delay (reduced from 4s to 3s for better UX)
+  // Handle navigation after delay (5s for better UX - time to read)
   useEffect(() => {
     const navigationTimer = setTimeout(() => {
       if (!hasNavigated.current) {
         hasNavigated.current = true;
         router.push('/intake/qualified');
       }
-    }, 3000);
+    }, 5000);
 
     return () => {
       clearTimeout(navigationTimer);

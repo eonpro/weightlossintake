@@ -52,7 +52,7 @@ export default function TirzepatideDosagePage() {
       <EonmedsLogo />
       
       {/* Main content */}
-      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-40 max-w-md lg:max-w-2xl mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 lg:px-8 py-8 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
         <div className="space-y-8">
           <div>
             <h1 className="page-title mb-2">
@@ -72,45 +72,33 @@ export default function TirzepatideDosagePage() {
               <button
                 key={dosage}
                 onClick={() => handleSelect(dosage)}
-                className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
-                  selected === dosage
-                    ? 'bg-[#f0feab] border-2 border-[#4fa87f]'
-                    : 'bg-white border-2 border-gray-200 hover:border-[#4fa87f]'
-                }`}
+                className={`option-button ${selected === dosage ? 'selected' : ''}`}
               >
-                <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center mr-3 transition-all ${
-                  selected === dosage ? 'bg-[#413d3d] border-[#413d3d]' : 'bg-white border-gray-300'
-                }`}>
+                <div className={`option-checkbox ${selected === dosage ? 'checked' : ''}`}>
                   {selected === dosage && (
                     <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   )}
                 </div>
-                <span className="text-base lg:text-lg">{dosage}</span>
+                <span>{dosage}</span>
               </button>
             ))}
-            
+
             {/* Oral option */}
             <button
               onClick={() => handleSelect('oral')}
-              className={`w-full p-4 text-left rounded-2xl transition-all flex items-center ${
-                selected === 'oral'
-                  ? 'bg-[#f0feab] border-2 border-[#4fa87f]'
-                  : 'bg-white border-2 border-gray-200 hover:border-[#4fa87f]'
-              }`}
+              className={`option-button ${selected === 'oral' ? 'selected' : ''}`}
             >
-              <div className={`w-5 h-5 flex-shrink-0 rounded border flex items-center justify-center mr-3 transition-all ${
-                selected === 'oral' ? 'bg-[#413d3d] border-[#413d3d]' : 'bg-white border-gray-300'
-              }`}>
+              <div className={`option-checkbox ${selected === 'oral' ? 'checked' : ''}`}>
                 {selected === 'oral' && (
                   <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 )}
               </div>
-              <span className="text-base lg:text-lg">
-                {language === 'es' 
+              <span>
+                {language === 'es'
                   ? 'Estoy tomando Tirzepatida Oral'
                   : 'I am taking Oral Tirzepatide'}
               </span>
