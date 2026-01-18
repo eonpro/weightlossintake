@@ -1181,11 +1181,15 @@ export async function POST(request: NextRequest) {
     // Check if we should send to EONPRO
     // - Must have EONPRO configured
     // - Must have minimum required fields (name, DOB, email, phone, address)
-    // - Check if already sent for this session to avoid duplicates
-    const sessionEonproKey = `eonpro_sent_${data.sessionId}`;
-    const alreadySentToEonpro = isUpdate && data.updateRecordId; // Don't resend on updates
+    // - ALWAYS send qualified=true submissions (final submissions)
+    // - For partial (midpoint) submissions, only send if it's a NEW record (not an update)
+    const isQualifiedFinal = data.qualified === true;
+    const isPartialUpdate = isUpdate && data.updateRecordId && !isQualifiedFinal;
     
-    if (EONPRO_ENABLED && hasRequiredFields && !alreadySentToEonpro) {
+    // Send to EONPRO if:
+    // 1. Has required fields AND
+    // 2. Either it's a qualified final submission OR it's NOT a partial update
+    if (EONPRO_ENABLED && hasRequiredFields && (isQualifiedFinal || !isPartialUpdate)) {
       // Determine if this is a partial or complete submission
       const isPartialSubmission = data.qualified !== true;
       
@@ -1211,8 +1215,8 @@ export async function POST(request: NextRequest) {
       eonproTriggered = true;
     } else if (EONPRO_ENABLED && !hasRequiredFields) {
       log('⏭️ Skipping EONPRO - missing required fields (need name, DOB, email, phone, address)');
-    } else if (alreadySentToEonpro) {
-      log('⏭️ Skipping EONPRO - this is an update to existing record');
+    } else if (isPartialUpdate) {
+      log('⏭️ Skipping EONPRO - this is a partial update (midpoint already sent)');
     }
 
     return NextResponse.json({
