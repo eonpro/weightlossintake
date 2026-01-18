@@ -527,9 +527,8 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Phone',
   'State',
   'Language',
-  // NOTE: 'Type' and 'Notes' fields are optional - add them to Airtable if you want submission tracking
-  // 'Type',  // 'Complete' or 'Partial - Dropped before checkout'
-  // 'Notes', // Additional notes about the submission
+  'Type',   // 'Complete' or 'Partial - Dropped before checkout'
+  'Notes',  // Additional notes about the submission
   // Medical data fields
   'Date of Birth',
   'Sex',
@@ -970,9 +969,8 @@ export async function POST(request: NextRequest) {
       'Phone': toString(data.phone),
       'State': toString(data.state),
       'Language': toString(data.flowLanguage),
-      // NOTE: Type and Notes fields commented out - add to Airtable table first if needed
-      // 'Type': submissionType,
-      // 'Notes': submissionNotes,
+      'Type': submissionType,
+      'Notes': submissionNotes,
       // Medical data
       'Date of Birth': toString(data.dob),
       'Sex': toString(data.sex),
