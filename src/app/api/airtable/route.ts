@@ -46,6 +46,11 @@ import { z } from 'zod';
 const isDev = process.env.NODE_ENV === 'development';
 const log = (...args: unknown[]) => isDev && console.log(...args);
 
+// EONPRO-specific logging - enabled in production to debug webhook issues
+// Set EONPRO_DEBUG=true to enable in production
+const EONPRO_DEBUG = process.env.EONPRO_DEBUG === 'true' || isDev;
+const eonproLog = (...args: unknown[]) => EONPRO_DEBUG && console.log('[EONPRO]', ...args);
+
 // =============================================================================
 // SECURITY AUDIT LOGGING (No PHI - only metadata)
 // Enable structured logging with ENABLE_AUDIT_LOG=true
@@ -55,7 +60,7 @@ const ENABLE_AUDIT_LOG = process.env.ENABLE_AUDIT_LOG === 'true' || isDev;
 
 interface AuditEvent {
   timestamp: string;
-  event: 'AUTH_FAILURE' | 'RATE_LIMITED' | 'VALIDATION_ERROR' | 'REQUEST_TOO_LARGE' | 
+  event: 'AUTH_FAILURE' | 'RATE_LIMITED' | 'VALIDATION_ERROR' | 'REQUEST_TOO_LARGE' |
          'SUBMISSION_SUCCESS' | 'SUBMISSION_FAILURE' | 'API_ERROR';
   endpoint: string;
   ip: string;
@@ -67,20 +72,20 @@ interface AuditEvent {
 
 function auditLog(event: AuditEvent): void {
   if (!ENABLE_AUDIT_LOG) return;
-  
+
   const logEntry = {
     ...event,
     service: 'eonmeds-intake',
     environment: process.env.NODE_ENV || 'development',
   };
-  
+
   // Structured JSON log - compatible with CloudWatch, Datadog, etc.
   console.log(JSON.stringify(logEntry));
 }
 
 function getClientIp(request: NextRequest): string {
-  return request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
-         request.headers.get('x-real-ip') || 
+  return request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+         request.headers.get('x-real-ip') ||
          'unknown';
 }
 
@@ -121,15 +126,15 @@ interface EonproResponse {
  * This runs asynchronously and doesn't block the main response
  */
 async function sendToEonpro(
-  intakeData: EonproIntakeData, 
+  intakeData: EonproIntakeData,
   maxRetries: number = 3
 ): Promise<EonproResponse | null> {
   if (!EONPRO_ENABLED) {
-    log('⏭️ EONPRO webhook not configured, skipping');
+    eonproLog('⏭️ Webhook not configured, skipping');
     return null;
   }
 
-  // Verbose logging - show what we're sending (safe fields only)
+  // Verbose logging - show what we're sending (safe fields only - no PHI)
   const logSafeData = {
     submissionId: intakeData.submissionId,
     submittedAt: intakeData.submittedAt,
@@ -144,17 +149,18 @@ async function sendToEonpro(
     qualified: intakeData.data.qualified,
     totalFields: Object.keys(intakeData.data).filter(k => intakeData.data[k]).length,
   };
-  
-  log('📤 EONPRO Webhook Request:', JSON.stringify(logSafeData, null, 2));
+
+  eonproLog('📤 Webhook Request (safe fields):', JSON.stringify(logSafeData, null, 2));
+  eonproLog(`📍 Webhook URL: ${EONPRO_WEBHOOK_URL?.substring(0, 50)}...`);
 
   let lastError: string | null = null;
-  
+
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      log(`🔄 EONPRO attempt ${attempt}/${maxRetries}...`);
-      
+      eonproLog(`🔄 Attempt ${attempt}/${maxRetries}...`);
+
       const startTime = Date.now();
-      
+
       const response = await fetch(EONPRO_WEBHOOK_URL!, {
         method: 'POST',
         headers: {
@@ -165,21 +171,23 @@ async function sendToEonpro(
       });
 
       const responseTime = Date.now() - startTime;
-      
+
       // Log response details
-      log(`📥 EONPRO Response: status=${response.status}, time=${responseTime}ms`);
+      eonproLog(`📥 Response: status=${response.status}, time=${responseTime}ms`);
 
       let result: EonproResponse;
+      const responseText = await response.text();
+
       try {
-        result = await response.json();
+        result = JSON.parse(responseText);
       } catch (parseError) {
-        log(`⚠️ EONPRO response not JSON: ${await response.text().catch(() => 'unable to read')}`);
-        result = { success: false, error: 'Invalid JSON response' };
+        eonproLog(`⚠️ Response not JSON. Body: ${responseText.substring(0, 200)}`);
+        result = { success: false, error: `Invalid JSON response: ${responseText.substring(0, 100)}` };
       }
 
       if (response.ok && result.success) {
-        log(`✅ EONPRO SUCCESS: patientId=${result.data?.patientId}, requestId=${result.requestId}`);
-        
+        eonproLog(`✅ SUCCESS: patientId=${result.data?.patientId}, requestId=${result.requestId}`);
+
         // Audit log for successful webhook
         auditLog({
           timestamp: new Date().toISOString(),
@@ -190,16 +198,16 @@ async function sendToEonpro(
           statusCode: response.status,
           details: `EONPRO patient created: ${result.data?.patientId || 'unknown'}`,
         });
-        
+
         return result;
       } else {
-        lastError = result.error || result.message || `HTTP ${response.status}`;
-        log(`❌ EONPRO attempt ${attempt} failed: ${lastError}`);
-        
+        lastError = result.error || result.message || `HTTP ${response.status}: ${responseText.substring(0, 100)}`;
+        eonproLog(`❌ Attempt ${attempt} failed: ${lastError}`);
+
         // Don't retry on 4xx errors (client errors)
         if (response.status >= 400 && response.status < 500) {
-          log(`⛔ Not retrying - client error (${response.status})`);
-          
+          eonproLog(`⛔ Not retrying - client error (${response.status})`);
+
           auditLog({
             timestamp: new Date().toISOString(),
             event: 'SUBMISSION_FAILURE',
@@ -209,26 +217,26 @@ async function sendToEonpro(
             statusCode: response.status,
             details: `EONPRO rejected: ${lastError}`,
           });
-          
+
           return result;
         }
       }
     } catch (error) {
       lastError = error instanceof Error ? error.message : 'Network error';
-      log(`❌ EONPRO attempt ${attempt} exception: ${lastError}`);
+      eonproLog(`❌ Attempt ${attempt} exception: ${lastError}`);
     }
-    
+
     // Exponential backoff before retry (1s, 2s, 4s)
     if (attempt < maxRetries) {
       const backoffMs = Math.pow(2, attempt - 1) * 1000;
-      log(`⏳ Waiting ${backoffMs}ms before retry...`);
+      eonproLog(`⏳ Waiting ${backoffMs}ms before retry...`);
       await new Promise(resolve => setTimeout(resolve, backoffMs));
     }
   }
 
   // All retries exhausted
-  log(`💀 EONPRO FAILED after ${maxRetries} attempts: ${lastError}`);
-  
+  eonproLog(`💀 FAILED after ${maxRetries} attempts: ${lastError}`);
+
   auditLog({
     timestamp: new Date().toISOString(),
     event: 'SUBMISSION_FAILURE',
@@ -255,7 +263,7 @@ function hasMinimumRequiredFields(data: IntakeRecord): boolean {
   const hasEmail = !!data.email;
   const hasPhone = !!data.phone;
   const hasAddress = !!(data.address || data.state);
-  
+
   return hasName && hasDob && hasEmail && hasPhone && hasAddress;
 }
 
@@ -273,7 +281,7 @@ function mapToEonproFormat(data: IntakeRecord, airtableRecordId: string, isParti
   // Parse address components from the combined address field
   // Address is stored as a combined string, we'll pass it as streetAddress
   const addressParts = data.address?.split(',').map(s => s.trim()) || [];
-  
+
   // Build notes about submission
   let intakeNotes = '';
   if (isPartial) {
@@ -282,7 +290,7 @@ function mapToEonproFormat(data: IntakeRecord, airtableRecordId: string, isParti
       intakeNotes += 'Qualification status: Not yet determined. ';
     }
   }
-  
+
   return {
     submissionId: `wli-${Date.now()}`,
     submittedAt: new Date().toISOString(),
@@ -295,21 +303,21 @@ function mapToEonproFormat(data: IntakeRecord, airtableRecordId: string, isParti
       phone: data.phone || '',
       dateOfBirth: data.dob || '',
       gender: data.sex || '',
-      
+
       // Address fields
       streetAddress: addressParts[0] || data.address || '',
       apartment: data.apartment || '',
       city: addressParts[1] || '',
       state: data.state || '',
       zipCode: addressParts[addressParts.length - 1]?.match(/\d{5}(-\d{4})?/)?.[0] || '',
-      
+
       // Physical measurements
       weight: data.currentWeight?.toString() || '',
       idealWeight: data.idealWeight?.toString() || '',
       height: heightFormatted,
       bmi: data.bmi?.toString() || '',
       bloodPressure: data.bloodPressure || '',
-      
+
       // Medical history
       currentMedications: data.medications || '',
       allergies: data.allergies || '',
@@ -321,10 +329,10 @@ function mapToEonproFormat(data: IntakeRecord, airtableRecordId: string, isParti
       ].filter(Boolean).join('; ') || '',
       mentalHealthHistory: data.mentalHealthConditions || '',
       familyHistory: data.familyConditions || '',
-      surgicalHistory: data.surgeryHistory === 'yes' || data.surgeryHistory === 'Yes' 
-        ? data.surgeryDetails || 'Yes' 
+      surgicalHistory: data.surgeryHistory === 'yes' || data.surgeryHistory === 'Yes'
+        ? data.surgeryDetails || 'Yes'
         : 'None',
-      
+
       // GLP-1 specific
       glp1History: data.glp1History || '',
       glp1Type: data.glp1Type || '',
@@ -332,31 +340,31 @@ function mapToEonproFormat(data: IntakeRecord, airtableRecordId: string, isParti
       semaglutideDosage: data.semaglutideDosage || '',
       tirzepatideDosage: data.tirzepatideDosage || '',
       previousSideEffects: data.sideEffects || '',
-      
+
       // Lifestyle
       activityLevel: data.activityLevel || '',
       alcoholUse: data.alcoholConsumption || '',
       recreationalDrugs: data.recreationalDrugs || '',
       weightLossHistory: data.weightLossHistory || '',
-      
+
       // Visit reason
       reasonForVisit: 'GLP-1 Weight Loss Treatment Consultation',
       chiefComplaint: data.goals || 'Weight management',
       healthGoals: data.healthImprovements || '',
-      
+
       // Pregnancy status (for eligibility)
       pregnancyStatus: data.pregnancyBreastfeeding || '',
-      
+
       // Personal medical flags
       hasDiabetes: data.personalDiabetes || '',
       hasGastroparesis: data.personalGastroparesis || '',
       hasPancreatitis: data.personalPancreatitis || '',
       hasThyroidCancer: data.personalThyroidCancer || '',
-      
+
       // Referral info
       referralSource: data.referralSources || '',
       referredBy: data.referrerName || '',
-      
+
       // Metadata
       qualified: data.qualified ? 'Yes' : (isPartial ? 'Pending' : 'No'),
       submissionType: isPartial ? 'Partial' : 'Complete',
@@ -381,27 +389,27 @@ function verifyApiKey(request: NextRequest): { valid: boolean; error?: string } 
   if (!REQUIRE_API_KEY) {
     return { valid: true };
   }
-  
+
   const providedKey = request.headers.get('x-api-key');
-  
+
   if (!providedKey) {
     return { valid: false, error: 'Missing API key' };
   }
-  
+
   // Constant-time comparison to prevent timing attacks
   if (providedKey.length !== API_SECRET_KEY!.length) {
     return { valid: false, error: 'Invalid API key' };
   }
-  
+
   let mismatch = 0;
   for (let i = 0; i < providedKey.length; i++) {
     mismatch |= providedKey.charCodeAt(i) ^ API_SECRET_KEY!.charCodeAt(i);
   }
-  
+
   if (mismatch !== 0) {
     return { valid: false, error: 'Invalid API key' };
   }
-  
+
   return { valid: true };
 }
 
@@ -739,7 +747,7 @@ const MAX_REQUEST_SIZE = 100 * 1024; // 100KB - generous for intake data
 //   1. npm install @upstash/ratelimit @upstash/redis
 //   2. Add to Vercel env: UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN
 //   3. Uncomment the import and ratelimit code below
-// 
+//
 // import { Ratelimit } from '@upstash/ratelimit';
 // import { Redis } from '@upstash/redis';
 // const ratelimit = new Ratelimit({
@@ -751,7 +759,7 @@ const MAX_REQUEST_SIZE = 100 * 1024; // 100KB - generous for intake data
 
 // Simple in-memory rate limiting (no external dependencies)
 // This is a basic fallback - use Upstash for production-grade rate limiting
-// 
+//
 // Configuration via environment variables:
 //   ENABLE_RATE_LIMIT=true           - Enable rate limiting
 //   AIRTABLE_RATE_LIMIT_MAX=30       - Max requests per window (default: 30)
@@ -773,10 +781,10 @@ function checkRateLimit(ip: string): RateLimitResult {
   if (!ENABLE_RATE_LIMIT) {
     return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS };
   }
-  
+
   const now = Date.now();
   const record = rateLimitStore.get(ip);
-  
+
   // Clean up old entries periodically (every 100th request)
   if (Math.random() < 0.01) {
     for (const [key, value] of rateLimitStore.entries()) {
@@ -785,19 +793,19 @@ function checkRateLimit(ip: string): RateLimitResult {
       }
     }
   }
-  
+
   if (!record || record.resetTime < now) {
     // New window
     rateLimitStore.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
     return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS - 1 };
   }
-  
+
   const resetIn = Math.ceil((record.resetTime - now) / 1000);
-  
+
   if (record.count >= RATE_LIMIT_MAX_REQUESTS) {
     return { allowed: false, remaining: 0, resetIn };
   }
-  
+
   record.count++;
   return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS - record.count, resetIn };
 }
@@ -806,7 +814,7 @@ function checkRateLimit(ip: string): RateLimitResult {
 export async function POST(request: NextRequest) {
   log('=== AIRTABLE API CALLED ===');
   const clientIp = getClientIp(request);
-  
+
   // Rate limiting (only if ENABLE_RATE_LIMIT=true)
   const rateLimitResult = checkRateLimit(clientIp);
   if (!rateLimitResult.allowed) {
@@ -822,8 +830,8 @@ export async function POST(request: NextRequest) {
       error: 'Too many requests',
       code: 'RATE_LIMITED',
       retryAfter: 60,
-    }, { 
-      status: 429, 
+    }, {
+      status: 429,
       headers: {
         ...corsHeaders,
         'Retry-After': '60',
@@ -831,7 +839,7 @@ export async function POST(request: NextRequest) {
       }
     });
   }
-  
+
   // Optional API key verification (only if API_SECRET_KEY is configured)
   const apiKeyResult = verifyApiKey(request);
   if (!apiKeyResult.valid) {
@@ -849,7 +857,7 @@ export async function POST(request: NextRequest) {
       code: 'INVALID_API_KEY',
     }, { status: 401, headers: corsHeaders });
   }
-  
+
   // Check request size before processing
   const contentLength = request.headers.get('content-length');
   if (contentLength && parseInt(contentLength, 10) > MAX_REQUEST_SIZE) {
@@ -868,7 +876,7 @@ export async function POST(request: NextRequest) {
     }, { status: 413, headers: corsHeaders });
   }
   log('Timestamp:', new Date().toISOString());
-  
+
   try {
     // Parse JSON body with error handling
     let rawData;
@@ -889,10 +897,10 @@ export async function POST(request: NextRequest) {
         code: 'INVALID_JSON',
       }, { status: 400, headers: corsHeaders });
     }
-    
+
     // Validate input schema
     const validationResult = IntakeRecordSchema.safeParse(rawData);
-    
+
     if (!validationResult.success) {
       log('Validation failed:', validationResult.error.flatten());
       // Log field names only - NEVER log field values (could contain PHI)
@@ -914,9 +922,9 @@ export async function POST(request: NextRequest) {
         details: isDev ? validationResult.error.flatten().fieldErrors : undefined,
       }, { status: 400, headers: corsHeaders });
     }
-    
+
     const data: IntakeRecord = validationResult.data as IntakeRecord;
-    
+
     const isUpdate = !!data.updateRecordId;
     log('Received intake submission:', {
       sessionId: data.sessionId,
@@ -952,7 +960,7 @@ export async function POST(request: NextRequest) {
     const isQualified = data.qualified === true;
     const hasRequiredFields = hasMinimumRequiredFields(data);
     const submissionType = isQualified ? 'Complete' : (hasRequiredFields ? 'Partial - Dropped before checkout' : 'Incomplete');
-    
+
     // Build notes for partial submissions
     let submissionNotes = '';
     if (!isQualified && hasRequiredFields) {
@@ -1042,19 +1050,19 @@ export async function POST(request: NextRequest) {
     // Build final fields object with proper types
     const fields: Record<string, string | boolean | number> = {};
     const skippedFields: string[] = [];
-    
+
     for (const [key, value] of Object.entries(allFields)) {
       // Skip empty values
       if (value === undefined || value === null || value === '') {
         continue;
       }
-      
+
       // Handle checkbox fields (need boolean)
       if (CHECKBOX_FIELDS.has(key)) {
         fields[key] = value === 'Yes' || value === 'true' || value === true;
         continue;
       }
-      
+
       // Handle number fields (need numeric values)
       if (NUMBER_FIELDS.has(key)) {
         const numValue = parseFloat(String(value));
@@ -1063,7 +1071,7 @@ export async function POST(request: NextRequest) {
         }
         continue;
       }
-      
+
       // Only include text fields that are known to exist in Airtable
       if (KNOWN_AIRTABLE_FIELDS.has(key)) {
         fields[key] = value;
@@ -1081,15 +1089,15 @@ export async function POST(request: NextRequest) {
     const airtableUrl = isUpdate && data.updateRecordId
       ? `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}/${data.updateRecordId}`
       : `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}`;
-    
+
     const httpMethod = isUpdate ? 'PATCH' : 'POST';
-    
+
     log(`${isUpdate ? '📝 UPDATING' : '➕ CREATING'} Airtable record...`);
 
     // Send to Airtable using Personal Access Token with retry logic
     let lastError: unknown = null;
     let response: Response | null = null;
-    
+
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
         response = await fetch(airtableUrl, {
@@ -1100,24 +1108,24 @@ export async function POST(request: NextRequest) {
           },
           body: JSON.stringify({ fields }),
         });
-        
+
         if (response.ok) {
           break; // Success, exit retry loop
         }
-        
+
         // If it's a 422 (validation error), don't retry - it will fail again
         if (response.status === 422) {
           break;
         }
-        
+
         log(`Airtable attempt ${attempt} failed with status ${response.status}, retrying...`);
         lastError = `HTTP ${response.status}`;
-        
+
       } catch (fetchError) {
         log(`Airtable attempt ${attempt} network error:`, fetchError);
         lastError = fetchError;
       }
-      
+
       // Wait before retry (exponential backoff)
       if (attempt < 3) {
         await new Promise(resolve => setTimeout(resolve, attempt * 1000));
@@ -1131,7 +1139,7 @@ export async function POST(request: NextRequest) {
       } catch {
         errorData = { error: String(lastError) };
       }
-      
+
       log('Airtable error after retries:', JSON.stringify(errorData, null, 2));
       log('Fields sent:', Object.keys(fields));
 
@@ -1174,10 +1182,14 @@ export async function POST(request: NextRequest) {
     // EONPRO WEBHOOK: Create patient profile in EONPRO
     // Sends for ANY submission with minimum required fields (name, DOB, email, phone, address)
     // This ensures we capture leads even if they drop off before checkout
-    // Runs asynchronously - doesn't block the response to the client
+    //
+    // IMPORTANT: We MUST await this call in serverless environments (Vercel)
+    // "Fire and forget" patterns DON'T work reliably - the function may terminate
+    // before the background promise completes!
     // ==========================================================================
     let eonproTriggered = false;
-    
+    let eonproResult: EonproResponse | null = null;
+
     // Check if we should send to EONPRO
     // - Must have EONPRO configured
     // - Must have minimum required fields (name, DOB, email, phone, address)
@@ -1185,38 +1197,74 @@ export async function POST(request: NextRequest) {
     // - For partial (midpoint) submissions, only send if it's a NEW record (not an update)
     const isQualifiedFinal = data.qualified === true;
     const isPartialUpdate = isUpdate && data.updateRecordId && !isQualifiedFinal;
-    
+
+    // Log EONPRO decision for debugging (uses eonproLog for production visibility)
+    eonproLog(`🔍 Decision Check for session ${data.sessionId}:`);
+    eonproLog(`   - EONPRO_ENABLED: ${EONPRO_ENABLED}`);
+    eonproLog(`   - hasRequiredFields: ${hasRequiredFields}`);
+    eonproLog(`   - isQualifiedFinal (data.qualified === true): ${isQualifiedFinal}`);
+    eonproLog(`   - isUpdate: ${isUpdate}`);
+    eonproLog(`   - isPartialUpdate: ${isPartialUpdate}`);
+    eonproLog(`   - Should trigger: ${EONPRO_ENABLED && hasRequiredFields && (isQualifiedFinal || !isPartialUpdate)}`);
+
     // Send to EONPRO if:
     // 1. Has required fields AND
     // 2. Either it's a qualified final submission OR it's NOT a partial update
     if (EONPRO_ENABLED && hasRequiredFields && (isQualifiedFinal || !isPartialUpdate)) {
       // Determine if this is a partial or complete submission
       const isPartialSubmission = data.qualified !== true;
-      
-      // Send to EONPRO in the background (don't await to avoid blocking)
-      // This creates a patient profile with all intake data
+
+      // Build EONPRO data
       const eonproData = mapToEonproFormat(data, result.id, isPartialSubmission);
-      
-      log(`📤 Sending to EONPRO (${isPartialSubmission ? 'PARTIAL' : 'COMPLETE'} submission)...`);
-      
-      // Fire and forget - we don't want to fail the intake if EONPRO is down
-      sendToEonpro(eonproData)
-        .then((res) => {
-          if (res?.success) {
-            log('✅ EONPRO patient profile created:', res.data?.patientId);
-          } else {
-            log('❌ EONPRO webhook returned error:', res?.error);
-          }
-        })
-        .catch((err) => {
-          log('❌ EONPRO webhook exception:', err);
+
+      eonproLog(`📤 Sending to EONPRO (${isPartialSubmission ? 'PARTIAL' : 'COMPLETE'} submission)...`);
+      eonproLog(`   - Airtable Record ID: ${result.id}`);
+      eonproLog(`   - Submission ID: ${eonproData.submissionId}`);
+
+      // AWAIT the EONPRO call - this is critical for serverless!
+      // Without awaiting, the function may terminate before the request completes
+      try {
+        eonproResult = await sendToEonpro(eonproData);
+
+        if (eonproResult?.success) {
+          eonproLog('✅ SUCCESS - Patient profile created:', eonproResult.data?.patientId);
+          eonproTriggered = true;
+        } else {
+          eonproLog('❌ FAILED - Webhook returned error:', eonproResult?.error);
+          // Still mark as triggered - we attempted
+          eonproTriggered = true;
+
+          // Audit log the failure
+          auditLog({
+            timestamp: new Date().toISOString(),
+            event: 'SUBMISSION_FAILURE',
+            endpoint: '/api/airtable -> EONPRO',
+            ip: clientIp,
+            sessionId: data.sessionId,
+            statusCode: 502,
+            details: `EONPRO failed: ${eonproResult?.error || 'Unknown error'}`,
+          });
+        }
+      } catch (err) {
+        eonproLog('❌ EXCEPTION:', err);
+        eonproTriggered = true; // Mark as attempted
+
+        auditLog({
+          timestamp: new Date().toISOString(),
+          event: 'API_ERROR',
+          endpoint: '/api/airtable -> EONPRO',
+          ip: clientIp,
+          sessionId: data.sessionId,
+          statusCode: 500,
+          details: `EONPRO exception: ${err instanceof Error ? err.message : 'Unknown'}`,
         });
-      
-      eonproTriggered = true;
-    } else if (EONPRO_ENABLED && !hasRequiredFields) {
-      log('⏭️ Skipping EONPRO - missing required fields (need name, DOB, email, phone, address)');
+      }
+    } else if (!EONPRO_ENABLED) {
+      eonproLog('⏭️ SKIPPED - Not configured (check EONPRO_WEBHOOK_URL and EONPRO_WEBHOOK_SECRET env vars)');
+    } else if (!hasRequiredFields) {
+      eonproLog('⏭️ SKIPPED - Missing required fields (need name, DOB, email, phone, address)');
     } else if (isPartialUpdate) {
-      log('⏭️ Skipping EONPRO - this is a partial update (midpoint already sent)');
+      eonproLog('⏭️ SKIPPED - Partial update (midpoint submission already sent this record before)');
     }
 
     return NextResponse.json({
@@ -1226,6 +1274,9 @@ export async function POST(request: NextRequest) {
       fieldsSaved: Object.keys(fields).length,
       submissionType: submissionType,
       eonproTriggered: eonproTriggered,
+      eonproSuccess: eonproResult?.success ?? null,
+      eonproPatientId: eonproResult?.data?.patientId ?? null,
+      eonproError: eonproResult?.error ?? null,
     }, { headers: corsHeaders });
 
   } catch (error) {
