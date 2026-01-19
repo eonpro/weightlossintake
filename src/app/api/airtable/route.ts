@@ -544,6 +544,8 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Language',
   'Type',   // 'Complete' or 'Partial - Dropped before checkout'
   'Notes',  // Additional notes about the submission
+  'EONPRO Patient ID',  // Stored after successful webhook sync
+  'EONPRO Sync Status', // 'Synced', 'Pending', 'Failed'
   // Medical data fields
   'Date of Birth',
   'Sex',
@@ -1242,6 +1244,31 @@ export async function POST(request: NextRequest) {
           // Record success metrics
           if (isMetricsConfigured()) {
             await recordSuccess(eonproLatency);
+          }
+
+          // Store EONPRO Patient ID in Airtable for bi-directional sync
+          if (eonproResult.data?.patientId) {
+            try {
+              await fetch(
+                `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}/${result.id}`,
+                {
+                  method: 'PATCH',
+                  headers: {
+                    'Authorization': `Bearer ${AIRTABLE_PAT}`,
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    fields: {
+                      'EONPRO Patient ID': String(eonproResult.data.patientId),
+                      'EONPRO Sync Status': 'Synced',
+                    }
+                  }),
+                }
+              );
+              eonproLog(`📝 Stored EONPRO Patient ID ${eonproResult.data.patientId} in Airtable`);
+            } catch (updateErr) {
+              eonproLog('⚠️ Failed to update Airtable with EONPRO ID:', updateErr);
+            }
           }
         } else {
           eonproLog('❌ FAILED - Webhook returned error:', eonproResult?.error);

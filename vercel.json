@@ -11,6 +11,10 @@
     {
       "path": "/api/cron/eonpro-health",
       "schedule": "2-57/5 * * * *"
+    },
+    {
+      "path": "/api/cron/eonpro-reconciliation",
+      "schedule": "0 6 * * *"
     }
   ],
   "headers": [
