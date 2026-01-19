@@ -38,19 +38,56 @@ function detectBrowserLanguage(): Language {
   return 'en';
 }
 
+/**
+ * Check URL for language parameter (?lang=en or ?lang=es)
+ */
+function getUrlLanguageParam(): Language | null {
+  if (typeof window === 'undefined') return null;
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const langParam = urlParams.get('lang')?.toLowerCase();
+  
+  if (langParam === 'en' || langParam === 'es') {
+    return langParam;
+  }
+  
+  // Also check for ?reset=true to clear saved preference
+  if (urlParams.get('reset') === 'true') {
+    localStorage.removeItem('preferredLanguage');
+    return detectBrowserLanguage();
+  }
+  
+  return null;
+}
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<Language>('en');
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    // 1. First check for saved preference in localStorage
+    // Priority order:
+    // 1. URL parameter (?lang=en or ?lang=es) - highest priority
+    // 2. Saved preference in localStorage
+    // 3. Browser/device language detection
+    
+    const urlLang = getUrlLanguageParam();
+    
+    if (urlLang) {
+      // URL parameter takes priority - use it and save it
+      setLanguage(urlLang);
+      localStorage.setItem('preferredLanguage', urlLang);
+      setIsInitialized(true);
+      return;
+    }
+    
+    // Check for saved preference
     const savedLanguage = localStorage.getItem('preferredLanguage') as Language;
     
     if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'es')) {
       // User has a saved preference - use it
       setLanguage(savedLanguage);
     } else {
-      // 2. No saved preference - detect from browser/device settings
+      // No saved preference - detect from browser/device settings
       const detectedLanguage = detectBrowserLanguage();
       setLanguage(detectedLanguage);
       // Save the detected language as their preference
