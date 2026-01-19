@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { SCHEMA_VERSION } from '@/lib/eonpro-schema';
 
 // =============================================================================
 // PHI HANDLING BOUNDARY DOCUMENTATION
@@ -101,7 +102,9 @@ const EONPRO_ENABLED = !!(EONPRO_WEBHOOK_URL && EONPRO_WEBHOOK_SECRET);
 interface EonproIntakeData {
   submissionId: string;
   submittedAt: string;
+  schemaVersion: string;
   source: string;
+  submissionType: 'complete' | 'partial';
   data: Record<string, string | number | boolean | undefined>;
 }
 
@@ -294,7 +297,9 @@ function mapToEonproFormat(data: IntakeRecord, airtableRecordId: string, isParti
   return {
     submissionId: `wli-${Date.now()}`,
     submittedAt: new Date().toISOString(),
+    schemaVersion: SCHEMA_VERSION,
     source: 'weightlossintake',
+    submissionType: isPartial ? 'partial' : 'complete',
     data: {
       // Patient identifiers
       firstName: data.firstName || '',

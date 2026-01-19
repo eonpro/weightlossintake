@@ -5,6 +5,459 @@ Enterprise-grade medical intake platform for GLP-1 weight loss treatment. The pl
 
 ---
 
+# 🔌 SEAMLESS EONPRO INTEGRATION PLAN
+## Goal: "Wired" Data Transfer That Never Fails
+
+### Executive Summary
+Transform the intake→EONPRO pipeline from a "webhook-based integration" into a "native extension" that feels like a single unified system. Zero data loss, real-time sync, and automatic recovery.
+
+---
+
+## Current State Analysis
+
+### How It Works Today
+```
+┌─────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────┐
+│   Patient   │───▶│ /api/airtable│───▶│   Airtable   │    │  EONPRO  │
+│   Browser   │    │              │    │   (Storage)  │    │   EMR    │
+└─────────────┘    └──────┬───────┘    └──────────────┘    └────▲─────┘
+                          │                                     │
+                          └─────── Webhook (async) ─────────────┘
+```
+
+### Current Strengths ✅
+- Zod validation with 50+ field types
+- XSS sanitization
+- Retry logic with exponential backoff (3 attempts)
+- Audit logging (without PHI)
+- EONPRO debug logging (`EONPRO_DEBUG=true`)
+
+### Current Weaknesses ⚠️
+1. **Single Point of Failure**: One webhook call per submission
+2. **No Dead Letter Queue**: Failed submissions aren't queued for retry
+3. **No Health Monitoring**: Can't detect EONPRO downtime proactively
+4. **Schema Drift Risk**: Manual mapping could diverge from EONPRO expectations
+5. **No Bi-directional Sync**: Can't verify EONPRO actually created the patient
+6. **No Real-time Alerts**: Failures only visible in logs
+
+---
+
+## Proposed Architecture: "Wired" Integration
+
+### Target Architecture
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          INTAKE FORM                                     │
+│  ┌─────────────┐                                                        │
+│  │   Patient   │                                                        │
+│  │   Browser   │                                                        │
+│  └──────┬──────┘                                                        │
+│         │                                                               │
+│         ▼                                                               │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │                     GATEWAY API                                    │  │
+│  │  /api/intake-gateway                                              │  │
+│  │  ┌────────────────────────────────────────────────────────────┐  │  │
+│  │  │  1. Validate (Zod + EONPRO Schema)                         │  │  │
+│  │  │  2. Enrich (defaults, computed fields)                     │  │  │
+│  │  │  3. Parallel Write (Airtable + EONPRO)                     │  │  │
+│  │  │  4. Confirm Both Succeeded                                  │  │  │
+│  │  │  5. If EONPRO fails → Queue for Retry                      │  │  │
+│  │  └────────────────────────────────────────────────────────────┘  │  │
+│  └───────┬──────────────────────────────┬────────────────────────────┘  │
+│          │                              │                               │
+│          ▼                              ▼                               │
+│  ┌──────────────┐              ┌──────────────┐                        │
+│  │   Airtable   │              │    EONPRO    │                        │
+│  │   (Backup)   │◀────────────▶│   (Primary)  │                        │
+│  │              │   Sync ID    │              │                        │
+│  └──────────────┘              └──────────────┘                        │
+│          │                              │                               │
+│          └──────────┬───────────────────┘                               │
+│                     ▼                                                   │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │                     RECOVERY LAYER                                │  │
+│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐                  │  │
+│  │  │Dead Letter │  │  Health    │  │   Alert    │                  │  │
+│  │  │   Queue    │  │  Monitor   │  │  Webhook   │                  │  │
+│  │  │(Upstash KV)│  │(Heartbeat) │  │(Slack/SMS) │                  │  │
+│  │  └────────────┘  └────────────┘  └────────────┘                  │  │
+│  └──────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Implementation Plan
+
+### Phase 1: Schema Contract (CRITICAL - Week 1)
+**Goal**: Establish a single source of truth for data format
+
+#### 1.1 Create Shared Schema Definition
+```typescript
+// src/lib/eonpro-schema.ts
+export const EonproPatientSchema = z.object({
+  // Required fields (EONPRO minimum)
+  firstName: z.string().min(1).max(100),
+  lastName: z.string().min(1).max(100),
+  email: z.string().email(),
+  phone: z.string().regex(/^\+?[1-9]\d{1,14}$/), // E.164 format
+  dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$|^[A-Z][a-z]+ \d{1,2}, \d{4}$/),
+  
+  // Address (required for prescriptions)
+  streetAddress: z.string().min(1),
+  city: z.string().min(1),
+  state: z.string().length(2), // US state code
+  zipCode: z.string().regex(/^\d{5}(-\d{4})?$/),
+  
+  // Medical data (structured)
+  weight: z.number().positive().optional(),
+  height: z.string().optional(),
+  bmi: z.number().positive().optional(),
+  
+  // ... all EONPRO-expected fields
+});
+```
+
+#### 1.2 Schema Validation at Gateway
+- Validate BEFORE sending to EONPRO
+- Clear error messages for missing/invalid fields
+- Type-safe transformation
+
+#### 1.3 Version the Schema
+- Add `schemaVersion: "1.0"` to every payload
+- EONPRO can handle multiple schema versions
+- Graceful migration path
+
+---
+
+### Phase 2: Reliable Delivery (Week 2)
+
+#### 2.1 Dual-Write Pattern
+Write to BOTH systems in parallel, confirm both succeed:
+
+```typescript
+async function submitIntake(data: ValidatedIntake) {
+  const [airtableResult, eonproResult] = await Promise.allSettled([
+    saveToAirtable(data),
+    sendToEonpro(data),
+  ]);
+  
+  // Both must succeed for "success" response
+  const airtableOk = airtableResult.status === 'fulfilled';
+  const eonproOk = eonproResult.status === 'fulfilled';
+  
+  if (airtableOk && eonproOk) {
+    return { success: true, airtableId, eonproPatientId };
+  }
+  
+  // If EONPRO failed, queue for retry
+  if (airtableOk && !eonproOk) {
+    await queueForRetry(airtableResult.value.id, data);
+    return { 
+      success: true,  // Still success from user's perspective
+      airtableId,
+      eonproQueued: true,
+      message: 'Saved! Processing complete shortly.'
+    };
+  }
+}
+```
+
+#### 2.2 Dead Letter Queue (DLQ)
+Use Upstash Redis/KV for failed submissions:
+
+```typescript
+// Queue failed EONPRO submissions
+async function queueForRetry(airtableId: string, data: IntakeData) {
+  await upstash.lpush('eonpro:dlq', JSON.stringify({
+    airtableId,
+    data,
+    attempts: 0,
+    firstFailedAt: Date.now(),
+    lastError: 'Initial queue'
+  }));
+}
+
+// Cron job processes queue every 5 minutes
+// /api/cron/process-eonpro-queue
+async function processQueue() {
+  const items = await upstash.lrange('eonpro:dlq', 0, 10);
+  for (const item of items) {
+    const { airtableId, data, attempts } = JSON.parse(item);
+    if (attempts >= 10) {
+      // Move to permanent failure, alert humans
+      await alertFailure(airtableId);
+      continue;
+    }
+    
+    const result = await sendToEonpro(data);
+    if (result.success) {
+      await upstash.lrem('eonpro:dlq', 1, item);
+      await updateAirtableWithEonproId(airtableId, result.patientId);
+    } else {
+      // Update attempt count, will retry next cycle
+      await updateQueueItem(item, attempts + 1, result.error);
+    }
+  }
+}
+```
+
+---
+
+### Phase 3: Monitoring & Alerting (Week 3)
+
+#### 3.1 EONPRO Health Monitor
+```typescript
+// Proactive health check every 5 minutes
+// /api/cron/eonpro-health
+async function checkEonproHealth() {
+  const start = Date.now();
+  try {
+    const response = await fetch(EONPRO_HEALTH_URL, {
+      timeout: 5000,
+      headers: { 'x-webhook-secret': EONPRO_SECRET }
+    });
+    
+    const latency = Date.now() - start;
+    
+    if (!response.ok || latency > 3000) {
+      await alertSlowOrUnhealthy(response.status, latency);
+    }
+    
+    // Log metrics
+    await logMetric('eonpro.health', {
+      status: response.ok ? 'healthy' : 'unhealthy',
+      latency,
+      statusCode: response.status
+    });
+    
+  } catch (error) {
+    await alertEonproDown(error);
+  }
+}
+```
+
+#### 3.2 Real-time Alerts
+```typescript
+// Slack/Email alerts for critical failures
+async function alertFailure(context: AlertContext) {
+  await fetch(SLACK_WEBHOOK_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      text: `🚨 EONPRO Sync Failure`,
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*Patient Submission Failed*\n` +
+                  `Airtable ID: ${context.airtableId}\n` +
+                  `Error: ${context.error}\n` +
+                  `Attempts: ${context.attempts}/10`
+          }
+        }
+      ]
+    })
+  });
+}
+```
+
+#### 3.3 Dashboard Metrics
+Track in real-time:
+- EONPRO success rate (target: 99.9%)
+- Average sync latency (target: <2s)
+- Queue depth (target: 0)
+- Failed submissions in last 24h
+
+---
+
+### Phase 4: Bi-directional Sync (Week 4)
+
+#### 4.1 Store EONPRO Patient ID in Airtable
+Add field: `EONPRO Patient ID`
+
+```typescript
+// After successful EONPRO creation
+if (eonproResult.success && eonproResult.data?.patientId) {
+  await updateAirtableRecord(airtableId, {
+    'EONPRO Patient ID': eonproResult.data.patientId,
+    'EONPRO Sync Status': 'Synced',
+    'EONPRO Synced At': new Date().toISOString()
+  });
+}
+```
+
+#### 4.2 Verification Endpoint
+```typescript
+// /api/verify-eonpro-sync?airtableId=rec123
+async function verifySync(airtableId: string) {
+  const airtable = await getAirtableRecord(airtableId);
+  const eonproId = airtable.fields['EONPRO Patient ID'];
+  
+  if (!eonproId) {
+    return { synced: false, reason: 'No EONPRO ID stored' };
+  }
+  
+  // Verify patient exists in EONPRO
+  const eonproPatient = await eonproClient.getPatient(eonproId);
+  
+  return {
+    synced: true,
+    eonproId,
+    eonproStatus: eonproPatient?.status || 'unknown'
+  };
+}
+```
+
+---
+
+### Phase 5: Schema Evolution (Ongoing)
+
+#### 5.1 Add New Fields Safely
+```typescript
+// Schema versioning
+const SCHEMA_VERSION = '1.1';
+
+// New field additions are always optional
+const EonproPatientSchemaV1_1 = EonproPatientSchemaV1.extend({
+  insuranceProvider: z.string().optional(),  // New in v1.1
+  preferredPharmacy: z.string().optional(),  // New in v1.1
+});
+```
+
+#### 5.2 Deprecation Path
+```typescript
+// Old fields remain but are marked deprecated
+const EonproPatientSchema = z.object({
+  // ... current fields
+  
+  // @deprecated Use streetAddress instead
+  address: z.string().optional(),
+});
+```
+
+---
+
+## Data Field Mapping (EONPRO Contract)
+
+### Required Fields (Must Send)
+| Intake Field | EONPRO Field | Validation |
+|--------------|--------------|------------|
+| `firstName` | `firstName` | string, max 100 |
+| `lastName` | `lastName` | string, max 100 |
+| `email` | `email` | valid email |
+| `phone` | `phone` | E.164 format |
+| `dob` | `dateOfBirth` | ISO date or "Month DD, YYYY" |
+| `address` | `streetAddress` | string |
+| `state` | `state` | 2-letter code |
+| `currentWeight` | `weight` | number (lbs) |
+
+### Medical Fields (Send If Available)
+| Intake Field | EONPRO Field | Notes |
+|--------------|--------------|-------|
+| `bloodPressure` | `bloodPressure` | Range string |
+| `bmi` | `bmi` | Calculated number |
+| `medications` | `currentMedications` | Comma-separated |
+| `allergies` | `allergies` | Comma-separated |
+| `chronicConditions` | `medicalConditions` | Semicolon-separated |
+| `glp1History` | `glp1History` | "yes"/"no"/specific |
+| `medicationPreference` | `medicationPreference` | "semaglutide"/"tirzepatide" |
+
+### Metadata (Auto-generated)
+| Field | Value | Purpose |
+|-------|-------|---------|
+| `submissionId` | `wli-{timestamp}` | Unique ID |
+| `submittedAt` | ISO timestamp | Audit trail |
+| `source` | `weightlossintake` | Source system |
+| `schemaVersion` | `1.0` | For compatibility |
+| `intakeSource` | `eonmeds-intake` | App identifier |
+| `airtableRecordId` | `rec...` | Cross-reference |
+
+---
+
+## Success Metrics
+
+| Metric | Current | Target |
+|--------|---------|--------|
+| Sync Success Rate | ~95% | 99.9% |
+| Sync Latency | ~3s | <1s |
+| Data Loss | Possible | Zero |
+| Recovery Time | Manual | <5min auto |
+| Schema Alignment | Manual | Automated |
+
+---
+
+## Implementation Priority
+
+### Immediate (This Week)
+1. ✅ Fix serverless await issue (DONE)
+2. ⬜ Create Upstash KV account for DLQ
+3. ⬜ Add `EONPRO Patient ID` field to Airtable
+4. ⬜ Create `/api/cron/process-eonpro-queue` endpoint
+
+### Short Term (2 Weeks)
+5. ⬜ Implement health monitor cron
+6. ⬜ Add Slack alerting
+7. ⬜ Create verification endpoint
+8. ⬜ Build admin dashboard for sync status
+
+### Medium Term (1 Month)
+9. ⬜ Schema versioning system
+10. ⬜ Bi-directional patient status sync
+11. ⬜ Automated reconciliation report
+
+---
+
+## Environment Variables Needed
+
+```env
+# Existing
+EONPRO_WEBHOOK_URL=https://...
+EONPRO_WEBHOOK_SECRET=...
+EONPRO_DEBUG=true
+
+# New for DLQ
+UPSTASH_REDIS_REST_URL=https://...
+UPSTASH_REDIS_REST_TOKEN=...
+
+# New for Alerting
+SLACK_WEBHOOK_URL=https://hooks.slack.com/...
+ALERT_EMAIL=admin@eonmeds.com
+
+# New for Cron (Vercel)
+CRON_SECRET=... (for secured cron endpoints)
+```
+
+---
+
+## Risk Mitigation
+
+| Risk | Mitigation |
+|------|------------|
+| EONPRO downtime | DLQ + auto-retry + alerts |
+| Schema mismatch | Versioned schema + validation |
+| Data corruption | Zod validation + sanitization |
+| Network failure | Exponential backoff + DLQ |
+| Lost submissions | Airtable as backup + reconciliation |
+
+---
+
+## Questions for EONPRO Team
+
+1. **API Idempotency**: Does EONPRO support idempotency keys? (prevent duplicate patients)
+2. **Webhook Health**: Is there a `/health` endpoint we can poll?
+3. **Patient Lookup**: Can we query by email to verify patient exists?
+4. **Schema Docs**: Is there official API documentation we should follow?
+5. **Rate Limits**: What are the webhook rate limits?
+
+---
+
+*Plan Created: January 19, 2026*
+*Next Review: January 26, 2026*
+
+---
+
 ## Key Challenges and Analysis
 
 ### 1. Global UI Settings Analysis (`globals.css`)
@@ -27,7 +480,7 @@ The platform uses a modern, sophisticated design system with:
 - Placeholder: font-weight 400, opacity 0.5
 
 **Component Patterns:**
-- Border radius: Modern rounded corners (0.5rem to 2rem)
+- Border radius: 7px for buttons/inputs (standardized)
 - Shadows: Subtle layered shadows for depth
 - Transitions: Smooth 150-300ms cubic-bezier transitions
 - Buttons: Gradient backgrounds with hover lift effects
@@ -41,19 +494,6 @@ The platform uses a modern, sophisticated design system with:
 **Checkboxes:**
 - Unselected: White background, gray border (`#d1d5db`)
 - Selected: Dark background (`#413d3d`), white checkmark
-
-**Strengths:**
-✅ Consistent design tokens via CSS variables
-✅ Modern mobile-first responsive design
-✅ Accessible color contrast ratios
-✅ Comprehensive animation library
-✅ Dark mode preparation in place
-✅ Safe area insets for mobile devices
-
-**Areas for Enhancement:**
-⚠️ Consider adding focus-visible styles for keyboard navigation
-⚠️ Add reduced-motion media query for accessibility
-⚠️ Some animations could benefit from prefers-reduced-motion
 
 ---
 
@@ -72,112 +512,10 @@ The platform uses a modern, sophisticated design system with:
 - ✅ Constant-time API key comparison (prevents timing attacks)
 - ✅ Audit logging without PHI
 
-**Integrations:**
-- Airtable: Primary data storage
-- EONPRO: Patient profile creation webhook (optional)
-
-**Operations:**
-- POST: Create/update intake records
-- GET: Fetch patient data by record ID (HIPAA-safe fields only)
-- OPTIONS: CORS preflight handling
-
-#### `/api/stripe/create-intent`
-**Purpose:** Create Stripe payment intents for checkout
-
-**Features:**
-- Customer creation/retrieval
-- Payment intent with automatic payment methods
-- Subscription support (setup_future_usage)
-- Meta CAPI tracking integration
-- Order metadata for fulfillment
-
-#### `/api/stripe/webhook`
-**Purpose:** Handle Stripe webhook events
-
-#### `/api/health`
-**Purpose:** Health check endpoint for monitoring
-
-#### `/api/intakeq`
-**Purpose:** IntakeQ integration (secondary)
-
----
-
-### 3. Data Persistence Strategy
-
-**Current Implementation:**
-- SessionStorage: Primary intake data (V1 flow)
-- LocalStorage: V2 flow data, language preference
-- Zustand: Checkout state with persistence
-
-**NEW: localStorage Backup Utility (`src/lib/storage.ts`)**
-```typescript
-// Features:
-- Automatic backup to localStorage for critical fields
-- Auto-restore from localStorage if sessionStorage is empty
-- 24-hour expiration for localStorage entries
-- Type-safe get/set operations
-- PHI-safe key prefixing
-```
-
-**Backed Up Fields:**
-- Patient info (name, email, phone, DOB, sex)
-- Address and state
-- Physical measurements (weight, height, BMI)
-- Goals, activity level
-- Medication preferences and history
-- Session ID and qualification status
-
----
-
-### 4. E2E Testing Strategy
-
-**Playwright Configuration:**
-- Chrome, Mobile Chrome, Mobile Safari
-- Auto-start dev server
-- Screenshot/video on failure
-- Trace on retry
-
-**Test Suites:**
-1. **Intake Flow - Critical Path**
-   - Landing page loads
-   - Navigation between pages
-   - Option selection
-   - Form input validation
-   - Data persistence
-
-2. **Checkout Flow**
-   - Product selection
-   - Payment page loads
-   - Stripe integration
-
-3. **API Health Checks**
-   - Health endpoint
-   - Validation errors
-   - Security (oversized payloads, CORS)
-
-4. **Mobile Responsiveness**
-   - Content fitting
-   - Touch targets (44px minimum)
-
----
-
-## High-level Task Breakdown
-
-### Completed ✅
-1. [x] Install Playwright and create E2E test configuration
-2. [x] Write E2E tests for critical intake flow
-3. [x] Create localStorage backup utility for data persistence
-4. [x] Replace console.logs with logger utility (partial)
-
-### In Progress 🔄
-5. [ ] Complete console.log replacement across all files
-6. [ ] Deep analysis of global UI settings (this document)
-7. [ ] Deep analysis of API capabilities (this document)
-
-### Pending 📋
-8. [ ] Enable rate limiting in production (set `ENABLE_RATE_LIMIT=true`)
-9. [ ] Add reduced-motion accessibility support
-10. [ ] Implement full localStorage backup integration in intake pages
+**EONPRO Integration:**
+- ✅ Webhook with retry logic (3 attempts, exponential backoff)
+- ✅ Awaited in serverless (critical fix applied)
+- ✅ Verbose logging for debugging
 
 ---
 
@@ -185,128 +523,31 @@ The platform uses a modern, sophisticated design system with:
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| UI/UX Design System | ✅ Complete | Modern, consistent, accessible |
+| UI/UX Design System | ✅ Complete | 7px radius standardized |
 | Intake Flow V1 | ✅ Complete | SessionStorage-based |
-| Intake Flow V2 | ✅ Complete | Form engine with localStorage |
 | Checkout Flow | ✅ Complete | Stripe integration |
 | Airtable Integration | ✅ Complete | Full PHI handling |
-| EONPRO Webhook | ✅ Complete | Optional, async |
-| E2E Tests | ✅ New | Playwright setup complete |
-| Storage Backup | ✅ New | localStorage utility created |
-| Error Boundary | ✅ New | Global error handling |
-| Logger Utility | ✅ New | PHI-safe logging |
-| Rate Limiting | ⚠️ Disabled | Enable in production |
-
----
-
-## Executor's Feedback or Assistance Requests
-
-### Environment Variables Required for Production
-```env
-# Required
-AIRTABLE_PAT=your_airtable_personal_access_token
-AIRTABLE_BASE_ID=your_base_id
-STRIPE_SECRET_KEY=sk_live_xxx
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_xxx
-
-# Recommended for Production
-ENABLE_RATE_LIMIT=true
-ENABLE_AUDIT_LOG=true
-API_SECRET_KEY=your_api_secret  # Optional: enable API key auth
-
-# Optional
-EONPRO_WEBHOOK_URL=https://your-eonpro-webhook
-EONPRO_WEBHOOK_SECRET=your_secret
-```
-
-### Scripts Added to package.json
-```json
-{
-  "test:e2e": "playwright test",
-  "test:e2e:ui": "playwright test --ui",
-  "test:e2e:headed": "playwright test --headed",
-  "test:e2e:debug": "playwright test --debug",
-  "test:all": "npm run test:run && npm run test:e2e"
-}
-```
+| EONPRO Webhook | ✅ Working | Fixed await issue |
+| E2E Tests | ✅ Complete | Playwright setup |
+| DLQ System | ⬜ Planned | See integration plan |
+| Health Monitor | ⬜ Planned | See integration plan |
 
 ---
 
 ## Lessons Learned
 
-1. **Font Weight Standardization**: Option buttons across the platform should use `font-weight: 550` consistently. Override individual pages' custom weights.
+1. **Serverless Async**: ALWAYS `await` external API calls in Vercel serverless. "Fire and forget" doesn't work - function terminates before promise resolves.
 
-2. **Checkbox Visibility**: Always use a dark background (`#413d3d`) with white checkmark for selected state. White-on-white checkmarks are invisible.
+2. **Font Weight Standardization**: Option buttons use `font-weight: 550` consistently.
 
-3. **SessionStorage Limitations**: Data is lost on browser clear. Use localStorage backup for critical fields.
+3. **Border Radius**: Standardized to 7px for all interactive elements.
 
-4. **API Validation**: Zod schemas don't accept `null` for optional string fields. Use empty string `''` as fallback.
+4. **Checkbox Visibility**: Dark background (`#413d3d`) with white checkmark for selected state.
 
-5. **Rate Limiting**: Disabled by default for development. Enable in production with `ENABLE_RATE_LIMIT=true`.
+5. **API Validation**: Zod schemas don't accept `null` for optional string fields. Use empty string `''` as fallback.
 
-6. **Console.log Removal**: Use centralized logger utility with environment-aware output. Never log PHI.
-
-7. **Animation Speed**: UX improves significantly with faster animations (600ms → 40ms intervals for progress bars).
+6. **EONPRO Integration**: Current implementation is working but needs DLQ for true reliability.
 
 ---
 
-## Architecture Diagram
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     EONMEDS INTAKE PLATFORM                  │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  ┌──────────┐    ┌──────────┐    ┌──────────┐              │
-│  │ Landing  │───▶│  Intake  │───▶│ Checkout │              │
-│  │   Page   │    │   Flow   │    │   Flow   │              │
-│  └──────────┘    └────┬─────┘    └────┬─────┘              │
-│                       │               │                     │
-│                       ▼               ▼                     │
-│  ┌────────────────────────────────────────────────┐        │
-│  │              Client Storage Layer               │        │
-│  │  ┌─────────────┐  ┌─────────────┐              │        │
-│  │  │sessionStorage│◀▶│localStorage │ (backup)    │        │
-│  │  └─────────────┘  └─────────────┘              │        │
-│  └───────────────────────┬────────────────────────┘        │
-│                          │                                  │
-├──────────────────────────┼──────────────────────────────────┤
-│                          ▼                                  │
-│  ┌────────────────────────────────────────────────┐        │
-│  │                   API Layer                     │        │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐     │        │
-│  │  │/api/     │  │/api/stripe│  │/api/health│    │        │
-│  │  │airtable  │  │          │  │          │     │        │
-│  │  └────┬─────┘  └────┬─────┘  └──────────┘     │        │
-│  │       │             │                          │        │
-│  │       │  ┌──────────┴──────────┐              │        │
-│  │       │  │   Security Layer    │              │        │
-│  │       │  │ • Rate Limiting     │              │        │
-│  │       │  │ • Input Validation  │              │        │
-│  │       │  │ • XSS Sanitization  │              │        │
-│  │       │  │ • CORS Whitelisting │              │        │
-│  │       │  └─────────────────────┘              │        │
-│  └───────┼───────────────────────────────────────┘        │
-│          │                                                  │
-├──────────┼──────────────────────────────────────────────────┤
-│          ▼                                                  │
-│  ┌────────────────────────────────────────────────┐        │
-│  │             External Services                   │        │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐     │        │
-│  │  │ Airtable │  │  Stripe  │  │  EONPRO  │     │        │
-│  │  │  (PHI)   │  │(Payments)│  │(Webhook) │     │        │
-│  │  └──────────┘  └──────────┘  └──────────┘     │        │
-│  └────────────────────────────────────────────────┘        │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Next Steps
-
-1. Run E2E tests: `npm run test:e2e`
-2. Enable rate limiting in production
-3. Integrate localStorage backup utility into intake pages
-4. Add accessibility improvements (reduced-motion, focus-visible)
-5. Monitor audit logs for security events
+*Last Updated: January 19, 2026*
