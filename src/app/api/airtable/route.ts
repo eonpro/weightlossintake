@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { SCHEMA_VERSION } from '@/lib/eonpro-schema';
 import { queueFailedSubmission, isDLQConfigured } from '@/lib/dlq';
+import { recordSuccess, recordFailure, isMetricsConfigured } from '@/lib/eonpro-metrics';
 
 // =============================================================================
 // PHI HANDLING BOUNDARY DOCUMENTATION
@@ -1229,16 +1230,30 @@ export async function POST(request: NextRequest) {
 
       // AWAIT the EONPRO call - this is critical for serverless!
       // Without awaiting, the function may terminate before the request completes
+      const eonproStartTime = Date.now();
       try {
         eonproResult = await sendToEonpro(eonproData);
+        const eonproLatency = Date.now() - eonproStartTime;
 
         if (eonproResult?.success) {
           eonproLog('✅ SUCCESS - Patient profile created:', eonproResult.data?.patientId);
           eonproTriggered = true;
+          
+          // Record success metrics
+          if (isMetricsConfigured()) {
+            await recordSuccess(eonproLatency);
+          }
         } else {
           eonproLog('❌ FAILED - Webhook returned error:', eonproResult?.error);
           // Still mark as triggered - we attempted
           eonproTriggered = true;
+
+          const failureError = eonproResult?.error || 'Unknown error';
+          
+          // Record failure metrics
+          if (isMetricsConfigured()) {
+            await recordFailure(failureError);
+          }
 
           // Queue for retry if DLQ is configured
           if (isDLQConfigured()) {
@@ -1246,7 +1261,7 @@ export async function POST(request: NextRequest) {
               result.id,
               data.sessionId,
               eonproData as unknown as Record<string, unknown>,
-              eonproResult?.error || 'Unknown error'
+              failureError
             );
             eonproLog(`📥 Queued for retry: ${dlqId}`);
           }
@@ -1259,12 +1274,19 @@ export async function POST(request: NextRequest) {
             ip: clientIp,
             sessionId: data.sessionId,
             statusCode: 502,
-            details: `EONPRO failed: ${eonproResult?.error || 'Unknown error'}`,
+            details: `EONPRO failed: ${failureError}`,
           });
         }
       } catch (err) {
         eonproLog('❌ EXCEPTION:', err);
         eonproTriggered = true; // Mark as attempted
+        
+        const exceptionError = err instanceof Error ? err.message : 'Unknown exception';
+
+        // Record failure metrics
+        if (isMetricsConfigured()) {
+          await recordFailure(exceptionError);
+        }
 
         // Queue for retry if DLQ is configured
         if (isDLQConfigured()) {
@@ -1272,7 +1294,7 @@ export async function POST(request: NextRequest) {
             result.id,
             data.sessionId,
             eonproData as unknown as Record<string, unknown>,
-            err instanceof Error ? err.message : 'Unknown exception'
+            exceptionError
           );
           eonproLog(`📥 Queued for retry: ${dlqId}`);
         }
@@ -1284,7 +1306,7 @@ export async function POST(request: NextRequest) {
           ip: clientIp,
           sessionId: data.sessionId,
           statusCode: 500,
-          details: `EONPRO exception: ${err instanceof Error ? err.message : 'Unknown'}`,
+          details: `EONPRO exception: ${exceptionError}`,
         });
       }
     } else if (!EONPRO_ENABLED) {

@@ -7,6 +7,10 @@
     {
       "path": "/api/cron/process-eonpro-queue",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/eonpro-health",
+      "schedule": "2-57/5 * * * *"
     }
   ],
   "headers": [
