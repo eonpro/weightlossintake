@@ -25,6 +25,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@stripe/react-stripe-js": "^5.4.1",
     "@stripe/stripe-js": "^8.6.1",
+    "@upstash/redis": "^1.36.1",
     "next": "15.5.9",
     "react": "19.1.0",
     "react-dom": "19.1.0",

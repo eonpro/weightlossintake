@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { SCHEMA_VERSION } from '@/lib/eonpro-schema';
+import { queueFailedSubmission, isDLQConfigured } from '@/lib/dlq';
 
 // =============================================================================
 // PHI HANDLING BOUNDARY DOCUMENTATION
@@ -1239,6 +1240,17 @@ export async function POST(request: NextRequest) {
           // Still mark as triggered - we attempted
           eonproTriggered = true;
 
+          // Queue for retry if DLQ is configured
+          if (isDLQConfigured()) {
+            const dlqId = await queueFailedSubmission(
+              result.id,
+              data.sessionId,
+              eonproData as unknown as Record<string, unknown>,
+              eonproResult?.error || 'Unknown error'
+            );
+            eonproLog(`📥 Queued for retry: ${dlqId}`);
+          }
+
           // Audit log the failure
           auditLog({
             timestamp: new Date().toISOString(),
@@ -1253,6 +1265,17 @@ export async function POST(request: NextRequest) {
       } catch (err) {
         eonproLog('❌ EXCEPTION:', err);
         eonproTriggered = true; // Mark as attempted
+
+        // Queue for retry if DLQ is configured
+        if (isDLQConfigured()) {
+          const dlqId = await queueFailedSubmission(
+            result.id,
+            data.sessionId,
+            eonproData as unknown as Record<string, unknown>,
+            err instanceof Error ? err.message : 'Unknown exception'
+          );
+          eonproLog(`📥 Queued for retry: ${dlqId}`);
+        }
 
         auditLog({
           timestamp: new Date().toISOString(),
