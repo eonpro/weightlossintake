@@ -674,6 +674,38 @@ export function collectIntakeData(): IntakeSubmission {
   const finalDosageSatisfaction = dosageSatisfaction || (hasNeverTakenGLP1 ? noPreviousGLP1 : '');
   const finalDosageInterest = dosageInterest || (hasNeverTakenGLP1 ? noPreviousGLP1 : '');
 
+  // ==========================================================================
+  // MEDICATIONS & ALLERGIES: CRITICAL MEDICAL INFORMATION
+  // Must clearly indicate when patient has no medications or allergies
+  // ==========================================================================
+  const noMedicationsStatement = 'Patient is currently not taking any other medications';
+  const noAllergiesStatement = 'Patient currently does not have any known allergies';
+  
+  // Parse medications and check if "none" or empty
+  let parsedMedications = medications ? JSON.parse(medications) : [];
+  const medicationsIsNone = !medications || 
+    parsedMedications.length === 0 || 
+    (parsedMedications.length === 1 && 
+      (parsedMedications[0]?.toLowerCase() === 'none' || 
+       parsedMedications[0]?.toLowerCase() === 'no' ||
+       parsedMedications[0]?.toLowerCase() === 'ninguno' ||
+       parsedMedications[0]?.toLowerCase() === 'no, none'));
+  
+  // Parse allergies and check if "none" or empty
+  let parsedAllergies = allergies ? JSON.parse(allergies) : [];
+  const allergiesIsNone = !allergies || 
+    parsedAllergies.length === 0 || 
+    (parsedAllergies.length === 1 && 
+      (parsedAllergies[0]?.toLowerCase() === 'none' || 
+       parsedAllergies[0]?.toLowerCase() === 'no' ||
+       parsedAllergies[0]?.toLowerCase() === 'ninguna' ||
+       parsedAllergies[0]?.toLowerCase() === 'nkda' ||
+       parsedAllergies[0]?.toLowerCase() === 'no known allergies'));
+  
+  // Set final values with clear medical statements
+  const finalMedications = medicationsIsNone ? [noMedicationsStatement] : parsedMedications;
+  const finalAllergies = allergiesIsNone ? [noAllergiesStatement] : parsedAllergies;
+
   const intakeData: IntakeSubmission = {
     sessionId,
     personalInfo: {
@@ -694,8 +726,8 @@ export function collectIntakeData(): IntakeSubmission {
     medicalHistory: {
       chronicConditions: chronicConditions ? JSON.parse(chronicConditions) : [],
       digestiveConditions: digestiveConditions ? JSON.parse(digestiveConditions) : [],
-      medications: medications ? JSON.parse(medications) : [],
-      allergies: allergies ? JSON.parse(allergies) : [],
+      medications: finalMedications,
+      allergies: finalAllergies,
       mentalHealthConditions: mentalHealth ? JSON.parse(mentalHealth) : 
         (hasMentalHealthIssues ? [] : ['None']),
       surgeryHistory: surgeryHistory || '',
