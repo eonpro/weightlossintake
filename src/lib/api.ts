@@ -54,12 +54,61 @@ const valueToEnglish: Record<string, string> = {
   'satisfied': 'Satisfied',
   'not_satisfied': 'Not satisfied',
   'somewhat': 'Somewhat satisfied',
+  'very_satisfied': 'Very satisfied',
   
   // Success levels
   'successful': 'Successful',
+  'very_successful': 'Very successful',
   'not_successful': 'Not successful',
   'partial': 'Partial success',
+  'partial_success': 'Partial success',
+  'no_success': 'No success',
+  
+  // Alcohol consumption
+  'never': 'Never',
+  'rarely': 'Rarely',
+  'few_times_year': 'A few times a year',
+  'few_times_month': 'A few times a month',
+  'once_week': 'Once a week',
+  'few_times_week': 'A few times a week',
+  'daily': 'Daily',
+  'socially': 'Socially',
+  'occasionally': 'Occasionally',
+  'regularly': 'Regularly',
+  'heavily': 'Heavily',
+  
+  // Dosage interest
+  'increase_dose': 'Interested in increasing dose',
+  'same_dose': 'Keep the same dose',
+  'decrease_dose': 'Interested in decreasing dose',
+  'not_sure': 'Not sure',
+  
+  // Side effects
+  'no_side_effects': 'No side effects',
+  'mild_nausea': 'Mild nausea',
+  'moderate_nausea': 'Moderate nausea',
+  'severe_nausea': 'Severe nausea',
+  'constipation': 'Constipation',
+  'diarrhea': 'Diarrhea',
+  'headache': 'Headache',
+  'fatigue': 'Fatigue',
+  'injection_site': 'Injection site reaction',
+  
+  // Common conditions - negative responses
+  'none': 'None',
+  'no_none': 'None',
+  'no_never': 'No, never',
+  'none_of_these': 'None of these',
+  'no_none_of_these': 'No, none of these',
 };
+
+// Convert underscore_case to "Title Case"
+function underscoreToTitleCase(str: string): string {
+  return str
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+}
 
 // Helper function to convert translation keys to English text
 function toEnglish(value: string | undefined | null): string {
@@ -86,6 +135,11 @@ function toEnglish(value: string | undefined | null): string {
     if (esValue === value && enTranslations[key]) {
       return enTranslations[key];
     }
+  }
+  
+  // Convert underscore_case to "Title Case" for any remaining values
+  if (value.includes('_')) {
+    return underscoreToTitleCase(value);
   }
   
   // Return original value if not a translation key (already in English or raw data)
@@ -574,6 +628,52 @@ export function collectIntakeData(): IntakeSubmission {
     heightInches: parsedHeight.inches !== undefined && parsedHeight.inches !== '' ? parseInt(parsedHeight.inches) : undefined
   };
 
+  // ==========================================================================
+  // CONDITIONAL DEFAULTS: Set proper values for questions that were skipped
+  // based on earlier answers (patient wasn't prompted these questions)
+  // ==========================================================================
+  
+  // Check if patient has chronic conditions - if "No", set personal condition fields to "No history"
+  const hasChronicIssues = hasChronicConditions?.toLowerCase() === 'yes';
+  const noHistoryDefault = 'No history';
+  
+  // Personal condition fields - only shown if patient indicated they have chronic conditions
+  const finalPersonalDiabetes = personalDiabetes || (hasChronicIssues ? '' : noHistoryDefault);
+  const finalPersonalGastroparesis = personalGastroparesis || (hasChronicIssues ? '' : noHistoryDefault);
+  const finalPersonalPancreatitis = personalPancreatitis || (hasChronicIssues ? '' : noHistoryDefault);
+  const finalPersonalThyroidCancer = personalThyroidCancer || (hasChronicIssues ? '' : noHistoryDefault);
+  const finalPersonalMen = personalMen || (hasChronicIssues ? '' : noHistoryDefault);
+  
+  // Check if patient has mental health history - if "No", default the field
+  const hasMentalHealthIssues = hasMentalHealth?.toLowerCase() === 'yes';
+  
+  // GLP-1 specific defaults based on history
+  const noPreviousGLP1 = 'N/A, no previous GLP-1 usage';
+  const hasNeverTakenGLP1 = glp1History?.toLowerCase() === 'never_taken' || 
+                            glp1History?.toLowerCase().includes('never');
+  const tookSemaglutide = glp1Type?.toLowerCase() === 'semaglutide';
+  const tookTirzepatide = glp1Type?.toLowerCase() === 'tirzepatide';
+  
+  // Semaglutide fields - only relevant if patient took Semaglutide
+  const finalSemaglutideDosage = semaglutideDosage || 
+    (hasNeverTakenGLP1 ? noPreviousGLP1 : (!tookSemaglutide && glp1Type ? 'N/A, took Tirzepatide' : ''));
+  const finalSemaglutideSideEffects = semaglutideSideEffects ? JSON.parse(semaglutideSideEffects) : 
+    (hasNeverTakenGLP1 || (!tookSemaglutide && glp1Type) ? [] : []);
+  const finalSemaglutideSuccess = semaglutideSuccess || 
+    (hasNeverTakenGLP1 ? noPreviousGLP1 : (!tookSemaglutide && glp1Type ? 'N/A, took Tirzepatide' : ''));
+  
+  // Tirzepatide fields - only relevant if patient took Tirzepatide
+  const finalTirzepatideDosage = tirzepatideDosage || 
+    (hasNeverTakenGLP1 ? noPreviousGLP1 : (!tookTirzepatide && glp1Type ? 'N/A, took Semaglutide' : ''));
+  const finalTirzepatideSideEffects = tirzepatideSideEffects ? JSON.parse(tirzepatideSideEffects) : 
+    (hasNeverTakenGLP1 || (!tookTirzepatide && glp1Type) ? [] : []);
+  const finalTirzepatideSuccess = tirzepatideSuccess || 
+    (hasNeverTakenGLP1 ? noPreviousGLP1 : (!tookTirzepatide && glp1Type ? 'N/A, took Semaglutide' : ''));
+  
+  // Dosage satisfaction/interest - only relevant if patient has taken GLP-1 before
+  const finalDosageSatisfaction = dosageSatisfaction || (hasNeverTakenGLP1 ? noPreviousGLP1 : '');
+  const finalDosageInterest = dosageInterest || (hasNeverTakenGLP1 ? noPreviousGLP1 : '');
+
   const intakeData: IntakeSubmission = {
     sessionId,
     personalInfo: {
@@ -596,33 +696,34 @@ export function collectIntakeData(): IntakeSubmission {
       digestiveConditions: digestiveConditions ? JSON.parse(digestiveConditions) : [],
       medications: medications ? JSON.parse(medications) : [],
       allergies: allergies ? JSON.parse(allergies) : [],
-      mentalHealthConditions: mentalHealth ? JSON.parse(mentalHealth) : [],
+      mentalHealthConditions: mentalHealth ? JSON.parse(mentalHealth) : 
+        (hasMentalHealthIssues ? [] : ['None']),
       surgeryHistory: surgeryHistory || '',
       surgeryDetails: surgeryDetails ? JSON.parse(surgeryDetails) : [],
       familyConditions: familyConditions ? JSON.parse(familyConditions) : [],
       kidneyConditions: kidneyConditions ? JSON.parse(kidneyConditions) : [],
       medicalConditions: medicalConditions ? JSON.parse(medicalConditions) : [],
-      personalDiabetes: personalDiabetes || '',
-      personalGastroparesis: personalGastroparesis || '',
-      personalPancreatitis: personalPancreatitis || '',
-      personalThyroidCancer: personalThyroidCancer || '',
-      personalMen: personalMen || '',
-      hasMentalHealth: hasMentalHealth || '',
-      hasChronicConditions: hasChronicConditions || ''
+      personalDiabetes: finalPersonalDiabetes,
+      personalGastroparesis: finalPersonalGastroparesis,
+      personalPancreatitis: finalPersonalPancreatitis,
+      personalThyroidCancer: finalPersonalThyroidCancer,
+      personalMen: finalPersonalMen,
+      hasMentalHealth: hasMentalHealth || 'No',
+      hasChronicConditions: hasChronicConditions || 'No'
     },
     glp1Profile: {
       history: glp1History || '',
-      type: glp1Type || '',
+      type: glp1Type || (hasNeverTakenGLP1 ? noPreviousGLP1 : ''),
       sideEffects: sideEffects ? JSON.parse(sideEffects) : [],
       medicationPreference: medicationPref || '',
-      semaglutideDosage: semaglutideDosage || '',
-      semaglutideSideEffects: semaglutideSideEffects ? JSON.parse(semaglutideSideEffects) : [],
-      semaglutideSuccess: semaglutideSuccess || '',
-      tirzepatideDosage: tirzepatideDosage || '',
-      tirzepatideSideEffects: tirzepatideSideEffects ? JSON.parse(tirzepatideSideEffects) : [],
-      tirzepatideSuccess: tirzepatideSuccess || '',
-      dosageSatisfaction: dosageSatisfaction || '',
-      dosageInterest: dosageInterest || ''
+      semaglutideDosage: finalSemaglutideDosage,
+      semaglutideSideEffects: finalSemaglutideSideEffects,
+      semaglutideSuccess: finalSemaglutideSuccess,
+      tirzepatideDosage: finalTirzepatideDosage,
+      tirzepatideSideEffects: finalTirzepatideSideEffects,
+      tirzepatideSuccess: finalTirzepatideSuccess,
+      dosageSatisfaction: finalDosageSatisfaction,
+      dosageInterest: finalDosageInterest
     },
     lifestyle: {
       alcoholConsumption: alcoholConsumption || '',
