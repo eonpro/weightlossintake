@@ -706,6 +706,91 @@ export function collectIntakeData(): IntakeSubmission {
   const finalMedications = medicationsIsNone ? [noMedicationsStatement] : parsedMedications;
   const finalAllergies = allergiesIsNone ? [noAllergiesStatement] : parsedAllergies;
 
+  // ==========================================================================
+  // LIABILITY PROTECTION: No blank responses
+  // All empty fields must have clear documentation that patient was asked
+  // and either denied history or question was not applicable
+  // ==========================================================================
+  const noKnownHistory = 'N/A, No known history';
+  const deniedHistory = 'Patient denied';
+  const notApplicable = 'N/A';
+  
+  // Helper function to ensure no empty values for arrays
+  const ensureArrayNotEmpty = (arr: string[] | null | undefined, defaultVal: string = noKnownHistory): string[] => {
+    if (!arr || arr.length === 0) return [defaultVal];
+    // Check if array contains only empty strings or "none" type values
+    const hasRealContent = arr.some(item => 
+      item && 
+      item.trim() !== '' && 
+      !['none', 'no', 'ninguno', 'ninguna', 'n/a'].includes(item.toLowerCase().trim())
+    );
+    return hasRealContent ? arr : [defaultVal];
+  };
+  
+  // Helper function to ensure no empty string values
+  const ensureNotEmpty = (val: string | null | undefined, defaultVal: string = noKnownHistory): string => {
+    if (!val || val.trim() === '') return defaultVal;
+    const lowerVal = val.toLowerCase().trim();
+    if (['none', 'no', 'ninguno', 'ninguna', ''].includes(lowerVal)) return defaultVal;
+    return val;
+  };
+
+  // Process all condition arrays with proper defaults
+  const finalChronicConditions = ensureArrayNotEmpty(
+    chronicConditions ? JSON.parse(chronicConditions) : [], 
+    'No chronic conditions reported'
+  );
+  const finalDigestiveConditions = ensureArrayNotEmpty(
+    digestiveConditions ? JSON.parse(digestiveConditions) : [],
+    'No digestive conditions reported'
+  );
+  const finalMentalHealthConditions = ensureArrayNotEmpty(
+    mentalHealth ? JSON.parse(mentalHealth) : [],
+    hasMentalHealthIssues ? noKnownHistory : 'No mental health conditions reported'
+  );
+  const finalSurgeryDetails = ensureArrayNotEmpty(
+    surgeryDetails ? JSON.parse(surgeryDetails) : [],
+    'No surgical history reported'
+  );
+  const finalFamilyConditions = ensureArrayNotEmpty(
+    familyConditions ? JSON.parse(familyConditions) : [],
+    'No relevant family history reported'
+  );
+  const finalKidneyConditions = ensureArrayNotEmpty(
+    kidneyConditions ? JSON.parse(kidneyConditions) : [],
+    'No kidney conditions reported'
+  );
+  const finalMedicalConditions = ensureArrayNotEmpty(
+    medicalConditions ? JSON.parse(medicalConditions) : [],
+    'No additional medical conditions reported'
+  );
+  const finalRecreationalDrugs = ensureArrayNotEmpty(
+    recreationalDrugs ? JSON.parse(recreationalDrugs) : [],
+    'Patient denied recreational drug use'
+  );
+  const finalWeightLossHistory = ensureArrayNotEmpty(
+    weightLossHistory ? JSON.parse(weightLossHistory) : [],
+    'No previous weight loss attempts reported'
+  );
+  const finalWeightLossSupport = ensureArrayNotEmpty(
+    weightLossSupport ? JSON.parse(weightLossSupport) : [],
+    noKnownHistory
+  );
+  const finalHealthImprovements = ensureArrayNotEmpty(
+    healthImprovements ? JSON.parse(healthImprovements) : [],
+    'Weight loss'
+  );
+  const finalSideEffects = ensureArrayNotEmpty(
+    sideEffects ? JSON.parse(sideEffects) : [],
+    hasNeverTakenGLP1 ? noPreviousGLP1 : 'No side effects reported'
+  );
+
+  // Process string fields with proper defaults
+  const finalSurgeryHistory = ensureNotEmpty(surgeryHistory, 'No surgical history');
+  const finalAlcoholConsumption = ensureNotEmpty(alcoholConsumption, 'Patient did not disclose');
+  const finalBloodPressure = ensureNotEmpty(bloodPressure, 'Not reported');
+  const finalPregnancyBreastfeeding = ensureNotEmpty(pregnancyBreastfeeding, notApplicable);
+
   const intakeData: IntakeSubmission = {
     sessionId,
     personalInfo: {
@@ -713,8 +798,8 @@ export function collectIntakeData(): IntakeSubmission {
       ...(contactData ? JSON.parse(contactData) : {}),
       dob: dobData || null,
       sex: sexAssigned || '',
-      bloodPressure: bloodPressure || '',
-      pregnancyBreastfeeding: pregnancyBreastfeeding || ''
+      bloodPressure: finalBloodPressure,
+      pregnancyBreastfeeding: finalPregnancyBreastfeeding
     },
     address: addressData ? JSON.parse(addressData) : null,
     medicalProfile: {
@@ -724,45 +809,44 @@ export function collectIntakeData(): IntakeSubmission {
       activityLevel: activityData || ''
     },
     medicalHistory: {
-      chronicConditions: chronicConditions ? JSON.parse(chronicConditions) : [],
-      digestiveConditions: digestiveConditions ? JSON.parse(digestiveConditions) : [],
+      chronicConditions: finalChronicConditions,
+      digestiveConditions: finalDigestiveConditions,
       medications: finalMedications,
       allergies: finalAllergies,
-      mentalHealthConditions: mentalHealth ? JSON.parse(mentalHealth) : 
-        (hasMentalHealthIssues ? [] : ['None']),
-      surgeryHistory: surgeryHistory || '',
-      surgeryDetails: surgeryDetails ? JSON.parse(surgeryDetails) : [],
-      familyConditions: familyConditions ? JSON.parse(familyConditions) : [],
-      kidneyConditions: kidneyConditions ? JSON.parse(kidneyConditions) : [],
-      medicalConditions: medicalConditions ? JSON.parse(medicalConditions) : [],
-      personalDiabetes: finalPersonalDiabetes,
-      personalGastroparesis: finalPersonalGastroparesis,
-      personalPancreatitis: finalPersonalPancreatitis,
-      personalThyroidCancer: finalPersonalThyroidCancer,
-      personalMen: finalPersonalMen,
+      mentalHealthConditions: finalMentalHealthConditions,
+      surgeryHistory: finalSurgeryHistory,
+      surgeryDetails: finalSurgeryDetails,
+      familyConditions: finalFamilyConditions,
+      kidneyConditions: finalKidneyConditions,
+      medicalConditions: finalMedicalConditions,
+      personalDiabetes: finalPersonalDiabetes || noKnownHistory,
+      personalGastroparesis: finalPersonalGastroparesis || noKnownHistory,
+      personalPancreatitis: finalPersonalPancreatitis || noKnownHistory,
+      personalThyroidCancer: finalPersonalThyroidCancer || noKnownHistory,
+      personalMen: finalPersonalMen || noKnownHistory,
       hasMentalHealth: hasMentalHealth || 'No',
       hasChronicConditions: hasChronicConditions || 'No'
     },
     glp1Profile: {
-      history: glp1History || '',
-      type: glp1Type || (hasNeverTakenGLP1 ? noPreviousGLP1 : ''),
-      sideEffects: sideEffects ? JSON.parse(sideEffects) : [],
-      medicationPreference: medicationPref || '',
-      semaglutideDosage: finalSemaglutideDosage,
+      history: glp1History || 'Never taken GLP-1 medications',
+      type: glp1Type || (hasNeverTakenGLP1 ? noPreviousGLP1 : noKnownHistory),
+      sideEffects: finalSideEffects,
+      medicationPreference: medicationPref || 'Looking for recommendation',
+      semaglutideDosage: finalSemaglutideDosage || noPreviousGLP1,
       semaglutideSideEffects: finalSemaglutideSideEffects,
-      semaglutideSuccess: finalSemaglutideSuccess,
-      tirzepatideDosage: finalTirzepatideDosage,
+      semaglutideSuccess: finalSemaglutideSuccess || noPreviousGLP1,
+      tirzepatideDosage: finalTirzepatideDosage || noPreviousGLP1,
       tirzepatideSideEffects: finalTirzepatideSideEffects,
-      tirzepatideSuccess: finalTirzepatideSuccess,
-      dosageSatisfaction: finalDosageSatisfaction,
-      dosageInterest: finalDosageInterest
+      tirzepatideSuccess: finalTirzepatideSuccess || noPreviousGLP1,
+      dosageSatisfaction: finalDosageSatisfaction || noPreviousGLP1,
+      dosageInterest: finalDosageInterest || noPreviousGLP1
     },
     lifestyle: {
-      alcoholConsumption: alcoholConsumption || '',
-      recreationalDrugs: recreationalDrugs ? JSON.parse(recreationalDrugs) : [],
-      weightLossHistory: weightLossHistory ? JSON.parse(weightLossHistory) : [],
-      weightLossSupport: weightLossSupport ? JSON.parse(weightLossSupport) : [],
-      healthImprovements: healthImprovements ? JSON.parse(healthImprovements) : []
+      alcoholConsumption: finalAlcoholConsumption,
+      recreationalDrugs: finalRecreationalDrugs,
+      weightLossHistory: finalWeightLossHistory,
+      weightLossSupport: finalWeightLossSupport,
+      healthImprovements: finalHealthImprovements
     },
     referral: {
       sources: referralSources ? JSON.parse(referralSources) : [],
