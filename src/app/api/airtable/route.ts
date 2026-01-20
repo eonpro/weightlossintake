@@ -379,6 +379,31 @@ function mapToEonproFormat(data: IntakeRecord, airtableRecordId: string, isParti
       language: data.flowLanguage || 'en',
       intakeSource: 'eonmeds-intake',
       airtableRecordId: airtableRecordId,
+
+      // E-Signature / Consent Data
+      consentIP: data.consentIP || '',
+      consentUserAgent: data.consentUserAgent || '',
+      consentCity: data.consentCity || '',
+      consentRegion: data.consentRegion || '',
+      consentRegionCode: data.consentRegionCode || '',
+      consentCountry: data.consentCountry || '',
+      consentCountryCode: data.consentCountryCode || '',
+      consentTimezone: data.consentTimezone || '',
+      consentISP: data.consentISP || '',
+      
+      // Consent acceptances
+      privacyPolicyAccepted: data.privacyPolicyAccepted ? 'Yes' : 'No',
+      termsOfServiceAccepted: data.termsOfUseAccepted ? 'Yes' : 'No',
+      telehealthConsentAccepted: data.telehealthConsentAccepted ? 'Yes' : 'No',
+      cancellationPolicyAccepted: data.cancellationPolicyAccepted ? 'Yes' : 'No',
+      smsConsentAccepted: data.smsConsentAccepted ? 'Yes' : 'No',
+      emailConsentAccepted: data.emailConsentAccepted ? 'Yes' : 'No',
+      weightLossTreatmentConsentAccepted: data.weightLossTreatmentConsentAccepted ? 'Yes' : 'No',
+      hipaaAuthorizationAccepted: data.hipaaAuthorizationAccepted ? 'Yes' : 'No',
+      floridaBillOfRightsAccepted: data.floridaBillOfRightsAccepted ? 'Yes' : 'No',
+      
+      // Full consent signatures log
+      consentSignatures: data.consentSignatures || '',
     },
   };
 }
@@ -492,6 +517,21 @@ const IntakeRecordSchema = z.object({
   cancellationPolicyAccepted: z.boolean().optional(),
   floridaBillOfRightsAccepted: z.boolean().optional(),
   floridaConsentAccepted: z.boolean().optional(),
+  smsConsentAccepted: z.boolean().optional(),
+  emailConsentAccepted: z.boolean().optional(),
+  weightLossTreatmentConsentAccepted: z.boolean().optional(),
+  hipaaAuthorizationAccepted: z.boolean().optional(),
+  // E-Signature data (IP, geolocation, user agent)
+  consentIP: z.string().max(50).optional(),
+  consentUserAgent: z.string().max(500).optional(),
+  consentCity: z.string().max(100).optional(),
+  consentRegion: z.string().max(100).optional(),
+  consentRegionCode: z.string().max(10).optional(),
+  consentCountry: z.string().max(100).optional(),
+  consentCountryCode: z.string().max(10).optional(),
+  consentTimezone: z.string().max(50).optional(),
+  consentISP: z.string().max(200).optional(),
+  consentSignatures: z.string().max(5000).optional(), // Formatted consent log
 }).strip(); // Strip unknown fields for security - only allow defined fields
 
 // =============================================================================
@@ -611,6 +651,21 @@ const KNOWN_AIRTABLE_FIELDS = new Set([
   'Cancellation Policy Accepted',
   'Florida Bill of Rights Accepted',
   'Florida Consent Accepted',
+  'SMS Consent Accepted',
+  'Email Consent Accepted',
+  'Weight Loss Treatment Consent Accepted',
+  'HIPAA Authorization Accepted',
+  // E-Signature data
+  'Consent IP',
+  'Consent User Agent',
+  'Consent City',
+  'Consent Region',
+  'Consent Region Code',
+  'Consent Country',
+  'Consent Country Code',
+  'Consent Timezone',
+  'Consent ISP',
+  'Consent Signatures',  // Full consent log with timestamps and signatures
   // Note: Consent timestamp fields (e.g., "Privacy Policy Accepted At") are computed fields
   // in Airtable and cannot be written to directly - they auto-populate when checkbox is set
 ]);
@@ -624,6 +679,10 @@ const CHECKBOX_FIELDS = new Set([
   'Cancellation Policy Accepted',
   'Florida Bill of Rights Accepted',
   'Florida Consent Accepted',
+  'SMS Consent Accepted',
+  'Email Consent Accepted',
+  'Weight Loss Treatment Consent Accepted',
+  'HIPAA Authorization Accepted',
 ]);
 
 // Fields that are number type in Airtable (need numeric values)
@@ -713,6 +772,10 @@ interface IntakeRecord {
   cancellationPolicyAccepted?: boolean;
   floridaBillOfRightsAccepted?: boolean;
   floridaConsentAccepted?: boolean;
+  smsConsentAccepted?: boolean;
+  emailConsentAccepted?: boolean;
+  weightLossTreatmentConsentAccepted?: boolean;
+  hipaaAuthorizationAccepted?: boolean;
   // Consent tracking - timestamps
   privacyPolicyAcceptedAt?: string;
   termsOfUseAcceptedAt?: string;
@@ -720,6 +783,17 @@ interface IntakeRecord {
   cancellationPolicyAcceptedAt?: string;
   floridaBillOfRightsAcceptedAt?: string;
   floridaConsentAcceptedAt?: string;
+  // E-Signature data (IP + geolocation)
+  consentIP?: string;
+  consentUserAgent?: string;
+  consentCity?: string;
+  consentRegion?: string;
+  consentRegionCode?: string;
+  consentCountry?: string;
+  consentCountryCode?: string;
+  consentTimezone?: string;
+  consentISP?: string;
+  consentSignatures?: string;
 }
 
 // CORS headers - whitelist only our domains
@@ -1054,6 +1128,21 @@ export async function POST(request: NextRequest) {
       'Cancellation Policy Accepted': data.cancellationPolicyAccepted ?? false,
       'Florida Bill of Rights Accepted': data.floridaBillOfRightsAccepted ?? false,
       'Florida Consent Accepted': data.floridaConsentAccepted ?? false,
+      'SMS Consent Accepted': data.smsConsentAccepted ?? false,
+      'Email Consent Accepted': data.emailConsentAccepted ?? false,
+      'Weight Loss Treatment Consent Accepted': data.weightLossTreatmentConsentAccepted ?? false,
+      'HIPAA Authorization Accepted': data.hipaaAuthorizationAccepted ?? false,
+      // E-Signature data
+      'Consent IP': toString(data.consentIP),
+      'Consent User Agent': toString(data.consentUserAgent),
+      'Consent City': toString(data.consentCity),
+      'Consent Region': toString(data.consentRegion),
+      'Consent Region Code': toString(data.consentRegionCode),
+      'Consent Country': toString(data.consentCountry),
+      'Consent Country Code': toString(data.consentCountryCode),
+      'Consent Timezone': toString(data.consentTimezone),
+      'Consent ISP': toString(data.consentISP),
+      'Consent Signatures': toString(data.consentSignatures),
     };
 
     // Build final fields object with proper types
