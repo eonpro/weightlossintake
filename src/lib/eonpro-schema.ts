@@ -192,7 +192,7 @@ export function validateIntakePayload(payload: unknown): {
       return { valid: true, data: result.data };
     }
     
-    const errors = result.error.errors.map(e => 
+    const errors = result.error.issues.map(e => 
       `${e.path.join('.')}: ${e.message}`
     );
     
