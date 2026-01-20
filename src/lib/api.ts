@@ -788,8 +788,15 @@ export function collectIntakeData(): IntakeSubmission {
   // Process string fields with proper defaults
   const finalSurgeryHistory = ensureNotEmpty(surgeryHistory, 'No surgical history');
   const finalAlcoholConsumption = ensureNotEmpty(alcoholConsumption, 'Patient did not disclose');
-  const finalBloodPressure = ensureNotEmpty(bloodPressure, 'Not reported');
   const finalPregnancyBreastfeeding = ensureNotEmpty(pregnancyBreastfeeding, notApplicable);
+  
+  // Blood pressure - handle "don't know" / "unknown" responses
+  let finalBloodPressure = bloodPressure || 'No known abnormal history';
+  const bpLower = finalBloodPressure.toLowerCase().trim();
+  if (bpLower === "don't know" || bpLower === 'dont_know' || bpLower === 'unknown' || 
+      bpLower === 'no_se' || bpLower === 'no se' || bpLower === '' || bpLower === 'not reported') {
+    finalBloodPressure = 'No known abnormal history';
+  }
 
   const intakeData: IntakeSubmission = {
     sessionId,
