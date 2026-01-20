@@ -659,7 +659,7 @@ input[type="number"] {
   animation: pulseGlow 2s ease-in-out infinite;
 }
 
-/* Shimmer/Shine effect */
+/* Shimmer/Shine effect - Inviting CTA animation */
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
@@ -669,9 +669,38 @@ input[type="number"] {
   }
 }
 
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(65, 61, 61, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(65, 61, 61, 0.5), 0 0 30px rgba(255, 255, 255, 0.1);
+  }
+}
+
 .shine-button {
   position: relative;
   overflow: hidden;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.shine-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    transparent 30%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 70%,
+    transparent 100%
+  );
+  animation: shine-sweep 2s ease-in-out infinite;
+  z-index: 1;
 }
 
 .shine-button::after {
@@ -681,11 +710,23 @@ input[type="number"] {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.15) 25%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
     transparent 100%
   );
   background-size: 200% 100%;
-  animation: shimmer 3s ease-in-out infinite;
+  animation: shimmer 1.8s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes shine-sweep {
+  0% {
+    left: -100%;
+  }
+  50%, 100% {
+    left: 100%;
+  }
 }
 
 /* Spin */
