@@ -188,6 +188,10 @@ export default function ContactInfoPage() {
         sessionStorage.setItem('intake_session_id', sessionId);
       }
 
+      // Get consent signature data (captured on consent page)
+      const consentClientInfo = sessionStorage.getItem('consent_client_info');
+      const parsedClientInfo = safeJsonParse<Record<string, string>>(consentClientInfo, {});
+
       // Build midpoint checkpoint data for Airtable
       // Filter out null/undefined values as Zod schema doesn't accept null
       const midpointData: Record<string, string | number | boolean> = {
@@ -206,6 +210,22 @@ export default function ContactInfoPage() {
         activityLevel: activityData || '',
         qualified: false, // Not yet qualified at midpoint
         flowLanguage: localStorage.getItem('preferredLanguage') || 'en',
+        // E-Signature data for consent tracking
+        consentIP: parsedClientInfo.ip || sessionStorage.getItem('consent_ip') || '',
+        consentUserAgent: parsedClientInfo.userAgent || sessionStorage.getItem('consent_user_agent') || '',
+        consentCity: parsedClientInfo.city || '',
+        consentRegion: parsedClientInfo.region || '',
+        consentCountry: parsedClientInfo.country || '',
+        consentTimezone: parsedClientInfo.timezone || '',
+        consentISP: parsedClientInfo.isp || '',
+        consentSignatureHash: sessionStorage.getItem('consent_signature_hash') || '',
+        consentSignatureTimestamp: sessionStorage.getItem('consent_signature_timestamp') || '',
+        // Individual consent acceptances
+        termsOfUseAccepted: sessionStorage.getItem('terms_of_use_accepted') === 'true',
+        privacyPolicyAccepted: sessionStorage.getItem('consent_privacy_policy_accepted') === 'true',
+        telehealthConsentAccepted: sessionStorage.getItem('telehealth_consent_accepted') === 'true',
+        smsConsentAccepted: consent, // Current page consent
+        cancellationPolicyAccepted: sessionStorage.getItem('cancellation_policy_accepted') === 'true',
       };
 
       // Only add numeric fields if they have valid values

@@ -122,6 +122,12 @@ export default function DOBPage() {
     
     // All validations passed
     sessionStorage.setItem('intake_dob', dob);
+    
+    // Track age certification consent with timestamp (e-signature)
+    const timestamp = new Date().toISOString();
+    sessionStorage.setItem('age_certification_accepted', 'true');
+    sessionStorage.setItem('age_certification_accepted_at', timestamp);
+    
     router.push('/intake/contact-info');
   };
   

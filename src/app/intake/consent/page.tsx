@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -8,17 +8,90 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useEnterNavigation } from '@/hooks/useEnterNavigation';
 import EonmedsLogo from '@/components/EonmedsLogo';
+import { generateSignatureHash } from '@/lib/consent-signature';
+
+// Client info interface
+interface ClientInfo {
+  ip: string;
+  userAgent: string;
+  city: string;
+  region: string;
+  regionCode: string;
+  country: string;
+  countryCode: string;
+  timezone: string;
+  isp: string;
+  timestamp: string;
+}
 
 export default function ConsentPage() {
   const router = useRouter();
   const { t } = useTranslation();
   const { language } = useLanguage();
   const [agreed, setAgreed] = useState(false);
+  const [clientInfo, setClientInfo] = useState<ClientInfo | null>(null);
+
+  // Fetch client info on page load for e-signature
+  useEffect(() => {
+    const fetchClientInfo = async () => {
+      // Check if we already have client info stored
+      const storedInfo = sessionStorage.getItem('consent_client_info');
+      if (storedInfo) {
+        setClientInfo(JSON.parse(storedInfo));
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/client-info');
+        if (response.ok) {
+          const data = await response.json();
+          const info: ClientInfo = {
+            ip: data.ip || 'unknown',
+            userAgent: data.userAgent || navigator.userAgent,
+            city: data.geolocation?.city || '',
+            region: data.geolocation?.region || '',
+            regionCode: data.geolocation?.regionCode || '',
+            country: data.geolocation?.country || '',
+            countryCode: data.geolocation?.countryCode || '',
+            timezone: data.geolocation?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+            isp: data.geolocation?.isp || '',
+            timestamp: data.timestamp || new Date().toISOString(),
+          };
+          setClientInfo(info);
+          sessionStorage.setItem('consent_client_info', JSON.stringify(info));
+        }
+      } catch (error) {
+        // Fallback: store basic browser info
+        const fallbackInfo: ClientInfo = {
+          ip: 'unknown',
+          userAgent: navigator.userAgent,
+          city: '',
+          region: '',
+          regionCode: '',
+          country: '',
+          countryCode: '',
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          isp: '',
+          timestamp: new Date().toISOString(),
+        };
+        setClientInfo(fallbackInfo);
+        sessionStorage.setItem('consent_client_info', JSON.stringify(fallbackInfo));
+      }
+    };
+
+    fetchClientInfo();
+  }, []);
 
   const handleContinue = () => {
     if (agreed) {
-      // Track all consent acceptances
       const timestamp = new Date().toISOString();
+      const ip = clientInfo?.ip || 'unknown';
+      const userAgent = clientInfo?.userAgent || navigator.userAgent;
+
+      // Generate e-signature for this consent batch
+      const signatureHash = generateSignatureHash('consent_batch', timestamp, ip, userAgent);
+
+      // Track all consent acceptances with e-signature data
       sessionStorage.setItem('terms_of_use_accepted', 'true');
       sessionStorage.setItem('terms_of_use_accepted_at', timestamp);
       sessionStorage.setItem('consent_privacy_policy_accepted', 'true');
@@ -35,6 +108,12 @@ export default function ConsentPage() {
       // New Jersey-specific consents
       sessionStorage.setItem('newjersey_consent_accepted', 'true');
       sessionStorage.setItem('newjersey_consent_accepted_at', timestamp);
+
+      // Store e-signature data for this consent acceptance
+      sessionStorage.setItem('consent_signature_hash', signatureHash);
+      sessionStorage.setItem('consent_signature_timestamp', timestamp);
+      sessionStorage.setItem('consent_ip', ip);
+      sessionStorage.setItem('consent_user_agent', userAgent);
 
       router.push('/intake/state');
     }

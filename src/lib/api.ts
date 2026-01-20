@@ -217,6 +217,21 @@ export interface IntakeSubmission {
     floridaBillOfRightsAcceptedAt?: string;
     floridaConsentAccepted?: boolean;
     floridaConsentAcceptedAt?: string;
+    smsConsentAccepted?: boolean;
+    ageCertificationAccepted?: boolean;
+    ageCertificationAcceptedAt?: string;
+  };
+  // E-Signature data
+  eSignature?: {
+    ip?: string;
+    userAgent?: string;
+    city?: string;
+    region?: string;
+    country?: string;
+    timezone?: string;
+    isp?: string;
+    signatureHash?: string;
+    signatureTimestamp?: string;
   };
 }
 
@@ -376,6 +391,19 @@ export async function submitIntake(intakeData: IntakeSubmission): Promise<{
       floridaBillOfRightsAcceptedAt: intakeData.consents?.floridaBillOfRightsAcceptedAt || '',
       floridaConsentAccepted: intakeData.consents?.floridaConsentAccepted ?? false,
       floridaConsentAcceptedAt: intakeData.consents?.floridaConsentAcceptedAt || '',
+      smsConsentAccepted: intakeData.consents?.smsConsentAccepted ?? false,
+      ageCertificationAccepted: intakeData.consents?.ageCertificationAccepted ?? false,
+      ageCertificationAcceptedAt: intakeData.consents?.ageCertificationAcceptedAt || '',
+      // E-Signature data for legally-binding consent tracking
+      consentIP: intakeData.eSignature?.ip || '',
+      consentUserAgent: intakeData.eSignature?.userAgent || '',
+      consentCity: intakeData.eSignature?.city || '',
+      consentRegion: intakeData.eSignature?.region || '',
+      consentCountry: intakeData.eSignature?.country || '',
+      consentTimezone: intakeData.eSignature?.timezone || '',
+      consentISP: intakeData.eSignature?.isp || '',
+      consentSignatureHash: intakeData.eSignature?.signatureHash || '',
+      consentSignatureTimestamp: intakeData.eSignature?.signatureTimestamp || '',
     };
 
     // Check if we have an existing record from midpoint submission
@@ -528,6 +556,14 @@ export function collectIntakeData(): IntakeSubmission {
   const floridaBillOfRightsAcceptedAt = sessionStorage.getItem('florida_bill_of_rights_accepted_at');
   const floridaConsentAccepted = sessionStorage.getItem('florida_consent_accepted');
   const floridaConsentAcceptedAt = sessionStorage.getItem('florida_consent_accepted_at');
+  const ageCertificationAccepted = sessionStorage.getItem('age_certification_accepted');
+  const ageCertificationAcceptedAt = sessionStorage.getItem('age_certification_accepted_at');
+
+  // E-Signature data (captured on consent page)
+  const consentClientInfo = sessionStorage.getItem('consent_client_info');
+  const parsedClientInfo = consentClientInfo ? JSON.parse(consentClientInfo) : {};
+  const consentSignatureHash = sessionStorage.getItem('consent_signature_hash');
+  const consentSignatureTimestamp = sessionStorage.getItem('consent_signature_timestamp');
 
   // Build weight object from separate keys
   const parsedHeight = heightData ? JSON.parse(heightData) : {};
@@ -619,7 +655,21 @@ export function collectIntakeData(): IntakeSubmission {
       floridaBillOfRightsAccepted: floridaBillOfRightsAccepted === 'true',
       floridaBillOfRightsAcceptedAt: floridaBillOfRightsAcceptedAt || '',
       floridaConsentAccepted: floridaConsentAccepted === 'true',
-      floridaConsentAcceptedAt: floridaConsentAcceptedAt || ''
+      floridaConsentAcceptedAt: floridaConsentAcceptedAt || '',
+      ageCertificationAccepted: ageCertificationAccepted === 'true',
+      ageCertificationAcceptedAt: ageCertificationAcceptedAt || ''
+    },
+    // E-Signature data for legally-binding consent tracking
+    eSignature: {
+      ip: parsedClientInfo.ip || sessionStorage.getItem('consent_ip') || '',
+      userAgent: parsedClientInfo.userAgent || sessionStorage.getItem('consent_user_agent') || '',
+      city: parsedClientInfo.city || '',
+      region: parsedClientInfo.region || '',
+      country: parsedClientInfo.country || '',
+      timezone: parsedClientInfo.timezone || '',
+      isp: parsedClientInfo.isp || '',
+      signatureHash: consentSignatureHash || '',
+      signatureTimestamp: consentSignatureTimestamp || ''
     }
   };
 
