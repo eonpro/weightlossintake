@@ -93,49 +93,50 @@ export const sentryClientConfig = {
 };
 
 // =============================================================================
-// EXAMPLE SENTRY INITIALIZATION (uncomment when @sentry/nextjs is installed)
+// SENTRY INITIALIZATION
 // =============================================================================
-/*
 import * as Sentry from '@sentry/nextjs';
 
-Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  ...sentryClientConfig,
+// Only initialize if DSN is configured
+if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    ...sentryClientConfig,
 
-  beforeSend(event) {
-    // Scrub PHI from error messages
-    if (event.message) {
-      event.message = scrubPHI(event.message);
-    }
+    beforeSend(event) {
+      // Scrub PHI from error messages
+      if (event.message) {
+        event.message = scrubPHI(event.message);
+      }
 
-    // Scrub PHI from exception values
-    if (event.exception?.values) {
-      event.exception.values = event.exception.values.map((exception) => ({
-        ...exception,
-        value: exception.value ? scrubPHI(exception.value) : exception.value,
-      }));
-    }
+      // Scrub PHI from exception values
+      if (event.exception?.values) {
+        event.exception.values = event.exception.values.map((exception) => ({
+          ...exception,
+          value: exception.value ? scrubPHI(exception.value) : exception.value,
+        }));
+      }
 
-    // Remove request body (may contain PHI)
-    if (event.request) {
-      delete event.request.data;
-      delete event.request.cookies;
-    }
+      // Remove request body (may contain PHI)
+      if (event.request) {
+        delete event.request.data;
+        delete event.request.cookies;
+      }
 
-    // Scrub user data
-    if (event.user) {
-      event.user = { id: event.user.id };
-    }
+      // Scrub user data
+      if (event.user) {
+        event.user = { id: event.user.id };
+      }
 
-    return event;
-  },
+      return event;
+    },
 
-  beforeBreadcrumb(breadcrumb) {
-    // Don't log console messages (might contain PHI)
-    if (breadcrumb.category === 'console') {
-      return null;
-    }
-    return breadcrumb;
-  },
-});
-*/
+    beforeBreadcrumb(breadcrumb) {
+      // Don't log console messages (might contain PHI)
+      if (breadcrumb.category === 'console') {
+        return null;
+      }
+      return breadcrumb;
+    },
+  });
+}

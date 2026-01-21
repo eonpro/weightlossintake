@@ -1,10 +1,38 @@
 // =============================================================================
-// NEXT.JS MIDDLEWARE - Security & Observability
+// NEXT.JS MIDDLEWARE - Security, Auth & Observability
 // =============================================================================
 // Runs on every request before it reaches the route handler
+// Integrates Clerk authentication for protected routes
 // =============================================================================
 
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+
+// =============================================================================
+// ROUTE MATCHERS
+// =============================================================================
+
+// Public routes that don't require authentication
+const isPublicRoute = createRouteMatcher([
+  '/',
+  '/intake(.*)',
+  '/v2/intake(.*)',
+  '/checkout(.*)',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/api/health',
+  '/api/airtable(.*)',
+  '/api/stripe/webhook',
+  '/api/emr(.*)',
+  '/api/intakeq(.*)',
+  '/api/client-info',
+]);
+
+// Admin routes that require authentication
+const isAdminRoute = createRouteMatcher([
+  '/admin(.*)',
+  '/api/admin(.*)',
+]);
 
 // =============================================================================
 // CONFIGURATION
@@ -30,10 +58,10 @@ const RATE_LIMIT_MAX_REQUESTS = 100; // per IP per minute
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 
 // =============================================================================
-// MIDDLEWARE FUNCTION
+// CLERK MIDDLEWARE WITH CUSTOM LOGIC
 // =============================================================================
 
-export function middleware(request: NextRequest) {
+export default clerkMiddleware(async (auth, request: NextRequest) => {
   const requestId = generateRequestId();
   const startTime = Date.now();
   const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() 
@@ -105,25 +133,42 @@ export function middleware(request: NextRequest) {
   }
 
   // ==========================================================================
-  // ADD REQUEST HEADERS
+  // AUTHENTICATION CHECK
   // ==========================================================================
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-request-id', requestId);
-  requestHeaders.set('x-request-start', startTime.toString());
+
+  // Protect admin routes - require authentication
+  if (isAdminRoute(request)) {
+    await auth.protect();
+  }
 
   // ==========================================================================
-  // PROCESS REQUEST
+  // LOG REQUEST (structured JSON for observability)
+  // ==========================================================================
+  if (process.env.ENABLE_REQUEST_LOGGING === 'true') {
+    const duration = Date.now() - startTime;
+
+    console.log(JSON.stringify({
+      timestamp: new Date().toISOString(),
+      event: 'REQUEST',
+      requestId,
+      method: request.method,
+      pathname,
+      ip: clientIp,
+      userAgent: userAgent.substring(0, 100),
+      duration,
+      authenticated: !isPublicRoute(request),
+    }));
+  }
+
+  // ==========================================================================
+  // ADD CUSTOM HEADERS TO RESPONSE
   // ==========================================================================
   const response = NextResponse.next({
     request: {
-      headers: requestHeaders,
+      headers: new Headers(request.headers),
     },
   });
 
-  // ==========================================================================
-  // ADD RESPONSE HEADERS
-  // ==========================================================================
-  
   // Request tracing
   response.headers.set('x-request-id', requestId);
   
@@ -139,28 +184,8 @@ export function middleware(request: NextRequest) {
     response.headers.set('Expires', '0');
   }
 
-  // ==========================================================================
-  // LOG REQUEST (structured JSON for observability)
-  // ==========================================================================
-  if (process.env.ENABLE_REQUEST_LOGGING === 'true') {
-    // Only log in production or when explicitly enabled
-    const duration = Date.now() - startTime;
-    
-    console.log(JSON.stringify({
-      timestamp: new Date().toISOString(),
-      event: 'REQUEST',
-      requestId,
-      method: request.method,
-      pathname,
-      ip: clientIp,
-      userAgent: userAgent.substring(0, 100), // Truncate for brevity
-      duration,
-      // Never log query params as they might contain PHI
-    }));
-  }
-
   return response;
-}
+});
 
 // =============================================================================
 // MIDDLEWARE MATCHER

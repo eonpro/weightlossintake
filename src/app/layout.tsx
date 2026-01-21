@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from '@vercel/analytics/react';
 import "./globals.css";
 import ClientProviders from '@/components/ClientProviders';
 import MetaPixel from '@/components/MetaPixel';
@@ -64,6 +65,7 @@ export default function RootLayout({
         <ClientProviders>
           {children}
         </ClientProviders>
+        <Analytics />
       </body>
     </html>
   );
