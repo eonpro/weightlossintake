@@ -3,10 +3,13 @@
 // =============================================================================
 // Runs on every request before it reaches the route handler
 // Integrates Clerk authentication for protected routes
+// Uses Upstash Redis for distributed rate limiting (works in serverless)
 // =============================================================================
 
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 
 // =============================================================================
 // ROUTE MATCHERS
@@ -34,6 +37,11 @@ const isAdminRoute = createRouteMatcher([
   '/api/admin(.*)',
 ]);
 
+// API routes that should have stricter rate limits
+const isApiRoute = createRouteMatcher([
+  '/api/(.*)',
+]);
+
 // =============================================================================
 // CONFIGURATION
 // =============================================================================
@@ -52,10 +60,70 @@ const BLOCKED_USER_AGENTS = [
   // Add more as needed
 ];
 
-// Rate limit configuration (simple in-memory for middleware)
-const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 100; // per IP per minute
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+// =============================================================================
+// UPSTASH RATE LIMITING (Distributed - works across serverless instances)
+// =============================================================================
+
+// Check if Upstash is configured
+const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
+const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+const USE_UPSTASH = !!(UPSTASH_URL && UPSTASH_TOKEN);
+
+// Create rate limiters (only if Upstash is configured)
+let generalRatelimit: Ratelimit | null = null;
+let apiRatelimit: Ratelimit | null = null;
+
+if (USE_UPSTASH) {
+  const redis = new Redis({
+    url: UPSTASH_URL,
+    token: UPSTASH_TOKEN,
+  });
+
+  // General rate limit: 100 requests per minute per IP
+  generalRatelimit = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(100, '1 m'),
+    analytics: true,
+    prefix: 'ratelimit:general',
+  });
+
+  // API rate limit: 30 requests per minute per IP (stricter)
+  apiRatelimit = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(30, '1 m'),
+    analytics: true,
+    prefix: 'ratelimit:api',
+  });
+}
+
+// In-memory fallback for development (when Upstash not configured)
+const memoryRateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 100;
+
+function inMemoryRateLimit(ip: string): { success: boolean; remaining: number } {
+  const now = Date.now();
+  const record = memoryRateLimitMap.get(ip);
+
+  // Cleanup old entries occasionally
+  if (Math.random() < 0.01) {
+    for (const [key, value] of memoryRateLimitMap.entries()) {
+      if (value.resetTime < now) memoryRateLimitMap.delete(key);
+    }
+  }
+
+  if (!record || record.resetTime < now) {
+    memoryRateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return { success: true, remaining: RATE_LIMIT_MAX_REQUESTS - 1 };
+  }
+
+  if (record.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return { success: false, remaining: 0 };
+  }
+
+  record.count++;
+  return { success: true, remaining: RATE_LIMIT_MAX_REQUESTS - record.count };
+}
 
 // =============================================================================
 // CLERK MIDDLEWARE WITH CUSTOM LOGIC
@@ -93,22 +161,37 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
   }
 
   // ==========================================================================
-  // RATE LIMITING (Simple in-memory for edge middleware)
-  // For production, use Upstash Redis for distributed rate limiting
+  // RATE LIMITING (Distributed via Upstash, with in-memory fallback)
   // ==========================================================================
   if (process.env.ENABLE_MIDDLEWARE_RATE_LIMIT === 'true') {
-    const now = Date.now();
-    const record = rateLimitMap.get(clientIp);
-    
-    if (!record || record.resetTime < now) {
-      rateLimitMap.set(clientIp, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
-    } else if (record.count >= RATE_LIMIT_MAX_REQUESTS) {
+    let rateLimitResult: { success: boolean; remaining: number; reset?: number };
+
+    if (USE_UPSTASH) {
+      // Use stricter rate limit for API routes
+      const limiter = isApiRoute(request) ? apiRatelimit : generalRatelimit;
+      if (limiter) {
+        const result = await limiter.limit(clientIp);
+        rateLimitResult = {
+          success: result.success,
+          remaining: result.remaining,
+          reset: result.reset,
+        };
+      } else {
+        rateLimitResult = { success: true, remaining: 100 };
+      }
+    } else {
+      // Fallback to in-memory for development
+      rateLimitResult = inMemoryRateLimit(clientIp);
+    }
+
+    if (!rateLimitResult.success) {
       console.log(JSON.stringify({
         timestamp: new Date().toISOString(),
         event: 'RATE_LIMITED',
         requestId,
         ip: clientIp,
         pathname,
+        distributed: USE_UPSTASH,
       }));
       
       return new NextResponse('Too Many Requests', {
@@ -116,19 +199,10 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
         headers: {
           'Retry-After': '60',
           'X-Request-Id': requestId,
+          'X-RateLimit-Remaining': '0',
+          ...(rateLimitResult.reset && { 'X-RateLimit-Reset': rateLimitResult.reset.toString() }),
         },
       });
-    } else {
-      record.count++;
-    }
-    
-    // Clean up old entries periodically
-    if (Math.random() < 0.01) {
-      for (const [key, value] of rateLimitMap.entries()) {
-        if (value.resetTime < now) {
-          rateLimitMap.delete(key);
-        }
-      }
     }
   }
 

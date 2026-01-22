@@ -281,24 +281,6 @@ export const useQualified = () => useIntakeStore((state) => state.qualified);
 export const useResponse = (key: string) => 
   useIntakeStore((state) => state.responses[key]);
 
-// Actions object (stable reference - use getState outside of render)
-const getActions = () => ({
-  setCurrentStep: useIntakeStore.getState().setCurrentStep,
-  markStepCompleted: useIntakeStore.getState().markStepCompleted,
-  goBack: useIntakeStore.getState().goBack,
-  setResponse: useIntakeStore.getState().setResponse,
-  setResponses: useIntakeStore.getState().setResponses,
-  setPersonalInfo: useIntakeStore.getState().setPersonalInfo,
-  setAddress: useIntakeStore.getState().setAddress,
-  setMedicalProfile: useIntakeStore.getState().setMedicalProfile,
-  setMedicalHistory: useIntakeStore.getState().setMedicalHistory,
-  setGLP1Profile: useIntakeStore.getState().setGLP1Profile,
-  setWeight: useIntakeStore.getState().setWeight,
-  setQualified: useIntakeStore.getState().setQualified,
-  resetIntake: useIntakeStore.getState().resetIntake,
-  getIntakeData: useIntakeStore.getState().getIntakeData,
-});
-
 // Actions hook - returns stable references that don't cause re-renders
 // Uses individual stable selectors instead of creating new object
 export const useIntakeActions = () => {
