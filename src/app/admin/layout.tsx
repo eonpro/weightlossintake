@@ -42,11 +42,13 @@ export default function AdminLayout({
           <div className="flex items-center justify-between h-16">
             {/* Logo & Nav */}
             <div className="flex items-center gap-8">
-              <Link href="/admin" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">E</span>
-                </div>
-                <span className="font-semibold text-slate-800">EONMeds Admin</span>
+              <Link href="/admin" className="flex items-center gap-3">
+                <img
+                  src="https://static.wixstatic.com/media/c49a9b_f1c55bbf207b4082bdef7d23fd95f39e~mv2.png"
+                  alt="EONMeds"
+                  className="h-8 w-8 object-contain"
+                />
+                <span className="font-semibold text-slate-800">Admin</span>
               </Link>
 
               <nav className="hidden md:flex items-center gap-6">
