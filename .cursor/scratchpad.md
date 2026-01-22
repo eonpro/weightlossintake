@@ -452,20 +452,20 @@ Create `docs/adr/` directory with decisions like:
 
 ## Recommended Resolution Order
 
-### Phase 1: Immediate (This Week)
+### Phase 1: Immediate (This Week) ✅ COMPLETE
 1. ✅ Fix Clerk production keys (DONE)
 2. ✅ Fix CSP for production Clerk domains (DONE)
 3. ✅ Fix health endpoint service status (DONE)
-4. ⬜ Remove all " 2" duplicate files
-5. ⬜ Fix ESLint circular reference
-6. ⬜ Run `npm audit fix`
-7. ⬜ Fix development admin bypass
+4. ✅ Remove all " 2" duplicate files (30+ files, 6,127 lines removed)
+5. ✅ Fix ESLint circular reference (native flat config)
+6. ✅ Run `npm audit fix` (0 vulnerabilities)
+7. ✅ Fix development admin bypass (requires DEV_ADMIN_BYPASS=true)
 
-### Phase 2: Short Term (2 Weeks)
-8. ⬜ Implement Upstash rate limiting
-9. ⬜ Add staging deployment to CI
+### Phase 2: Short Term (2 Weeks) ✅ COMPLETE
+8. ✅ Implement Upstash rate limiting (distributed, edge-compatible)
+9. ✅ Add staging deployment to CI (develop branch → staging)
 10. ⬜ Increase unit test coverage to 50%
-11. ⬜ Add API versioning
+11. ✅ Add API versioning (/api/v1/ structure)
 12. ⬜ Document v1 vs v2 intake flow
 
 ### Phase 3: Medium Term (1 Month)
