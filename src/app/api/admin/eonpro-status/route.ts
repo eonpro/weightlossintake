@@ -4,33 +4,20 @@
  * Provides a comprehensive view of the EONPRO integration health.
  * Used for monitoring and debugging.
  * 
- * Security: Requires ADMIN_SECRET header
+ * Security: Requires Clerk authentication
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
 import { getMetrics, isMetricsConfigured } from '@/lib/eonpro-metrics';
 import { getQueueStats, getDeadLetters, isDLQConfigured } from '@/lib/dlq';
 
-const ADMIN_SECRET = process.env.ADMIN_SECRET;
+export const dynamic = 'force-dynamic';
 
-/**
- * Verify admin authentication
- */
-function verifyAdmin(request: NextRequest): boolean {
-  if (!ADMIN_SECRET) {
-    // No admin secret configured - allow in development only
-    return process.env.NODE_ENV === 'development';
-  }
-  
-  const providedSecret = request.headers.get('x-admin-secret') ||
-                        request.headers.get('authorization')?.replace('Bearer ', '');
-  
-  return providedSecret === ADMIN_SECRET;
-}
-
-export async function GET(request: NextRequest) {
-  // Verify admin access
-  if (!verifyAdmin(request)) {
+export async function GET() {
+  // Verify Clerk authentication
+  const { userId } = await auth();
+  if (!userId) {
     return NextResponse.json(
       { success: false, error: 'Unauthorized' },
       { status: 401 }
@@ -130,9 +117,10 @@ export async function GET(request: NextRequest) {
 /**
  * POST - Manual actions (retry dead letters, clear metrics, etc.)
  */
-export async function POST(request: NextRequest) {
-  // Verify admin access
-  if (!verifyAdmin(request)) {
+export async function POST(request: Request) {
+  // Verify Clerk authentication
+  const { userId } = await auth();
+  if (!userId) {
     return NextResponse.json(
       { success: false, error: 'Unauthorized' },
       { status: 401 }
