@@ -11,11 +11,22 @@ import { NextResponse } from 'next/server';
 //   GET /api/health?verbose  - Detailed status (for debugging)
 // =============================================================================
 
+interface ServiceStatus {
+  status: string;
+  configured: boolean;
+}
+
 interface HealthStatus {
   status: 'healthy' | 'degraded' | 'unhealthy';
   timestamp: string;
   version: string;
   environment: string;
+  services?: {
+    airtable: ServiceStatus;
+    eonpro: ServiceStatus;
+    stripe: ServiceStatus;
+    clerk: ServiceStatus;
+  };
   checks?: {
     airtable: boolean;
     intakeq: boolean;
@@ -33,14 +44,17 @@ export async function GET(request: Request) {
   
   // Check service configuration (not connectivity - that would be too slow)
   const airtableConfigured = !!(process.env.AIRTABLE_PAT && process.env.AIRTABLE_BASE_ID);
+  const eonproConfigured = !!(process.env.EONPRO_WEBHOOK_URL && process.env.EONPRO_WEBHOOK_SECRET);
+  const stripeConfigured = !!(process.env.STRIPE_SECRET_KEY && process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+  const clerkConfigured = !!(process.env.CLERK_SECRET_KEY && process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
   const intakeqConfigured = !!process.env.INTAKEQ_API_KEY;
   const pdfcoConfigured = !!process.env.PDFCO_API_KEY;
   
-  // Determine overall health
-  const allServicesConfigured = airtableConfigured && intakeqConfigured;
-  const status: HealthStatus['status'] = allServicesConfigured 
+  // Determine overall health based on critical services
+  const criticalServicesConfigured = airtableConfigured && clerkConfigured;
+  const status: HealthStatus['status'] = criticalServicesConfigured 
     ? 'healthy' 
-    : airtableConfigured 
+    : airtableConfigured || clerkConfigured
       ? 'degraded' 
       : 'unhealthy';
   
@@ -53,6 +67,24 @@ export async function GET(request: Request) {
   
   // Add detailed checks only if verbose mode requested
   if (verbose) {
+    response.services = {
+      airtable: {
+        status: airtableConfigured ? 'connected' : 'not_configured',
+        configured: airtableConfigured,
+      },
+      eonpro: {
+        status: eonproConfigured ? 'connected' : 'not_configured',
+        configured: eonproConfigured,
+      },
+      stripe: {
+        status: stripeConfigured ? 'connected' : 'not_configured',
+        configured: stripeConfigured,
+      },
+      clerk: {
+        status: clerkConfigured ? 'connected' : 'not_configured',
+        configured: clerkConfigured,
+      },
+    };
     response.checks = {
       airtable: airtableConfigured,
       intakeq: intakeqConfigured,
