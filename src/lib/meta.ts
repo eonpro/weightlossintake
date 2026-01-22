@@ -67,9 +67,9 @@ export function initMetaIdentity(): MetaIdentity {
   // Try to get from URL params first, then localStorage
   let lead_id = normalize(getParam('lead_id')) || normalize(localStorage.getItem('lead_id'));
   let meta_event_id = normalize(getParam('meta_event_id')) || normalize(localStorage.getItem('meta_event_id'));
-  let fbp = normalize(getParam('fbp')) || normalize(localStorage.getItem('fbp'));
+  const fbp = normalize(getParam('fbp')) || normalize(localStorage.getItem('fbp'));
   let fbc = normalize(getParam('fbc')) || normalize(localStorage.getItem('fbc'));
-  let fbclid = normalize(getParam('fbclid')) || normalize(localStorage.getItem('fbclid'));
+  const fbclid = normalize(getParam('fbclid')) || normalize(localStorage.getItem('fbclid'));
   const lang = normalize(getParam('lang')) || normalize(localStorage.getItem('preferredLanguage')) || 'es';
 
   // Generate lead_id if not present

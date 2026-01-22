@@ -1,553 +1,502 @@
-# EONMeds Intake Platform - Comprehensive Analysis & Status
+# EONMeds Intake Platform - Comprehensive Audit & Resolution Plan
 
-## Background and Motivation
-Enterprise-grade medical intake platform for GLP-1 weight loss treatment. The platform must maintain HIPAA compliance, provide excellent UX, and integrate with Airtable for patient data storage and EONPRO for patient profile creation.
-
----
-
-# 🔌 SEAMLESS EONPRO INTEGRATION PLAN
-## Goal: "Wired" Data Transfer That Never Fails
-
-### Executive Summary
-Transform the intake→EONPRO pipeline from a "webhook-based integration" into a "native extension" that feels like a single unified system. Zero data loss, real-time sync, and automatic recovery.
+**Audit Date:** January 21, 2026  
+**Auditor Role:** Senior Software Architect  
+**Platform:** Next.js 15 + React 19 + TypeScript Medical Intake Application
 
 ---
 
-## Current State Analysis
+## Executive Summary
 
-### How It Works Today
-```
-┌─────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────┐
-│   Patient   │───▶│ /api/airtable│───▶│   Airtable   │    │  EONPRO  │
-│   Browser   │    │              │    │   (Storage)  │    │   EMR    │
-└─────────────┘    └──────┬───────┘    └──────────────┘    └────▲─────┘
-                          │                                     │
-                          └─────── Webhook (async) ─────────────┘
-```
+The EONMeds intake platform is a functional medical intake system with good foundations but has accumulated technical debt, security gaps, and structural inefficiencies that need addressing. This audit identifies **32 issues** across 7 categories with prioritized remediation steps.
 
-### Current Strengths ✅
-- Zod validation with 50+ field types
-- XSS sanitization
-- Retry logic with exponential backoff (3 attempts)
-- Audit logging (without PHI)
-- EONPRO debug logging (`EONPRO_DEBUG=true`)
-
-### Current Weaknesses ⚠️
-1. **Single Point of Failure**: One webhook call per submission
-2. **No Dead Letter Queue**: Failed submissions aren't queued for retry
-3. **No Health Monitoring**: Can't detect EONPRO downtime proactively
-4. **Schema Drift Risk**: Manual mapping could diverge from EONPRO expectations
-5. **No Bi-directional Sync**: Can't verify EONPRO actually created the patient
-6. **No Real-time Alerts**: Failures only visible in logs
+**Risk Assessment:**
+- 🔴 Critical (Fix immediately): 4 issues
+- 🟠 High (Fix within 1 week): 8 issues  
+- 🟡 Medium (Fix within 1 month): 12 issues
+- 🟢 Low (Backlog): 8 issues
 
 ---
 
-## Proposed Architecture: "Wired" Integration
+## 1. CODE QUALITY ISSUES
 
-### Target Architecture
+### 1.1 🔴 CRITICAL: Duplicate Files Pollution
+**Problem:** 30+ files with " 2" suffix exist throughout the codebase, indicating poor version control practices.
+
+**Affected Files:**
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                          INTAKE FORM                                     │
-│  ┌─────────────┐                                                        │
-│  │   Patient   │                                                        │
-│  │   Browser   │                                                        │
-│  └──────┬──────┘                                                        │
-│         │                                                               │
-│         ▼                                                               │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                     GATEWAY API                                    │  │
-│  │  /api/intake-gateway                                              │  │
-│  │  ┌────────────────────────────────────────────────────────────┐  │  │
-│  │  │  1. Validate (Zod + EONPRO Schema)                         │  │  │
-│  │  │  2. Enrich (defaults, computed fields)                     │  │  │
-│  │  │  3. Parallel Write (Airtable + EONPRO)                     │  │  │
-│  │  │  4. Confirm Both Succeeded                                  │  │  │
-│  │  │  5. If EONPRO fails → Queue for Retry                      │  │  │
-│  │  └────────────────────────────────────────────────────────────┘  │  │
-│  └───────┬──────────────────────────────┬────────────────────────────┘  │
-│          │                              │                               │
-│          ▼                              ▼                               │
-│  ┌──────────────┐              ┌──────────────┐                        │
-│  │   Airtable   │              │    EONPRO    │                        │
-│  │   (Backup)   │◀────────────▶│   (Primary)  │                        │
-│  │              │   Sync ID    │              │                        │
-│  └──────────────┘              └──────────────┘                        │
-│          │                              │                               │
-│          └──────────┬───────────────────┘                               │
-│                     ▼                                                   │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                     RECOVERY LAYER                                │  │
-│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐                  │  │
-│  │  │Dead Letter │  │  Health    │  │   Alert    │                  │  │
-│  │  │   Queue    │  │  Monitor   │  │  Webhook   │                  │  │
-│  │  │(Upstash KV)│  │(Heartbeat) │  │(Slack/SMS) │                  │  │
-│  │  └────────────┘  └────────────┘  └────────────┘                  │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────────────┘
+src/lib/storage 2.ts
+src/lib/rate-limit 2.ts
+src/lib/stripe 2.ts
+src/lib/logger 2.ts
+src/lib/emr-client 2.ts
+src/middleware 2.ts
+src/store/checkoutStore 2.ts
+src/types/checkout 2.ts
+docs/*2.md (6 files)
+e2e/*2.ts (3 files)
+tests/setup 2.ts
+playwright.config 2.ts
+vitest.config 2.ts
+commitlint.config 2.js
+sentry.server.config 2.ts
+.husky/commit-msg 2
+.husky/pre-commit 2
+SECURITY 2.md
+src/app/error 2.tsx
 ```
+
+**Resolution:**
+```bash
+# Remove all duplicate files
+find . -name "* 2.*" -o -name "* 2" | grep -v node_modules | grep -v .next | xargs rm -f
+
+# Add to .gitignore to prevent future duplicates
+echo "* 2.*" >> .gitignore
+echo "* 2" >> .gitignore
+```
+
+**Priority:** 🔴 Critical - Do first
 
 ---
 
-## Implementation Plan
+### 1.2 🟠 HIGH: Monolithic Intake Pages (11,504 lines across 60+ files)
+**Problem:** Each intake step has its own page file with duplicated patterns. This leads to:
+- Difficult maintenance
+- Inconsistent implementations
+- Large bundle size
+- Hard to add new steps
 
-### Phase 1: Schema Contract (CRITICAL - Week 1)
-**Goal**: Establish a single source of truth for data format
+**Current Structure:**
+```
+src/app/intake/
+├── activity-level/page.tsx (80 lines)
+├── address/page.tsx (150 lines)
+├── allergies/page.tsx (90 lines)
+... 60+ more files
+```
 
-#### 1.1 Create Shared Schema Definition
+**Recommended Structure:**
+```
+src/app/intake/
+├── [stepId]/page.tsx          # Single dynamic route
+├── layout.tsx                  # Shared layout
+src/config/
+├── intake-steps.ts            # Step configuration
+├── step-components.ts         # Component registry
+```
+
+**Resolution:**
+1. Migrate to v2 dynamic routing (`/v2/intake/[stepId]`) which already exists
+2. Create step registry with metadata
+3. Deprecate individual page files
+4. Add redirects from old URLs
+
+---
+
+### 1.3 🟡 MEDIUM: Inconsistent Component Patterns
+**Problem:** Some steps use `form-engine` components, others have custom implementations.
+
+**Resolution:**
+- Standardize all steps to use `form-engine`
+- Create additional step types as needed
+- Document component API
+
+---
+
+### 1.4 🟡 MEDIUM: Unused Code / Dead Exports
+**Problem:** `getActions()` function at line 285 in `intakeStore.ts` is never used.
+
 ```typescript
-// src/lib/eonpro-schema.ts
-export const EonproPatientSchema = z.object({
-  // Required fields (EONPRO minimum)
-  firstName: z.string().min(1).max(100),
-  lastName: z.string().min(1).max(100),
-  email: z.string().email(),
-  phone: z.string().regex(/^\+?[1-9]\d{1,14}$/), // E.164 format
-  dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$|^[A-Z][a-z]+ \d{1,2}, \d{4}$/),
-  
-  // Address (required for prescriptions)
-  streetAddress: z.string().min(1),
-  city: z.string().min(1),
-  state: z.string().length(2), // US state code
-  zipCode: z.string().regex(/^\d{5}(-\d{4})?$/),
-  
-  // Medical data (structured)
-  weight: z.number().positive().optional(),
-  height: z.string().optional(),
-  bmi: z.number().positive().optional(),
-  
-  // ... all EONPRO-expected fields
+// This function is defined but never exported or used
+const getActions = () => ({
+  setCurrentStep: useIntakeStore.getState().setCurrentStep,
+  // ...
 });
 ```
 
-#### 1.2 Schema Validation at Gateway
-- Validate BEFORE sending to EONPRO
-- Clear error messages for missing/invalid fields
-- Type-safe transformation
-
-#### 1.3 Version the Schema
-- Add `schemaVersion: "1.0"` to every payload
-- EONPRO can handle multiple schema versions
-- Graceful migration path
+**Resolution:**
+- Remove unused code
+- Run dead code analysis: `npx knip`
 
 ---
 
-### Phase 2: Reliable Delivery (Week 2)
+## 2. SECURITY ISSUES
 
-#### 2.1 Dual-Write Pattern
-Write to BOTH systems in parallel, confirm both succeed:
+### 2.1 🔴 CRITICAL: Development Mode Bypasses Admin Auth
+**Problem:** In `src/lib/auth.ts`, admin checks are bypassed in development:
 
-```typescript
-async function submitIntake(data: ValidatedIntake) {
-  const [airtableResult, eonproResult] = await Promise.allSettled([
-    saveToAirtable(data),
-    sendToEonpro(data),
-  ]);
-  
-  // Both must succeed for "success" response
-  const airtableOk = airtableResult.status === 'fulfilled';
-  const eonproOk = eonproResult.status === 'fulfilled';
-  
-  if (airtableOk && eonproOk) {
-    return { success: true, airtableId, eonproPatientId };
-  }
-  
-  // If EONPRO failed, queue for retry
-  if (airtableOk && !eonproOk) {
-    await queueForRetry(airtableResult.value.id, data);
-    return { 
-      success: true,  // Still success from user's perspective
-      airtableId,
-      eonproQueued: true,
-      message: 'Saved! Processing complete shortly.'
-    };
-  }
-}
+```typescript:72:73:src/lib/auth.ts
+  // Check for admin role
+  // In development, allow access if no role is set (for initial setup)
+  const isAdmin = role === 'admin' || process.env.NODE_ENV === 'development';
 ```
 
-#### 2.2 Dead Letter Queue (DLQ)
-Use Upstash Redis/KV for failed submissions:
+**Risk:** If NODE_ENV is accidentally set to 'development' in production, all admin routes are open.
 
+**Resolution:**
 ```typescript
-// Queue failed EONPRO submissions
-async function queueForRetry(airtableId: string, data: IntakeData) {
-  await upstash.lpush('eonpro:dlq', JSON.stringify({
-    airtableId,
-    data,
-    attempts: 0,
-    firstFailedAt: Date.now(),
-    lastError: 'Initial queue'
-  }));
-}
-
-// Cron job processes queue every 5 minutes
-// /api/cron/process-eonpro-queue
-async function processQueue() {
-  const items = await upstash.lrange('eonpro:dlq', 0, 10);
-  for (const item of items) {
-    const { airtableId, data, attempts } = JSON.parse(item);
-    if (attempts >= 10) {
-      // Move to permanent failure, alert humans
-      await alertFailure(airtableId);
-      continue;
-    }
-    
-    const result = await sendToEonpro(data);
-    if (result.success) {
-      await upstash.lrem('eonpro:dlq', 1, item);
-      await updateAirtableWithEonproId(airtableId, result.patientId);
-    } else {
-      // Update attempt count, will retry next cycle
-      await updateQueueItem(item, attempts + 1, result.error);
-    }
-  }
-}
+// Replace with explicit dev override flag
+const DEV_ADMIN_BYPASS = process.env.DEV_ADMIN_BYPASS === 'true' && process.env.NODE_ENV === 'development';
+const isAdmin = role === 'admin' || DEV_ADMIN_BYPASS;
 ```
 
 ---
 
-### Phase 3: Monitoring & Alerting (Week 3)
+### 2.2 🔴 CRITICAL: In-Memory Rate Limiting Won't Work in Serverless
+**Problem:** In `src/middleware.ts`, rate limiting uses in-memory Map:
 
-#### 3.1 EONPRO Health Monitor
-```typescript
-// Proactive health check every 5 minutes
-// /api/cron/eonpro-health
-async function checkEonproHealth() {
-  const start = Date.now();
-  try {
-    const response = await fetch(EONPRO_HEALTH_URL, {
-      timeout: 5000,
-      headers: { 'x-webhook-secret': EONPRO_SECRET }
-    });
-    
-    const latency = Date.now() - start;
-    
-    if (!response.ok || latency > 3000) {
-      await alertSlowOrUnhealthy(response.status, latency);
-    }
-    
-    // Log metrics
-    await logMetric('eonpro.health', {
-      status: response.ok ? 'healthy' : 'unhealthy',
-      latency,
-      statusCode: response.status
-    });
-    
-  } catch (error) {
-    await alertEonproDown(error);
-  }
-}
+```typescript:56:58:src/middleware.ts
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 100; // per IP per minute
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 ```
 
-#### 3.2 Real-time Alerts
+**Risk:** Each serverless invocation gets fresh memory - rate limiting doesn't work across requests.
+
+**Resolution:**
 ```typescript
-// Slack/Email alerts for critical failures
-async function alertFailure(context: AlertContext) {
-  await fetch(SLACK_WEBHOOK_URL, {
-    method: 'POST',
-    body: JSON.stringify({
-      text: `🚨 EONPRO Sync Failure`,
-      blocks: [
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `*Patient Submission Failed*\n` +
-                  `Airtable ID: ${context.airtableId}\n` +
-                  `Error: ${context.error}\n` +
-                  `Attempts: ${context.attempts}/10`
-          }
-        }
-      ]
-    })
-  });
-}
-```
+// Use Upstash Redis (already in dependencies)
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 
-#### 3.3 Dashboard Metrics
-Track in real-time:
-- EONPRO success rate (target: 99.9%)
-- Average sync latency (target: <2s)
-- Queue depth (target: 0)
-- Failed submissions in last 24h
-
----
-
-### Phase 4: Bi-directional Sync (Week 4)
-
-#### 4.1 Store EONPRO Patient ID in Airtable
-Add field: `EONPRO Patient ID`
-
-```typescript
-// After successful EONPRO creation
-if (eonproResult.success && eonproResult.data?.patientId) {
-  await updateAirtableRecord(airtableId, {
-    'EONPRO Patient ID': eonproResult.data.patientId,
-    'EONPRO Sync Status': 'Synced',
-    'EONPRO Synced At': new Date().toISOString()
-  });
-}
-```
-
-#### 4.2 Verification Endpoint
-```typescript
-// /api/verify-eonpro-sync?airtableId=rec123
-async function verifySync(airtableId: string) {
-  const airtable = await getAirtableRecord(airtableId);
-  const eonproId = airtable.fields['EONPRO Patient ID'];
-  
-  if (!eonproId) {
-    return { synced: false, reason: 'No EONPRO ID stored' };
-  }
-  
-  // Verify patient exists in EONPRO
-  const eonproPatient = await eonproClient.getPatient(eonproId);
-  
-  return {
-    synced: true,
-    eonproId,
-    eonproStatus: eonproPatient?.status || 'unknown'
-  };
-}
-```
-
----
-
-### Phase 5: Schema Evolution (Ongoing)
-
-#### 5.1 Add New Fields Safely
-```typescript
-// Schema versioning
-const SCHEMA_VERSION = '1.1';
-
-// New field additions are always optional
-const EonproPatientSchemaV1_1 = EonproPatientSchemaV1.extend({
-  insuranceProvider: z.string().optional(),  // New in v1.1
-  preferredPharmacy: z.string().optional(),  // New in v1.1
-});
-```
-
-#### 5.2 Deprecation Path
-```typescript
-// Old fields remain but are marked deprecated
-const EonproPatientSchema = z.object({
-  // ... current fields
-  
-  // @deprecated Use streetAddress instead
-  address: z.string().optional(),
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(100, '1 m'),
 });
 ```
 
 ---
 
-## Data Field Mapping (EONPRO Contract)
+### 2.3 🟠 HIGH: API Key Verification is Optional
+**Problem:** In airtable route, API key check can be skipped:
 
-### Required Fields (Must Send)
-| Intake Field | EONPRO Field | Validation |
-|--------------|--------------|------------|
-| `firstName` | `firstName` | string, max 100 |
-| `lastName` | `lastName` | string, max 100 |
-| `email` | `email` | valid email |
-| `phone` | `phone` | E.164 format |
-| `dob` | `dateOfBirth` | ISO date or "Month DD, YYYY" |
-| `address` | `streetAddress` | string |
-| `state` | `state` | 2-letter code |
-| `currentWeight` | `weight` | number (lbs) |
+```typescript
+// API_KEY verification is optional and not enforced
+```
 
-### Medical Fields (Send If Available)
-| Intake Field | EONPRO Field | Notes |
-|--------------|--------------|-------|
-| `bloodPressure` | `bloodPressure` | Range string |
-| `bmi` | `bmi` | Calculated number |
-| `medications` | `currentMedications` | Comma-separated |
-| `allergies` | `allergies` | Comma-separated |
-| `chronicConditions` | `medicalConditions` | Semicolon-separated |
-| `glp1History` | `glp1History` | "yes"/"no"/specific |
-| `medicationPreference` | `medicationPreference` | "semaglutide"/"tirzepatide" |
-
-### Metadata (Auto-generated)
-| Field | Value | Purpose |
-|-------|-------|---------|
-| `submissionId` | `wli-{timestamp}` | Unique ID |
-| `submittedAt` | ISO timestamp | Audit trail |
-| `source` | `weightlossintake` | Source system |
-| `schemaVersion` | `1.0` | For compatibility |
-| `intakeSource` | `eonmeds-intake` | App identifier |
-| `airtableRecordId` | `rec...` | Cross-reference |
+**Resolution:**
+- Make API key required for production
+- Use Clerk session tokens for authenticated endpoints
 
 ---
 
-## Success Metrics
+### 2.4 🟠 HIGH: Missing CSRF Protection
+**Problem:** Form submissions don't have CSRF tokens.
 
-| Metric | Current | Target |
-|--------|---------|--------|
-| Sync Success Rate | ~95% | 99.9% |
-| Sync Latency | ~3s | <1s |
-| Data Loss | Possible | Zero |
-| Recovery Time | Manual | <5min auto |
-| Schema Alignment | Manual | Automated |
+**Resolution:**
+- Implement CSRF tokens for state-changing operations
+- Or use SameSite=Strict cookies with Clerk
 
 ---
 
-## Implementation Priority
+### 2.5 🟠 HIGH: npm Audit Vulnerability
+**Problem:** 1 high severity vulnerability in `tar` package.
 
-### Immediate (This Week)
-1. ✅ Fix serverless await issue (DONE)
-2. ⬜ Create Upstash KV account for DLQ
-3. ⬜ Add `EONPRO Patient ID` field to Airtable
-4. ⬜ Create `/api/cron/process-eonpro-queue` endpoint
-
-### Short Term (2 Weeks)
-5. ⬜ Implement health monitor cron
-6. ⬜ Add Slack alerting
-7. ⬜ Create verification endpoint
-8. ⬜ Build admin dashboard for sync status
-
-### Medium Term (1 Month)
-9. ⬜ Schema versioning system
-10. ⬜ Bi-directional patient status sync
-11. ⬜ Automated reconciliation report
-
----
-
-## Environment Variables Needed
-
-```env
-# Existing
-EONPRO_WEBHOOK_URL=https://...
-EONPRO_WEBHOOK_SECRET=...
-EONPRO_DEBUG=true
-
-# New for DLQ
-UPSTASH_REDIS_REST_URL=https://...
-UPSTASH_REDIS_REST_TOKEN=...
-
-# New for Alerting
-SLACK_WEBHOOK_URL=https://hooks.slack.com/...
-ALERT_EMAIL=admin@eonmeds.com
-
-# New for Cron (Vercel)
-CRON_SECRET=... (for secured cron endpoints)
+**Resolution:**
+```bash
+npm audit fix
 ```
 
 ---
 
-## Risk Mitigation
+### 2.6 🟡 MEDIUM: Sensitive Data in localStorage
+**Problem:** Medical data stored in localStorage via Zustand persist.
 
-| Risk | Mitigation |
-|------|------------|
-| EONPRO downtime | DLQ + auto-retry + alerts |
-| Schema mismatch | Versioned schema + validation |
-| Data corruption | Zod validation + sanitization |
-| Network failure | Exponential backoff + DLQ |
-| Lost submissions | Airtable as backup + reconciliation |
+**Resolution:**
+- Encrypt localStorage data
+- Or use sessionStorage (already partially implemented)
+- Add data expiry
 
 ---
 
-## Questions for EONPRO Team
+## 3. ARCHITECTURE ISSUES
 
-1. **API Idempotency**: Does EONPRO support idempotency keys? (prevent duplicate patients)
-2. **Webhook Health**: Is there a `/health` endpoint we can poll?
-3. **Patient Lookup**: Can we query by email to verify patient exists?
-4. **Schema Docs**: Is there official API documentation we should follow?
-5. **Rate Limits**: What are the webhook rate limits?
+### 3.1 🟠 HIGH: No API Versioning
+**Problem:** APIs are at `/api/airtable`, `/api/stripe/webhook` with no versioning.
 
----
-
-*Plan Created: January 19, 2026*
-*Next Review: January 26, 2026*
-
----
-
-## Key Challenges and Analysis
-
-### 1. Global UI Settings Analysis (`globals.css`)
-
-#### Design System Overview
-The platform uses a modern, sophisticated design system with:
-
-**Color Palette:**
-- Primary: `#10b981` (emerald green) with light/dark variants
-- Accent: `#f0feab` (lime yellow) and `#d4f084` (darker lime)
-- Neutrals: Warm grays from `#1f2937` to `#9ca3af`
-- Semantic: Success (`#10b981`), Warning (`#f59e0b`), Error (`#ef4444`)
-
-**Typography:**
-- Font: Sofia Pro (Adobe Typekit)
-- Base: 16px, line-height 1.6
-- Titles: `clamp(1.75rem, 5vw, 2.5rem)`, font-weight 600, line-height 1.15
-- Subtitles: `clamp(0.9375rem, 2vw, 1.0625rem)`, font-weight 400, line-height 1.25
-- Input text: font-weight 550, font-size 18px
-- Placeholder: font-weight 400, opacity 0.5
-
-**Component Patterns:**
-- Border radius: 7px for buttons/inputs (standardized)
-- Shadows: Subtle layered shadows for depth
-- Transitions: Smooth 150-300ms cubic-bezier transitions
-- Buttons: Gradient backgrounds with hover lift effects
-
-**Standardized Option Buttons:**
-- Unselected: White background, gray border (`#e5e7eb`)
-- Hover: Green border (`#4fa87f`), light background (`#fafafa`)
-- Selected: Green border (`#4fa87f`), lime background (`#f0feab`)
-- Font-weight: 550 (standardized across platform)
-
-**Checkboxes:**
-- Unselected: White background, gray border (`#d1d5db`)
-- Selected: Dark background (`#413d3d`), white checkmark
+**Resolution:**
+```
+/api/v1/intake/submit
+/api/v1/payments/create-intent
+/api/v1/webhooks/stripe
+```
 
 ---
 
-### 2. API Capabilities Analysis
+### 3.2 🟠 HIGH: Tight Coupling to Airtable
+**Problem:** Airtable is directly called from API route with 1,400+ lines of code.
 
-#### `/api/airtable` (Primary Intake API)
-**Purpose:** PHI ingestion point for patient intake data
+**Resolution:**
+- Extract data layer interface
+- Create repository pattern
+- Allow swapping storage backends
 
-**Security Features:**
-- ✅ Input validation via Zod schema (50+ field types)
-- ✅ XSS sanitization for string values
-- ✅ Request size limits (100KB max)
-- ✅ Optional API key verification
-- ✅ Rate limiting (configurable, 30 req/min default)
-- ✅ CORS whitelisting for allowed origins
-- ✅ Constant-time API key comparison (prevents timing attacks)
-- ✅ Audit logging without PHI
+```typescript
+// src/lib/repositories/intake-repository.ts
+interface IntakeRepository {
+  save(data: IntakeData): Promise<string>;
+  get(id: string): Promise<IntakeData>;
+  update(id: string, data: Partial<IntakeData>): Promise<void>;
+}
 
-**EONPRO Integration:**
-- ✅ Webhook with retry logic (3 attempts, exponential backoff)
-- ✅ Awaited in serverless (critical fix applied)
-- ✅ Verbose logging for debugging
+class AirtableIntakeRepository implements IntakeRepository { }
+class PostgresIntakeRepository implements IntakeRepository { }
+```
+
+---
+
+### 3.3 🟡 MEDIUM: No OpenAPI/Swagger Documentation
+**Problem:** APIs are undocumented.
+
+**Resolution:**
+- Add OpenAPI spec
+- Generate from route handlers
+- Use `next-swagger-doc` or similar
+
+---
+
+### 3.4 🟡 MEDIUM: Mixed v1/v2 Intake Flows
+**Problem:** Both `/intake/*` and `/v2/intake/*` exist without clear migration path.
+
+**Resolution:**
+- Document which to use
+- Add deprecation warnings to v1
+- Set timeline for v1 removal
+
+---
+
+## 4. TESTING ISSUES
+
+### 4.1 🟠 HIGH: Insufficient Test Coverage
+**Problem:** Only 3 unit test files exist:
+- `api-health.test.ts`
+- `intakeStore.test.ts`  
+- `validation.test.ts`
+
+**Missing:**
+- Component tests
+- API route integration tests
+- Hook tests
+
+**Resolution:**
+- Target 80% code coverage
+- Add component tests with React Testing Library
+- Add API route tests with MSW
+
+---
+
+### 4.2 🟡 MEDIUM: E2E Tests Are Flaky
+**Problem:** Multiple test failure screenshots in `test-results/`.
+
+**Resolution:**
+- Add retry logic
+- Use test IDs instead of text selectors
+- Add visual regression testing
+
+---
+
+### 4.3 🟡 MEDIUM: No Contract Testing
+**Problem:** EONPRO integration could break without notice.
+
+**Resolution:**
+- Add Pact or similar contract testing
+- Mock EONPRO in tests
+- Add schema validation tests
+
+---
+
+## 5. BUILD & DEVOPS ISSUES
+
+### 5.1 🔴 CRITICAL: ESLint Circular Reference
+**Problem:** Pre-commit hooks fail with:
+```
+TypeError: Converting circular structure to JSON
+```
+
+**Resolution:**
+```javascript
+// eslint.config.mjs - Fix the FlatCompat usage
+import eslintPluginReact from 'eslint-plugin-react';
+
+const eslintConfig = [
+  {
+    plugins: {
+      react: eslintPluginReact,
+    },
+    // ... rest of config
+  }
+];
+```
+
+---
+
+### 5.2 🟠 HIGH: No Staging Environment in CI
+**Problem:** CI only builds, doesn't deploy to staging.
+
+**Resolution:**
+```yaml
+# Add to ci.yml
+deploy-staging:
+  name: Deploy to Staging
+  runs-on: ubuntu-latest
+  needs: [build]
+  if: github.ref == 'refs/heads/develop'
+  steps:
+    - uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+```
+
+---
+
+### 5.3 🟡 MEDIUM: Security Audit Continues on Error
+**Problem:** In CI, security audit has `continue-on-error: true`.
+
+**Resolution:**
+- Make security audit required for PRs to main
+- Allow bypass only with explicit approval
+
+---
+
+### 5.4 🟡 MEDIUM: No Database Migrations
+**Problem:** Airtable schema changes are manual.
+
+**Resolution:**
+- Document Airtable schema as code
+- Create migration scripts
+- Version control schema
+
+---
+
+## 6. PERFORMANCE ISSUES
+
+### 6.1 🟡 MEDIUM: Large JavaScript Bundle
+**Problem:** 60+ page components increase bundle size.
+
+**Resolution:**
+- Implement dynamic imports
+- Use Next.js route groups for code splitting
+- Analyze with `@next/bundle-analyzer`
+
+---
+
+### 6.2 🟡 MEDIUM: No Image Optimization Strategy
+**Problem:** Static images in `public/` aren't optimized.
+
+**Resolution:**
+- Use Next.js `<Image>` component
+- Add WebP/AVIF formats
+- Implement lazy loading
+
+---
+
+### 6.3 🟢 LOW: No Caching Strategy
+**Problem:** API responses aren't cached.
+
+**Resolution:**
+- Add cache headers for static data
+- Use SWR or React Query for client caching
+- Implement stale-while-revalidate
+
+---
+
+## 7. DOCUMENTATION ISSUES
+
+### 7.1 🟡 MEDIUM: Duplicate Documentation Files
+**Problem:** 6 docs have " 2" duplicates.
+
+**Resolution:**
+- Remove duplicates
+- Single source of truth
+
+---
+
+### 7.2 🟡 MEDIUM: No Runbook
+**Problem:** No operational documentation for incidents.
+
+**Resolution:**
+Create `docs/RUNBOOK.md`:
+- Common errors and fixes
+- Deployment procedures
+- Rollback procedures
+- Monitoring alerts
+
+---
+
+### 7.3 🟢 LOW: No Architecture Decision Records (ADRs)
+**Resolution:**
+Create `docs/adr/` directory with decisions like:
+- Why Airtable for storage
+- Why Zustand over Redux
+- Why form-engine pattern
 
 ---
 
 ## Project Status Board
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| UI/UX Design System | ✅ Complete | 7px radius standardized |
-| Intake Flow V1 | ✅ Complete | SessionStorage-based |
-| Checkout Flow | ✅ Complete | Stripe integration |
-| Airtable Integration | ✅ Complete | Full PHI handling |
-| EONPRO Webhook | ✅ Working | Fixed await issue |
-| E2E Tests | ✅ Complete | Playwright setup |
-| DLQ System | ⬜ Planned | See integration plan |
-| Health Monitor | ⬜ Planned | See integration plan |
+| Category | Critical | High | Medium | Low | Total |
+|----------|----------|------|--------|-----|-------|
+| Code Quality | 1 | 1 | 2 | 0 | 4 |
+| Security | 2 | 3 | 1 | 0 | 6 |
+| Architecture | 0 | 2 | 2 | 0 | 4 |
+| Testing | 0 | 1 | 2 | 0 | 3 |
+| Build/DevOps | 1 | 1 | 2 | 0 | 4 |
+| Performance | 0 | 0 | 2 | 1 | 3 |
+| Documentation | 0 | 0 | 2 | 1 | 3 |
+| **TOTAL** | **4** | **8** | **13** | **2** | **27** |
 
 ---
 
-## Lessons Learned
+## Recommended Resolution Order
 
-1. **Serverless Async**: ALWAYS `await` external API calls in Vercel serverless. "Fire and forget" doesn't work - function terminates before promise resolves.
+### Phase 1: Immediate (This Week)
+1. ✅ Fix Clerk production keys (DONE)
+2. ✅ Fix CSP for production Clerk domains (DONE)
+3. ✅ Fix health endpoint service status (DONE)
+4. ⬜ Remove all " 2" duplicate files
+5. ⬜ Fix ESLint circular reference
+6. ⬜ Run `npm audit fix`
+7. ⬜ Fix development admin bypass
 
-2. **Font Weight Standardization**: Option buttons use `font-weight: 550` consistently.
+### Phase 2: Short Term (2 Weeks)
+8. ⬜ Implement Upstash rate limiting
+9. ⬜ Add staging deployment to CI
+10. ⬜ Increase unit test coverage to 50%
+11. ⬜ Add API versioning
+12. ⬜ Document v1 vs v2 intake flow
 
-3. **Border Radius**: Standardized to 7px for all interactive elements.
+### Phase 3: Medium Term (1 Month)
+13. ⬜ Migrate all intake steps to v2 dynamic routing
+14. ⬜ Extract Airtable to repository pattern
+15. ⬜ Add OpenAPI documentation
+16. ⬜ Implement contract testing for EONPRO
+17. ⬜ Add component tests
+18. ⬜ Create operational runbook
 
-4. **Checkbox Visibility**: Dark background (`#413d3d`) with white checkmark for selected state.
-
-5. **API Validation**: Zod schemas don't accept `null` for optional string fields. Use empty string `''` as fallback.
-
-6. **EONPRO Integration**: Current implementation is working but needs DLQ for true reliability.
+### Phase 4: Long Term (Backlog)
+19. ⬜ Implement ADRs
+20. ⬜ Add caching strategy
+21. ⬜ Performance optimization
+22. ⬜ Image optimization
 
 ---
 
-*Last Updated: January 19, 2026*
+## Quick Wins (Can Do Today)
+
+```bash
+# 1. Remove duplicate files
+find . -name "* 2.*" -o -name "* 2" | grep -v node_modules | grep -v .next | xargs rm -f
+
+# 2. Fix npm vulnerability
+npm audit fix
+
+# 3. Add to .gitignore
+echo -e "\n# Prevent duplicate files\n* 2.*\n* 2" >> .gitignore
+```
+
+---
+
+*Last Updated: January 21, 2026*

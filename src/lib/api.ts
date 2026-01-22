@@ -682,7 +682,7 @@ export function collectIntakeData(): IntakeSubmission {
   const noAllergiesStatement = 'Patient currently does not have any known allergies';
   
   // Parse medications and check if "none" or empty
-  let parsedMedications = medications ? JSON.parse(medications) : [];
+  const parsedMedications = medications ? JSON.parse(medications) : [];
   const medicationsIsNone = !medications || 
     parsedMedications.length === 0 || 
     (parsedMedications.length === 1 && 
@@ -692,7 +692,7 @@ export function collectIntakeData(): IntakeSubmission {
        parsedMedications[0]?.toLowerCase() === 'no, none'));
   
   // Parse allergies and check if "none" or empty
-  let parsedAllergies = allergies ? JSON.parse(allergies) : [];
+  const parsedAllergies = allergies ? JSON.parse(allergies) : [];
   const allergiesIsNone = !allergies || 
     parsedAllergies.length === 0 || 
     (parsedAllergies.length === 1 && 

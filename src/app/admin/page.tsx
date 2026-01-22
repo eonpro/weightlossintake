@@ -11,7 +11,7 @@ async function getUser() {
   if (!isClerkConfigured) {
     return null;
   }
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
+   
   const { currentUser } = require('@clerk/nextjs/server');
   return await currentUser();
 }

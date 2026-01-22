@@ -37,7 +37,7 @@ export default function DateOfBirthStep({
     
     // Validate month (01-12)
     if (value.length >= 2) {
-      let month = parseInt(value.slice(0, 2));
+      const month = parseInt(value.slice(0, 2));
       if (month > 12) value = '12' + value.slice(2);
       else if (month < 1 && value.length === 2) value = '01' + value.slice(2);
     }
@@ -45,7 +45,7 @@ export default function DateOfBirthStep({
     // Validate day (01-31)
     if (value.length >= 4) {
       const month = parseInt(value.slice(0, 2));
-      let day = parseInt(value.slice(2, 4));
+      const day = parseInt(value.slice(2, 4));
       
       if (month === 2 && day > 29) {
         value = value.slice(0, 2) + '29' + value.slice(4);

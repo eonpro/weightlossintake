@@ -24,7 +24,7 @@ export default function DOBPage() {
     
     // Validate month (01-12)
     if (value.length >= 2) {
-      let month = parseInt(value.slice(0, 2));
+      const month = parseInt(value.slice(0, 2));
       if (month > 12) {
         value = '12' + value.slice(2);
       } else if (month < 1 && value.length === 2) {

@@ -57,7 +57,7 @@ export async function requireAuth(): Promise<string> {
  * Use this in admin routes and API handlers
  */
 export async function requireAdmin(): Promise<AuthenticatedUser> {
-  const { userId, sessionClaims } = await auth();
+  const { userId } = await auth();
   
   if (!userId) {
     redirect('/sign-in');
@@ -68,8 +68,10 @@ export async function requireAdmin(): Promise<AuthenticatedUser> {
   const role = metadata.role || 'user';
   
   // Check for admin role
-  // In development, allow access if no role is set (for initial setup)
-  const isAdmin = role === 'admin' || process.env.NODE_ENV === 'development';
+  // DEV_ADMIN_BYPASS allows access in development for initial setup
+  // Must be explicitly enabled AND in development mode
+  const devBypassEnabled = process.env.DEV_ADMIN_BYPASS === 'true' && process.env.NODE_ENV === 'development';
+  const isAdmin = role === 'admin' || devBypassEnabled;
   
   if (!isAdmin) {
     throw new Error('Unauthorized: Admin access required');
@@ -169,8 +171,10 @@ export async function requireApiAdmin(): Promise<AuthenticatedUser> {
     throw new Error('Authentication required');
   }
   
-  // Allow in development mode for testing
-  const isAdmin = user.role === 'admin' || process.env.NODE_ENV === 'development';
+  // DEV_ADMIN_BYPASS allows access in development for testing
+  // Must be explicitly enabled AND in development mode
+  const devBypassEnabled = process.env.DEV_ADMIN_BYPASS === 'true' && process.env.NODE_ENV === 'development';
+  const isAdmin = user.role === 'admin' || devBypassEnabled;
   
   if (!isAdmin) {
     throw new Error('Admin access required');

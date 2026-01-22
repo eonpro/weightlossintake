@@ -40,3 +40,16 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+
+# Prevent duplicate files (macOS creates these sometimes)
+* 2.*
+* 2
+*copy*
+*Copy*
+
+# Test results (regenerated on each run)
+/test-results/
+/playwright-report/
+
+# Sentry
+.sentryclirc
